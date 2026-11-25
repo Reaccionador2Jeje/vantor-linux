@@ -54,6 +54,9 @@ mkdir -p "$WORK/build-ncurses"
   make -j2
   make install.libs install.includes DESTDIR="$WORK/sysroot"
 )
+# Nano's configure probes the narrow terminfo name even with wide ncurses.
+# Both names resolve to the same statically built musl-compatible archive.
+ln -sf libtinfow.a "$WORK/sysroot/usr/local/lib/libtinfo.a"
 
 NANO_TARBALL="$WORK/downloads/nano-9.2.tar.xz"
 fetch_verify "https://ftp.gnu.org/gnu/nano/nano-9.2.tar.xz" "$NANO_TARBALL" "05ecb99247b782e8a5b3a25ed4101dd034b0236902f7449bc9795b717642f7e9"
