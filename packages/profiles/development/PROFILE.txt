@@ -1,0 +1,13 @@
+VANTOR Linux — Development Profile 0.1.0
+
+This metapackage enables the initial programming-language environment.
+Installed dependencies:
+- lua: Lua 5.4.9 interpreter and bytecode compiler.
+
+Planned additions:
+- C compiler and linker toolchain
+- make, pkg-config and development headers
+- Python 3
+- Git and debugging tools
+
+This profile is intentionally small until the remaining packages are built and published.
