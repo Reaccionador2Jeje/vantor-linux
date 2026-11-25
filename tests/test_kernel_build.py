@@ -82,6 +82,8 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("--enable M486SX", script)
         self.assertIn("--file \"$CONFIG\" --enable MATH_EMULATION", script)
         self.assertIn("bzImage", script)
+        for storage in ("BLK_DEV_IDECD", "BLK_DEV_IDEDISK", "EXT2_FS", "EXT3_FS", "EXT4_FS", "ISO9660_FS", "VFAT_FS"):
+            self.assertIn(storage, script)
 
 
 if __name__ == "__main__":
