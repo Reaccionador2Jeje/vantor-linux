@@ -36,7 +36,7 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("--only \"$SOURCE_NAME\"", script)
         self.assertIn("i386_defconfig", script)
         self.assertIn("--enable M486SX", script)
-        self.assertIn("--enable MATH_EMULATION", script)
+        self.assertIn("--file \"$CONFIG\" --enable MATH_EMULATION", script)
         self.assertIn("bzImage", script)
 
 
