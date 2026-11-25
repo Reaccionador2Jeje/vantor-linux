@@ -87,7 +87,7 @@ mount -t proc proc /proc 2>/dev/null || true
 mount -t sysfs sysfs /sys 2>/dev/null || true
 mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
 chmod 1777 /tmp 2>/dev/null || true
-hostname vantor 2>/dev/null || true
+if [ -r /etc/hostname ]; then hostname "$(cat /etc/hostname)" 2>/dev/null || true; else hostname vantor 2>/dev/null || true; fi
 if command -v mdev >/dev/null 2>&1; then
     echo /bin/mdev > /proc/sys/kernel/hotplug 2>/dev/null || true
     /bin/busybox mdev -s 2>/dev/null || true
