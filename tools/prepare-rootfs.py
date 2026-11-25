@@ -101,16 +101,27 @@ for media_dev in /dev/sr0 /dev/cdrom; do
         break
     fi
 done
-# Start DHCP only on detected non-loopback interfaces.
-if command -v udhcpc >/dev/null 2>&1 && [ -d /sys/class/net ]; then
+# Apply persistent installer network configuration, or fall back to DHCP.
+network_cfg=/etc/vantor/network.conf
+if [ -r "$network_cfg" ]; then
+    . "$network_cfg"
+    if [ "$MODE" = static ] && command -v ip >/dev/null 2>&1; then
+        ip link set "$INTERFACE" up 2>/dev/null || true
+        ip addr replace "$ADDRESS" dev "$INTERFACE" 2>/dev/null || true
+        ip route replace default via "$GATEWAY" dev "$INTERFACE" 2>/dev/null || true
+        printf 'nameserver %s\n' "$DNS" > /etc/resolv.conf
+    elif [ "$MODE" = dhcp ] && command -v udhcpc >/dev/null 2>&1; then
+        /bin/busybox udhcpc -i "$INTERFACE" -b -q -t 5 -T 2 >/dev/null 2>&1 || true
+    fi
+elif command -v udhcpc >/dev/null 2>&1 && [ -d /sys/class/net ]; then
     for iface_path in /sys/class/net/*; do
         [ -e "$iface_path" ] || continue
-        iface="${iface_path##*/}"
+        iface=$(basename "$iface_path")
         [ "$iface" = lo ] && continue
         /bin/busybox udhcpc -i "$iface" -b -q -t 3 -T 2 >/dev/null 2>&1 || true
     done
 fi
-echo "[VANTOR] Minimal userspace is ready."
+    echo "[VANTOR] Minimal userspace is ready."
 """, 0o755)
     write(output / "usr/bin/vantor-live-session", """#!/bin/sh
 # Local Live console session; the root account remains locked.
