@@ -62,8 +62,16 @@ done
 make -C "$SOURCE_DIR" O="$BUILD_DIR" olddefconfig
 cp "$CONFIG" "$ROOT/kernel/configs/vantor-x86_64.config"
 
-echo "[VANTOR] Building bzImage and loadable modules..."
-make -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS" bzImage modules 2>&1 | tee "$ROOT/build/logs/kernel-build.log"
+echo "[VANTOR] Building bzImage and loadable modules with $VANTOR_BUILD_JOBS jobs..."
+compiler_args=()
+if command -v ccache >/dev/null 2>&1; then
+    compiler_args+=(CC="ccache gcc" HOSTCC="ccache gcc")
+    echo "[VANTOR] ccache enabled for incremental compiler reuse."
+fi
+make -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS" "${compiler_args[@]}" bzImage modules 2>&1 | tee "$ROOT/build/logs/kernel-build.log"
+if command -v ccache >/dev/null 2>&1; then
+    ccache --show-stats
+fi
 
 [[ -s "$OUTPUT" ]] || { echo "[ERROR] Kernel build completed without bzImage." >&2; exit 1; }
 install -D -m 0644 "$OUTPUT" "$ROOT/build/work/kernel/vantor-kernel"
