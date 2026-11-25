@@ -89,7 +89,7 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertIn("kill -TERM", service_manager)
             self.assertIn("start|stop|restart|status", service_manager)
             self.assertIn("restart_policy=never", service_manager)
-            self.assertIn("restart|stop|restart", service_manager)
+            self.assertIn("start|stop|restart|status|logs", service_manager)
             self.assertIn("restart-delay", service_manager)
             self.assertIn("vantor-service-supervisor", service_manager)
             supervisor = (output / "usr/sbin/vantor-service-supervisor").read_text()
