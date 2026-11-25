@@ -25,9 +25,11 @@ done
 }
 
 # Include loadable modules from the matching kernel build when available.
-KERNEL_RELEASE_FILE="$ROOT/build/work/kernel/kernelrelease"
-MODULES_ROOT="$ROOT/build/work/modules/lib/modules"
-if [[ -s "$KERNEL_RELEASE_FILE" ]]; then
+KERNEL_RELEASE_FILE="${VANTOR_KERNEL_RELEASE_FILE:-$ROOT/build/work/kernel/kernelrelease}"
+MODULES_ROOT="${VANTOR_MODULES_ROOT:-$ROOT/build/work/modules}/lib/modules"
+if [[ "${VANTOR_SKIP_KERNEL_MODULES:-0}" == "1" ]]; then
+    echo "[INFO] Loadable modules skipped for this image target; required legacy drivers are built into its kernel."
+elif [[ -s "$KERNEL_RELEASE_FILE" ]]; then
     KERNEL_RELEASE="$(cat "$KERNEL_RELEASE_FILE")"
     [[ "$KERNEL_RELEASE" =~ ^[A-Za-z0-9._+-]+$ ]] || {
         echo "[ERROR] Invalid kernel release string: $KERNEL_RELEASE" >&2
