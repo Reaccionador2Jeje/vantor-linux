@@ -258,6 +258,11 @@ prepare_boot_files() {
             cp "$theme_source" "$target/boot/grub/themes/vantor/theme.txt"
         fi
     fi
+    if [ "$arch" = "i486" ]; then
+        boot_title="VANTOR Linux Minimal — i486"
+    else
+        boot_title="VANTOR Linux — Live installed (x86_64)"
+    fi
     cat > "$target/boot/grub/grub.cfg.tmp" <<EOF
 # VANTOR Linux Minimal — installed system
 set default=0
@@ -277,7 +282,7 @@ else
     terminal_output console
 fi
 
-menuentry "VANTOR Linux — Live installed ($arch)" --class vantor {
+menuentry "$boot_title" --class vantor {
     search --no-floppy --file --set=root /boot/vantor-kernel
     linux /boot/vantor-kernel root=$root_device rootfstype=$root_fstype rw rootwait console=tty0 loglevel=4
     initrd /boot/vantor-initramfs.cpio.gz
