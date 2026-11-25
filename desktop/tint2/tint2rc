@@ -1,14 +1,21 @@
-# VANTOR Panel — compact X11 panel
+# VANTOR Panel — lightweight bottom dock/taskbar
+# Background 1: standard surfaces
 rounded = 7
-rounded corners = 7
-border width = 1
+border_width = 1
 background_color = #0C1D30 94
 border_color = #24435F 100
-background_color_hover = #132A43 100
-border_color_hover = #00CFFF 100
-background_color_pressed = #0877FF 100
-border_color_pressed = #00CFFF 100
-panel_items = LTSCP
+# Background 2: active/focused surfaces
+rounded = 7
+border_width = 1
+background_color = #132A43 100
+border_color = #00CFFF 100
+# Background 3: pressed/selected accent
+rounded = 7
+border_width = 1
+background_color = #0877FF 100
+border_color = #00CFFF 100
+
+panel_items = LTSC
 panel_size = 100% 38
 panel_margin = 0 0
 panel_padding = 10 4 10
@@ -21,16 +28,17 @@ panel_monitor = all
 primary_monitor_first = 1
 autohide = 0
 strut_policy = follow_size
+
 taskbar_mode = multi_desktop
 taskbar_padding = 3 2 3
-taskbar_background_id = 0
+taskbar_background_id = 1
 taskbar_active_background_id = 2
 taskbar_name = 1
 taskbar_name_padding = 6 3
 taskbar_name_font = Rajdhani 10
 taskbar_name_font_color = #9BB0C8 100
 taskbar_name_active_font_color = #00CFFF 100
-taskbar_name_background_id = 0
+taskbar_name_background_id = 1
 taskbar_name_active_background_id = 2
 task_icon = 1
 task_text = 1
@@ -40,17 +48,19 @@ task_padding = 6 3
 task_font = Rajdhani 10
 task_font_color = #F4F8FF 100
 task_active_font_color = #00CFFF 100
-task_background_id = 0
+task_background_id = 1
 task_active_background_id = 2
 task_icon_asb = 100 0 0
 task_active_icon_asb = 100 0 0
+
 systray_padding = 5 3 5
-systray_background_id = 0
+systray_background_id = 1
 systray_icon_size = 18
+
 clock_font = Rajdhani Bold 11
 clock_font_color = #F4F8FF 100
 clock_padding = 8 3
-clock_background_id = 0
+clock_background_id = 1
 time1_format = %H:%M
 time2_format = %a %d %b
 clock_tooltip = %A, %d %B %Y
