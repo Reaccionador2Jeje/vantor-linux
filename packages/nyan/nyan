@@ -3,6 +3,8 @@
 set -eu
 
 NYAN_ROOT=${NYAN_ROOT:-/}
+NYAN_CONFIG="${NYAN_ROOT%/}/etc/nyan.conf"
+if [ -r "$NYAN_CONFIG" ]; then . "$NYAN_CONFIG"; fi
 NYAN_REPO=${NYAN_REPO:-https://vantor-linux.cristopheriguaran-7.workers.dev}
 NYAN_ARCH=${NYAN_ARCH:-x86_64}
 NYAN_STATE="${NYAN_ROOT%/}/var/lib/nyan"
