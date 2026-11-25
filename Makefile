@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
-.PHONY: help info check check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel kernel-legacy busybox busybox-legacy initramfs rootfs rootfs-legacy boot-files iso clean kernel-files initramfs-files
+.PHONY: help info check check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel kernel-legacy busybox busybox-legacy initramfs initramfs-legacy rootfs rootfs-legacy boot-files iso iso-legacy image-legacy clean kernel-files initramfs-files
 
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
@@ -10,10 +10,10 @@ help:
 	  '  make check-sources Validate source manifest structure' '  make check-python  Compile and test Python tools' '  make check-nyan    Validate Nyan package manager syntax' \
 	  '  make sources-ready Require verified source checksums' '  make fetch-sources Download and verify pinned archives' \
 	  '  make toolchain      Build Binutils and GCC pass 1' '  make kernel         Build VANTOR x86_64 Linux kernel' '  make kernel-legacy  Build 486SX-compatible 32-bit legacy kernel' \
-	  '  make busybox        Build static x86_64 BusyBox userspace' '  make busybox-legacy Build static i486 BusyBox userspace' '  make initramfs      Assemble VANTOR early userspace' \
+	  '  make busybox        Build static x86_64 BusyBox userspace' '  make busybox-legacy Build static i486 BusyBox userspace' '  make initramfs      Assemble x86_64 early userspace' '  make initramfs-legacy Assemble i486 early userspace' \
 	  '  make rootfs         Assemble the x86_64 VANTOR rootfs skeleton' '  make rootfs-legacy  Assemble the i486 VANTOR rootfs skeleton' \
 	  '  make boot-files     Check bootloader configuration and builder' \
-	  '  make iso            Build a GRUB ISO after kernel and initramfs exist' \
+	  '  make iso            Build the x86_64 GRUB ISO' '  make iso-legacy     Build the 486 BIOS GRUB ISO' '  make image-legacy   Build the complete i486 ISO pipeline' \
 	  '  make clean         Remove generated build output'
 
 info:
@@ -124,6 +124,9 @@ busybox-legacy:
 initramfs:
 	@bash build/scripts/build-initramfs.sh
 
+initramfs-legacy: rootfs-legacy busybox-legacy
+	@VANTOR_ROOTFS_DIR=build/work/rootfs-legacy VANTOR_INITRAMFS_DIR=build/work/initramfs-legacy VANTOR_INITRAMFS_NAME=vantor-legacy-initramfs.cpio.gz bash build/scripts/build-initramfs.sh
+
 initramfs-files:
 	@test -s build/scripts/build-busybox.sh
 	@test -s build/scripts/build-initramfs.sh
@@ -139,11 +142,18 @@ rootfs-legacy:
 
 boot-files:
 	@test -s boot/grub/grub.cfg
+	@test -s boot/grub/grub-legacy.cfg
 	@test -s build/scripts/build-iso.sh
+	@test -s build/scripts/build-iso-legacy.sh
 	@echo "[OK] GRUB configuration and ISO builder are present."
 
 iso:
 	@bash build/scripts/build-iso.sh
+
+iso-legacy: kernel-legacy initramfs-legacy
+	@bash build/scripts/build-iso-legacy.sh
+
+image-legacy: iso-legacy
 
 clean:
 	rm -rf -- build/work build/distfiles output
