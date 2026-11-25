@@ -2,7 +2,58 @@
   "schema_version": 1,
   "project": "VANTOR Linux",
   "target": "x86_64-vantor-linux-gnu",
-  "status": "unpopulated",
-  "policy": "Every source must have an exact upstream version, canonical URL, verified SHA-256, and license before automated download.",
-  "sources": []
+  "status": "candidate",
+  "policy": "Versions are candidates selected from upstream release pages. SHA-256 values must be independently verified before downloads/builds are enabled.",
+  "sources": [
+    {
+      "name": "binutils",
+      "version": "2.46.1",
+      "archive": "binutils-2.46.1.tar.xz",
+      "url": "https://sourceware.org/pub/binutils/releases/binutils-2.46.1.tar.xz",
+      "sha256": null,
+      "license": "GPL-3.0-or-later (component files may vary)",
+      "role": "Assembler, linker and binary utilities",
+      "status": "candidate"
+    },
+    {
+      "name": "gcc",
+      "version": "16.2.0",
+      "archive": "gcc-16.2.0.tar.xz",
+      "url": "https://ftp.gnu.org/gnu/gcc/gcc-16.2.0/gcc-16.2.0.tar.xz",
+      "sha256": null,
+      "license": "GPL-3.0-or-later with GCC Runtime Library Exception where applicable",
+      "role": "Initial cross-compiler and compiler runtime",
+      "status": "candidate"
+    },
+    {
+      "name": "glibc",
+      "version": "2.44",
+      "archive": "glibc-2.44.tar.xz",
+      "url": "https://ftp.gnu.org/gnu/glibc/glibc-2.44.tar.xz",
+      "sha256": null,
+      "license": "LGPL-2.1-or-later; component files may vary",
+      "role": "Target C library",
+      "status": "candidate"
+    },
+    {
+      "name": "linux",
+      "version": "6.18.65",
+      "archive": "linux-6.18.65.tar.xz",
+      "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.65.tar.xz",
+      "sha256": null,
+      "license": "GPL-2.0-only; see kernel COPYING and source headers",
+      "role": "Long-term-support kernel baseline for first boot target",
+      "status": "candidate"
+    },
+    {
+      "name": "busybox",
+      "version": "1.37.0",
+      "archive": "busybox-1.37.0.tar.bz2",
+      "url": "https://www.busybox.net/downloads/busybox-1.37.0.tar.bz2",
+      "sha256": null,
+      "license": "GPL-2.0-only",
+      "role": "Minimal initial userspace",
+      "status": "candidate"
+    }
+  ]
 }
