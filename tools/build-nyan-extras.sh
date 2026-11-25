@@ -50,7 +50,7 @@ for tool in vantor-about vantor-doctor vantor-netdiag vantor-logview vantor-conf
   install -m 0755 "$ROOT/packages/addons/$tool" "$stage/usr/local/bin/$tool"
   mkdir -p "$stage/usr/local/share/doc/$tool"
   printf '%s\n' "$tool — VANTOR community utility" "Architecture-independent POSIX shell tool." "Part of the VANTOR Nyan add-on collection." > "$stage/usr/local/share/doc/$tool/README"
-  tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \\
+  tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \
     -czf "$OUT/$tool-0.1.0-all.tar.gz" -C "$stage" .
   tar -tzf "$OUT/$tool-0.1.0-all.tar.gz" >/dev/null
 done
