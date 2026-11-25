@@ -24,3 +24,4 @@ xinit	desktop	planned	X11 session launcher for VANTOR Desktop
 xsetroot	desktop	planned	Minimal X11 root-window utilities
 pcmanfm	desktop	planned	Optional desktop icons and file manager
 vantor-desktop	desktop	building	VANTOR-branded Openbox and tint2 session configuration
+lightdm	desktop	planned	Optional graphical login manager and X session selector
