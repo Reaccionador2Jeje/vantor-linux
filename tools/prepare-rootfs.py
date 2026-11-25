@@ -510,10 +510,10 @@ exec /bin/sh
 """, 0o755)
 
     write(output / "sbin/vantor-init", """#!/bin/sh
-# VANTOR Init 0.1.0 - minimal early-userspace orchestrator.
+# VANTOR Init 0.2.0 - minimal early-userspace orchestrator.
 set -u
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
-VERSION="0.1.0"
+VERSION="0.2.0"
 log() { echo "[VANTOR:init] $*"; }
 
 mount_virtual_fs() {
@@ -734,7 +734,7 @@ exit 0
     write(output / "etc/vantor-brand.json", json.dumps({
         "brand": theme["brand"], "edition": "Minimal", "architecture": args.arch, "version": "0.1.0", "codename": "Genesis",
         "slogan": theme["slogan"], "branding_path": "/usr/share/vantor/branding",
-        "core": {"init": "VANTOR Init 0.1.0", "control": "VANTOR Control 0.1.0", "hardware": "VANTOR Hardware 0.1.0"}
+        "core": {"init": "VANTOR Init 0.2.0", "control": "VANTOR Control 0.1.0", "hardware": "VANTOR Hardware 0.1.0"}
     }, indent=2) + "\n")
     print(f"[OK] Prepared VANTOR {args.arch} rootfs skeleton at {output}")
     print(f"[OK] Installed {len(BRAND_FILES)} official branding assets.")
