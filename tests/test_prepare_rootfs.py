@@ -188,13 +188,19 @@ class PrepareRootfsTests(unittest.TestCase):
             (sysroot / "bus" / "virtio" / "devices" / "virtio0").mkdir(parents=True)
             (sysroot / "bus" / "virtio" / "devices" / "virtio0" / "vendor").write_text("0x1af4\n")
             (sysroot / "bus" / "virtio" / "devices" / "virtio0" / "device").write_text("0x1000\n")
+            usb = sysroot / "bus" / "usb" / "devices" / "1-1"
+            usb.mkdir(parents=True)
+            (usb / "idVendor").write_text("1234\\n")
+            (usb / "idProduct").write_text("abcd\\n")
+            (usb / "manufacturer").write_text("VANTOR Test\\n")
+            (usb / "product").write_text("USB Device\\n")
             (sysroot / "class" / "net" / "eth0").mkdir(parents=True)
             (sysroot / "class" / "net" / "eth0" / "operstate").write_text("up\n")
             (sysroot / "class" / "net" / "eth0" / "address").write_text("02:00:00:00:00:01\n")
             env = dict(__import__("os").environ, VANTOR_PROC_ROOT=str(proc), VANTOR_SYS_ROOT=str(sysroot))
             result = subprocess.run(["sh", str(ROOT / "core/hardware/vantor-hw")], env=env, capture_output=True, text=True, check=False)
             self.assertEqual(result.returncode, 0, result.stderr)
-            for expected in ("VANTOR Test CPU", "MemTotal:", "vda: sectors=4096", "vendor=0x1af4", "virtio0", "eth0 state=up"):
+            for expected in ("VANTOR Test CPU", "MemTotal:", "vda: sectors=4096", "vendor=0x1af4", "virtio0", "1234", "abcd", "VANTOR Test", "eth0 state=up"):
                 self.assertIn(expected, result.stdout, expected)
 
     def test_refuses_nonempty_output(self) -> None:
