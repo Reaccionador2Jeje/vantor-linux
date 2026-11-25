@@ -51,7 +51,13 @@ if ! command -v proot >/dev/null 2>&1; then
   exit 1
 fi
 if [ ! -x "$ROOTFS/bin/busybox" ] || [ ! -x "$ROOTFS/usr/bin/vantor-termux-shell" ]; then
-  echo "VANTOR: rootfs not found or incomplete at $ROOTFS" >&2
+  if command -v proot-distro >/dev/null 2>&1; then
+    if [ "$#" -eq 0 ]; then
+      exec proot-distro login vantor -- /usr/bin/vantor-termux-shell
+    fi
+    exec proot-distro login vantor -- /usr/bin/vantor-termux-shell "$@"
+  fi
+  echo "VANTOR: rootfs not found at $ROOTFS and PRoot-Distro is unavailable." >&2
   echo "Install it with: sh tools/termux/install-vantor" >&2
   exit 1
 fi
