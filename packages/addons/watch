@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+interval=2
+if [ "${1:-}" = "-n" ]; then
+  [ "$#" -ge 3 ] || { echo "Usage: watch [-n seconds] command [arguments...]" >&2; exit 2; }
+  interval=$2
+  case "$interval" in *[!0-9.]*|'') echo "watch: invalid interval" >&2; exit 2;; esac
+  shift 2
+fi
+[ "$#" -gt 0 ] || { echo "Usage: watch [-n seconds] command [arguments...]" >&2; exit 2; }
+while :; do
+  printf '\033[H\033[2J'
+  printf 'Every %s seconds: %s\n\n' "$interval" "$*"
+  "$@" || true
+  sleep "$interval"
+done
