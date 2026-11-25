@@ -23,9 +23,11 @@ for arch in x86_64 i486 aarch64; do
   make_pkg "$arch" vantor-hardware \
     "VANTOR read-only hardware inventory utility" \
     core/hardware/vantor-hw usr/local/bin/vantor-hw
-  make_pkg "$arch" vantor-installer \
-    "VANTOR text-mode system installer" \
-    installer/vantor-install usr/local/sbin/vantor-install
+  if [[ "$arch" != aarch64 ]]; then
+    make_pkg "$arch" vantor-installer \
+      "VANTOR text-mode system installer" \
+      installer/vantor-install usr/local/sbin/vantor-install
+  fi
   for file in vantor-mark.svg vantor-lockup.svg theme.json theme.css; do
     stage="$OUT/stage-$arch-vantor-branding"
     mkdir -p "$stage/usr/local/share/vantor/branding"
