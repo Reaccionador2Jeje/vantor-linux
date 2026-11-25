@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 usage() {
-  echo "Usage: $0 PACKAGE.tar.gz NAME VERSION ARCH DESCRIPTION" >&2
+  echo "Usage: $0 PACKAGE.tar.gz NAME VERSION ARCH DESCRIPTION [DEPENDENCIES]" >&2
   exit 2
 }
 [[ $# -eq 5 || $# -eq 6 ]] || usage
