@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
-.PHONY: help info check check-shell check-config check-sources sources-ready fetch-sources clean
+.PHONY: help info check check-shell check-config check-sources sources-ready fetch-sources toolchain clean
 
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
@@ -43,6 +43,9 @@ sources-ready:
 
 fetch-sources: sources-ready
 	@python3 tools/fetch-sources.py
+
+toolchain:
+	@bash build/scripts/build-toolchain.sh
 
 clean:
 	rm -rf -- build/work build/distfiles output
