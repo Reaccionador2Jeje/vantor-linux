@@ -9,6 +9,7 @@ Nyan is VANTOR's native package manager. It currently supports repository refres
 - `nyan search TERM` — search package names and descriptions.
 - `nyan show NAME` — inspect version, architecture, description and dependencies.
 - `nyan languages` — list programming-language packages.
+- `nyan catalog` — show bundled, published and planned core packages.
 - `nyan install NAME` — resolve and install declared dependencies before the requested package.
 - `nyan profiles` — list planned system profiles and their publication status.
 - `nyan install-profile NAME` — reserved for profiles whose full package sets have been published.
@@ -32,7 +33,7 @@ Nyan exposes five profile names:
 - `development` — Lua 5.4.9 starter language environment.
 - `network` — DHCP, DNS, TLS and network diagnostic tools; not yet published.
 
-The Minimal package workflow is `.github/workflows/build-nyan-minimal.yml`. It builds the base payload from the rootfs generator and BusyBox, then publishes the base package and Minimal meta-package. It does not make sudo, nano, full Vim or Fastfetch available yet; those remain separate package targets.
+The local package catalog is maintained in `packages/catalog.tsv` and is installed at `/usr/share/nyan/catalog.tsv`. It distinguishes bundled tools from packages that are still planned; planned entries are not installable yet.\n\nThe Minimal package workflow is `.github/workflows/build-nyan-minimal.yml`. It builds the base payload from the rootfs generator and BusyBox, then publishes the base package and Minimal meta-package. It does not make sudo, nano, full Vim or Fastfetch available yet; those remain separate package targets.
 
 
 ## VANTOR Community Mirror
