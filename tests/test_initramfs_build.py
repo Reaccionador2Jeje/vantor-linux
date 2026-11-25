@@ -35,6 +35,11 @@ class InitramfsBuildTests(unittest.TestCase):
             self.assertIn("modprobe", script)
             self.assertIn("switch_root", script)
 
+    def test_busybox_service_manager_applet_is_enabled(self):
+        script = (ROOT / "build/scripts/build-busybox.sh").read_text()
+        self.assertIn("CONFIG_START_STOP_DAEMON", script)
+        self.assertIn("start-stop-daemon", script)
+
     def test_iso_and_initramfs_output_contract_match(self):
         initramfs = (ROOT / "build/scripts/build-initramfs.sh").read_text()
         iso = (ROOT / "build/scripts/build-iso.sh").read_text()
