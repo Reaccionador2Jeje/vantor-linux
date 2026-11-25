@@ -20,6 +20,14 @@ SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 CHUNK_SIZE = 1024 * 1024
 
 
+def sha256_file(path: Path) -> str:
+    hasher = hashlib.sha256()
+    with path.open("rb") as source:
+        for chunk in iter(lambda: source.read(CHUNK_SIZE), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+
 def abort(message: str) -> None:
     print(f"[ERROR] {message}", file=sys.stderr)
     raise SystemExit(1)
@@ -53,7 +61,7 @@ def main() -> int:
 
         target = DESTINATION / archive
         if target.exists():
-            current = hashlib.sha256(target.read_bytes()).hexdigest()
+            current = sha256_file(target)
             if current == entry["sha256"]:
                 print(f"[OK] Already verified: {archive}")
                 continue
