@@ -128,14 +128,14 @@ jobs:
               failures=$((failures + 1))
             fi
           }
-          publish_one nano 9.2 x86_64 "GNU nano 9.2 tiny static editor (musl + ncurses)"
-          publish_one nano 9.2 i486 "GNU nano 9.2 tiny static editor (musl + ncurses)"
-          publish_one htop 3.4.1 x86_64 "htop 3.4.1 static process monitor (musl + ncurses)"
-          publish_one htop 3.4.1 i486 "htop 3.4.1 static process monitor (musl + ncurses)"
-          publish_one dialog 1.3-20260721 x86_64 "Dialog terminal UI widgets, static musl and ncurses"
-          publish_one dialog 1.3-20260721 i486 "Dialog terminal UI widgets, static musl and ncurses"
-          publish_one curl 8.23.0 x86_64 "curl 8.23.0 with static OpenSSL 3.5.9 LTS and Mozilla CA bundle"
-          publish_one curl 8.23.0 i486 "curl 8.23.0 with static OpenSSL 3.5.9 LTS and Mozilla CA bundle"
+          publish_one nano-9.2 nano 9.2 x86_64 "GNU nano 9.2 tiny static editor (musl + ncurses)"
+          publish_one nano-9.2 nano 9.2 i486 "GNU nano 9.2 tiny static editor (musl + ncurses)"
+          publish_one htop-3.4.1 htop 3.4.1 x86_64 "htop 3.4.1 static process monitor (musl + ncurses)"
+          publish_one htop-3.4.1 htop 3.4.1 i486 "htop 3.4.1 static process monitor (musl + ncurses)"
+          publish_one dialog-1.3-20260721 dialog 1.3-20260721 x86_64 "Dialog terminal UI widgets, static musl and ncurses"
+          publish_one dialog-1.3-20260721 dialog 1.3-20260721 i486 "Dialog terminal UI widgets, static musl and ncurses"
+          publish_one curl-8.23.0 curl 8.23.0 x86_64 "curl 8.23.0 with static OpenSSL 3.5.9 LTS and Mozilla CA bundle"
+          publish_one curl-8.23.0 curl 8.23.0 i486 "curl 8.23.0 with static OpenSSL 3.5.9 LTS and Mozilla CA bundle"
           if (( failures > 0 )); then
             exit 1
           fi
