@@ -173,5 +173,19 @@ class NyanIntegrationTests(unittest.TestCase):
         self.assertEqual(target.read_text(), "system file")
 
 
+    def test_installed_listing_and_verify_detect_missing_files(self) -> None:
+        self.add_package("inspectable", "usr/bin/inspectable", b"inspect me\\n")
+        self.assertEqual(self.run_nyan("update").returncode, 0)
+        self.assertEqual(self.run_nyan("install", "inspectable").returncode, 0)
+        listing = self.run_nyan("installed")
+        self.assertEqual(listing.returncode, 0, listing.stderr)
+        self.assertIn("inspectable", listing.stdout)
+        verified = self.run_nyan("verify", "inspectable")
+        self.assertEqual(verified.returncode, 0, verified.stderr)
+        (self.root / "usr/bin/inspectable").unlink()
+        missing = self.run_nyan("verify", "inspectable")
+        self.assertNotEqual(missing.returncode, 0)
+        self.assertIn("missing usr/bin/inspectable", missing.stderr)
+
 if __name__ == "__main__":
     unittest.main()
