@@ -21,7 +21,7 @@ info:
 	printf '%s %s (%s)\nTarget: %s\nKernel: Linux %s (%s)\n' \
 	  "$$VANTOR_NAME" "$$VANTOR_VERSION" "$$VANTOR_CODENAME" "$$VANTOR_TARGET" "$$VANTOR_KERNEL_VERSION" "$$VANTOR_KERNEL_ARCH"
 
-check: check-config check-shell check-sources check-python check-nyan kernel-files initramfs-files boot-files
+check: check-config check-shell check-sources check-python check-nyan core-files kernel-files initramfs-files boot-files
 	@python3 -m json.tool assets/branding/theme.json > /dev/null
 	@echo "[OK] VANTOR repository checks passed."
 
@@ -42,6 +42,12 @@ check-sources:
 check-python:
 	@python3 -m compileall -q tools tests
 	@python3 -m unittest discover -s tests -p 'test_*.py' -v
+
+core-files:
+	@test -s docs/vantor-core.md
+	@grep -q 'VANTOR Init' tools/prepare-rootfs.py
+	@grep -q 'VANTOR Control' tools/prepare-rootfs.py
+	@echo "[OK] VANTOR Core bootstrap components are present."
 
 kernel-files:
 	@test -s build/scripts/build-kernel.sh
