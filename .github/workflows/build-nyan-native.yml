@@ -6,6 +6,8 @@ on:
     paths:
       - "tools/build-nyan-native.sh"
       - "tools/build-nyan-htop.sh"
+      - "tools/build-nyan-dialog.sh"
+      - "tools/build-nyan-curl.sh"
       - "tools/publish-package.sh"
       - ".github/workflows/build-nyan-native.yml"
       - "packages/catalog.tsv"
@@ -45,8 +47,32 @@ jobs:
             script: tools/build-nyan-htop.sh
             archive: htop-3.4.1
             description: "htop 3.4.1 static process monitor (musl + ncurses)"
+          - arch: x86_64
+            package: dialog
+            version: "1.3-20260721"
+            script: tools/build-nyan-dialog.sh
+            archive: dialog-1.3-20260721
+            description: "Dialog terminal UI widgets, static musl and ncurses"
+          - arch: i486
+            package: dialog
+            version: "1.3-20260721"
+            script: tools/build-nyan-dialog.sh
+            archive: dialog-1.3-20260721
+            description: "Dialog terminal UI widgets, static musl and ncurses"
+          - arch: x86_64
+            package: curl
+            version: "8.23.0"
+            script: tools/build-nyan-curl.sh
+            archive: curl-8.23.0
+            description: "curl 8.23.0 with static OpenSSL 3.5.9 LTS and Mozilla CA bundle"
+          - arch: i486
+            package: curl
+            version: "8.23.0"
+            script: tools/build-nyan-curl.sh
+            archive: curl-8.23.0
+            description: "curl 8.23.0 with static OpenSSL 3.5.9 LTS and Mozilla CA bundle"
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 90
     steps:
       - name: Check out VANTOR
         uses: actions/checkout@v4
@@ -59,18 +85,57 @@ jobs:
           sudo apt-get install -y qemu-user
       - name: Build and verify native package
         run: bash "${{ matrix.script }}" "${{ matrix.arch }}"
-      - name: Publish verified package
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          bash tools/publish-package.sh \
-            "build/nyan-native/${{ matrix.archive }}-${{ matrix.arch }}.tar.gz" \
-            "${{ matrix.package }}" "${{ matrix.version }}" "${{ matrix.arch }}" \
-            "${{ matrix.description }}"
-      - name: Upload build artifact
+      - name: Upload verified build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vantor-${{ matrix.package }}-${{ matrix.version }}-${{ matrix.arch }}
+          name: nyan-native-${{ matrix.package }}-${{ matrix.version }}-${{ matrix.arch }}
           path: build/nyan-native/${{ matrix.archive }}-${{ matrix.arch }}.tar.gz
           if-no-files-found: error
           retention-days: 30
+  publish:
+    needs: build
+    if: always() && !cancelled()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out VANTOR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download successful build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: nyan-native-*
+          path: build/nyan-native
+          merge-multiple: true
+      - name: Publish every successful package build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -u
+          failures=0
+          publish_one() {
+            local archive="$1" package="$2" version="$3" arch="$4" description="$5"
+            if [[ ! -s "build/nyan-native/$archive-$arch.tar.gz" ]]; then
+              echo "::warning::Skipping $package $version ($arch): no successful build artifact"
+              return 0
+            fi
+            if ! bash tools/publish-package.sh \
+              "build/nyan-native/$archive-$arch.tar.gz" \
+              "$package" "$version" "$arch" "$description"; then
+              echo "::error::Failed to publish $package $version ($arch)"
+              failures=$((failures + 1))
+            fi
+          }
+          publish_one nano 9.2 x86_64 "GNU nano 9.2 tiny static editor (musl + ncurses)"
+          publish_one nano 9.2 i486 "GNU nano 9.2 tiny static editor (musl + ncurses)"
+          publish_one htop 3.4.1 x86_64 "htop 3.4.1 static process monitor (musl + ncurses)"
+          publish_one htop 3.4.1 i486 "htop 3.4.1 static process monitor (musl + ncurses)"
+          publish_one dialog 1.3-20260721 x86_64 "Dialog terminal UI widgets, static musl and ncurses"
+          publish_one dialog 1.3-20260721 i486 "Dialog terminal UI widgets, static musl and ncurses"
+          publish_one curl 8.23.0 x86_64 "curl 8.23.0 with static OpenSSL 3.5.9 LTS and Mozilla CA bundle"
+          publish_one curl 8.23.0 i486 "curl 8.23.0 with static OpenSSL 3.5.9 LTS and Mozilla CA bundle"
+          if (( failures > 0 )); then
+            exit 1
+          fi
