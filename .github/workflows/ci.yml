@@ -34,6 +34,9 @@ jobs:
       - name: Validate configuration, shell scripts and source manifest
         run: make check
 
+      - name: Validate visual identity metadata
+        run: python -m json.tool assets/branding/theme.json > /dev/null
+
       - name: Check required repository paths
         run: |
           test -f README.md
@@ -43,6 +46,13 @@ jobs:
           test -f docs/architecture.md
           test -f docs/toolchain.md
           test -f docs/testing-limbo.md
+          test -f docs/branding.md
+          test -f assets/branding/README.md
+          test -f assets/branding/vantor-mark.svg
+          test -f assets/branding/vantor-lockup.svg
+          test -f assets/branding/theme.css
+          test -f assets/branding/theme.json
+          test -f boot/branding/README.md
           test -f build/sources/sources.json
           test -f tools/validate-sources.py
           test -f tools/fetch-sources.py
@@ -52,4 +62,4 @@ jobs:
           test -f build/scripts/build-toolchain.sh
           test -f .github/workflows/toolchain.yml
           test -f tests/test_source_tools.py
-          echo "Repository layout is valid."
+          echo "Repository layout and branding assets are valid."
