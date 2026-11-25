@@ -27,6 +27,15 @@
     <names><name>VANTOR</name><name>Workspace 2</name></names>
     <popupTime>650</popupTime>
   </desktops>
+  <menu>
+    <file>/usr/share/vantor/desktop/openbox/menu.xml</file>
+    <hideDelay>200</hideDelay>
+    <middle>no</middle>
+    <submenuShowDelay>100</submenuShowDelay>
+    <submenuHideDelay>300</submenuHideDelay>
+    <applicationIcons>yes</applicationIcons>
+    <manageDesktops>yes</manageDesktops>
+  </menu>
   <keyboard>
     <keybind key="W-Return">
       <action name="Execute"><command>xterm</command></action>
