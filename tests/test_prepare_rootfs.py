@@ -59,6 +59,13 @@ class PrepareRootfsTests(unittest.TestCase):
             rc_s = (output / "etc/init.d/rcS").read_text()
             self.assertIn("udhcpc", rc_s)
             self.assertIn("/usr/sbin/vantor-network", rc_s)
+            self.assertIn("/usr/sbin/vantor-service start", rc_s)
+            self.assertTrue((output / "usr/sbin/vantor-service").stat().st_mode & 0o111)
+            self.assertTrue((output / "etc/vantor/services").is_dir())
+            service_manager = (output / "usr/sbin/vantor-service").read_text()
+            self.assertIn("start-stop-daemon --start --background --make-pidfile", service_manager)
+            self.assertIn("kill -TERM", service_manager)
+            self.assertIn("start|stop|restart|status", service_manager)
             self.assertTrue((output / "usr/sbin/vantor-network").stat().st_mode & 0o111)
             network = (output / "usr/sbin/vantor-network").read_text()
             self.assertIn("while IFS='=' read -r key value", network)
@@ -81,7 +88,7 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertEqual(brand["brand"], "VANTOR Linux")
             self.assertEqual(brand["core"]["init"], "VANTOR Init 0.1.0")
             self.assertEqual(brand["core"]["hardware"], "VANTOR Hardware 0.1.0")
-            for script in ("init", "sbin/vantor-init", "usr/sbin/vantor-modules", "usr/sbin/vantor-network", "etc/init.d/rcS", "usr/bin/vantor-splash", "usr/bin/vantor-live-session", "usr/bin/vantorctl", "usr/bin/vantor-hw", "usr/bin/nyan", "usr/bin/vantor-install"):
+            for script in ("init", "sbin/vantor-init", "usr/sbin/vantor-modules", "usr/sbin/vantor-network", "usr/sbin/vantor-service", "etc/init.d/rcS", "usr/bin/vantor-splash", "usr/bin/vantor-live-session", "usr/bin/vantorctl", "usr/bin/vantor-hw", "usr/bin/nyan", "usr/bin/vantor-install"):
                 check = subprocess.run(["sh", "-n", str(output / script)], capture_output=True, text=True, check=False)
                 self.assertEqual(check.returncode, 0, f"{script}: {check.stderr}")
 
