@@ -24,6 +24,30 @@ fi
 mkdir -p "$BUILD_DIR" "$ROOTFS"
 make -C "$SOURCE_DIR" O="$BUILD_DIR" defconfig
 
+# The optional traffic-control applet depends on legacy CBQ kernel UAPI
+# structures that are absent on some modern host header sets. VANTOR's
+# first userspace does not need this applet, so keep the bootstrap portable.
+if grep -q '^CONFIG_TC=y so the first userspace does not depend
+# on a not-yet-built VANTOR C library or dynamic loader.
+if grep -q '^# CONFIG_STATIC is not set$' "$BUILD_DIR/.config"; then
+    sed -i 's/^# CONFIG_STATIC is not set$/CONFIG_STATIC=y/' "$BUILD_DIR/.config"
+elif grep -q '^CONFIG_STATIC=' "$BUILD_DIR/.config"; then
+    sed -i 's/^CONFIG_STATIC=.*/CONFIG_STATIC=y/' "$BUILD_DIR/.config"
+else
+    printf '\nCONFIG_STATIC=y\n' >> "$BUILD_DIR/.config"
+fi
+make -C "$SOURCE_DIR" O="$BUILD_DIR" oldconfig </dev/null
+make -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS"
+make -C "$SOURCE_DIR" O="$BUILD_DIR" CONFIG_PREFIX="$ROOTFS" install
+
+[[ -x "$ROOTFS/bin/busybox" ]] || { echo "[ERROR] BusyBox install did not produce /bin/busybox." >&2; exit 1; }
+"$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
+echo "[OK] Static BusyBox installed into build/work/rootfs."
+echo "[INFO] The VANTOR initramfs can now be assembled with: make initramfs"
+ "$BUILD_DIR/.config"; then
+    sed -i 's/^CONFIG_TC=y$/# CONFIG_TC is not set/' "$BUILD_DIR/.config"
+fi
+
 # Build a self-contained static BusyBox so the first userspace does not depend
 # on a not-yet-built VANTOR C library or dynamic loader.
 if grep -q '^# CONFIG_STATIC is not set$' "$BUILD_DIR/.config"; then
