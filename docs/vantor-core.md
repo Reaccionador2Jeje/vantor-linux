@@ -4,7 +4,7 @@ VANTOR Core is the first project-owned userspace layer in Genesis. It is deliber
 
 ## Components
 
-- **VANTOR Init 0.1.0** (`/sbin/vantor-init`): mounts procfs, sysfs and devtmpfs when available, creates runtime directories, prints boot diagnostics, then hands off to `/sbin/init`. If no system init is installed, it opens an emergency shell.
+- **VANTOR Init 0.1.0** (`/sbin/vantor-init`): mounts procfs, sysfs and devtmpfs when available, creates runtime directories, prints boot diagnostics, then hands off to `/sbin/init`. If no system init is installed, it opens an emergency shell. The Live startup script records ordered startup steps and command failures in `/var/log/vantor-boot.log`.
 - **Early entry point** (`/init`): delegates to VANTOR Init and provides a minimal emergency fallback.
 - **VANTOR Control 0.1.0** (`/usr/bin/vantorctl`): dispatches system information and diagnostics commands.
 - **VANTOR Doctor 0.2.0** (`/usr/bin/vantor-doctor`): built-in offline read-only checks for core binaries, virtual filesystem mounts, user environment, Nyan configuration and network-interface presence. It separates critical failures from warnings and never changes system state.
@@ -39,7 +39,7 @@ VANTOR Hardware reads procfs and sysfs only. It does not load drivers, change de
 
 `make rootfs` generates these files under `build/work/rootfs`. `make check` runs rootfs generator tests and validates generated shell syntax. `make image` performs the ordered x86_64 kernel → rootfs → BusyBox → initramfs → ISO pipeline. `make image-legacy` builds the 486-compatible BIOS ISO with its own BusyBox and initramfs; the legacy initramfs explicitly skips x86_64 kernel modules.
 
-## Current boundaries
+## Boot diagnostics\n\nThe Live startup script writes a fresh `/var/log/vantor-boot.log` on each boot. It records module loading, filesystem mounting, network configuration and optional service startup, including non-zero command results. Non-critical startup failures are logged and do not prevent the console from becoming available. Read the log with `vantorctl logs`; use `vantorctl logs follow` to follow it.\n\n## Current boundaries
 
 The initramfs loads available storage/filesystem modules before attempting the installed root, waits up to 20 seconds for the selected block device, then switches root through `/sbin/vantor-init`. `/sbin/init` is explicitly linked to BusyBox. During normal startup, VANTOR mounts configured fstab entries without formatting or partitioning. The x86_64 kernel enables ext2, ext4 (which also handles ext3 volumes), ISO9660/Joliet, FAT/VFAT, VirtIO block/SCSI, AHCI and optical-drive support; the i486 kernel includes its compatible filesystem and legacy storage drivers. The ISO workflow checks the generated boot catalog but does not prove a successful machine boot.
 
