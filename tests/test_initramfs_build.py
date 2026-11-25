@@ -74,6 +74,18 @@ class InitramfsBuildTests(unittest.TestCase):
         self.assertIn("terminal_output console", grub)
         self.assertIn("vantor-legacy-kernel", grub)
 
+    def test_framebuffer_splash_draws_scene_once_and_animates_progress_only(self):
+        source = (ROOT / "core/boot/vantor-fb-splash.c").read_text()
+        start = source.index('if(!strcmp(cmd,"start"))')
+        step = source.index('} else if(!strcmp(cmd,"step"))', start)
+        animation = source[start:step]
+        frames = animation[animation.index("for(int i=0;i<18;i++)"):]
+        self.assertIn('render_static("INITIALIZING VANTOR")', animation)
+        self.assertIn("draw_progress(progress)", frames)
+        self.assertNotIn("render_static(", frames)
+        self.assertNotIn("background()", frames)
+        self.assertIn("draw_orbit(cx,cy,rx,ry)", source)
+
 
 if __name__ == "__main__":
     unittest.main()
