@@ -282,6 +282,8 @@ is_running() {
     [ -s "$pidfile" ] || return 1
     pid=$(cat "$pidfile")
     case "$pid" in ''|*[!0-9]*) return 1;; esac
+    [ -r "/proc/$pid/cmdline" ] || return 1
+    tr '\\000' ' ' < "/proc/$pid/cmdline" | grep -Fq -- "$script" || return 1
     kill -0 "$pid" 2>/dev/null
 }
 start_service() {
