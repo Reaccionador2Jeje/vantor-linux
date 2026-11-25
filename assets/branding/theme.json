@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "brand": "VANTOR Linux",
+  "slogan": "ONE SYSTEM. EVERY GENERATION.",
+  "origin": "independent",
+  "base": "independent",
+  "target": "universal",
+  "palette": {
+    "background": "#071321",
+    "surface": "#0C1D30",
+    "raised": "#132A43",
+    "cyan": "#00CFFF",
+    "blue": "#0877FF",
+    "metal": "#B9CCE3",
+    "text": "#F4F8FF",
+    "muted": "#9BB0C8",
+    "success": "#42D6A4",
+    "warning": "#FFC857",
+    "danger": "#FF647C"
+  },
+  "typography": {
+    "display": "Orbitron",
+    "interface": "Rajdhani",
+    "fallback": "Noto Sans"
+  },
+  "logo": {
+    "mark": "vantor-mark.svg",
+    "lockup": "vantor-lockup.svg",
+    "clear_space": "At least the height of the V mark",
+    "background": "Prefer dark navy; use monochrome mark on light surfaces"
+  },
+  "interface": {
+    "appearance": "dark",
+    "corner_radius_px": 12,
+    "focus_ring": "#00CFFF",
+    "motion": "subtle; respect reduced-motion preferences"
+  },
+  "system_surfaces": [
+    "boot splash",
+    "bootloader",
+    "login screen",
+    "desktop wallpaper",
+    "icons",
+    "terminal",
+    "installer",
+    "system settings"
+  ]
+}\n
