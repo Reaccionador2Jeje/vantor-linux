@@ -1,11 +1,11 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
-.PHONY: help info check check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel kernel-legacy busybox busybox-legacy initramfs initramfs-legacy rootfs rootfs-legacy boot-files iso iso-legacy image-legacy clean kernel-files initramfs-files
+.PHONY: help info check desktop-files check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel kernel-legacy busybox busybox-legacy initramfs initramfs-legacy rootfs rootfs-legacy boot-files iso iso-legacy image-legacy clean kernel-files initramfs-files
 
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
 	  'Targets:' '  make info          Show project configuration' \
-	  '  make check         Run all repository checks and tests' \
+	  '  make check         Run all repository checks and tests' '  make desktop-files Validate VANTOR Desktop Genesis files' \
 	  '  make check-shell   Validate shell scripts' '  make check-config  Validate build configuration' \
 	  '  make check-sources Validate source manifest structure' '  make check-python  Compile and test Python tools' '  make check-nyan    Validate Nyan package manager syntax' \
 	  '  make sources-ready Require verified source checksums' '  make fetch-sources Download and verify pinned archives' \
@@ -21,9 +21,19 @@ info:
 	printf '%s %s (%s)\nTarget: %s\nKernel: Linux %s (%s)\n' \
 	  "$$VANTOR_NAME" "$$VANTOR_VERSION" "$$VANTOR_CODENAME" "$$VANTOR_TARGET" "$$VANTOR_KERNEL_VERSION" "$$VANTOR_KERNEL_ARCH"
 
-check: check-config check-shell check-sources check-python check-nyan core-files kernel-files initramfs-files boot-files
+check: check-config check-shell check-sources check-python check-nyan desktop-files core-files kernel-files initramfs-files boot-files
 	@python3 -m json.tool assets/branding/theme.json > /dev/null
 	@echo "[OK] VANTOR repository checks passed."
+
+desktop-files:
+	@test -x desktop/bin/vantor-session
+	@test -s desktop/openbox/rc.xml
+	@test -s desktop/openbox/menu.xml
+	@test -s desktop/tint2/tint2rc
+	@test -s desktop/README.md
+	@test -s tests/test_desktop.py
+	@sh -n desktop/bin/vantor-session
+	@echo "[OK] VANTOR Desktop Genesis files are present."
 
 check-config:
 	@bash -n build/config/vantor.conf
