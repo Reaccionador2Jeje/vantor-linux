@@ -16,6 +16,7 @@ def write(path: Path, content: str, mode: int = 0o644) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "build" / "work" / "rootfs")
+    parser.add_argument("--arch", choices=("x86_64", "i486"), default="x86_64")
     args = parser.parse_args()
     output = args.output.resolve()
     if output == Path("/") or output == ROOT or output == ROOT / "rootfs":
@@ -231,17 +232,18 @@ esac
     nyan_client = ROOT / "packages/nyan/nyan"
     shutil.copy2(nyan_client, output / "usr/bin/nyan")
     (output / "usr/bin/nyan").chmod(0o755)
-    write(output / "etc/nyan.conf", """# Nyan package repository configuration
+    nyan_config = """# Nyan package repository configuration
 : "${NYAN_REPO:=https://vantor-linux.cristopheriguaran-7.workers.dev}"
-: "${NYAN_ARCH:=x86_64}"
-""")
+: "${NYAN_ARCH:=ARCH_PLACEHOLDER}"
+""".replace("ARCH_PLACEHOLDER", args.arch)
+    write(output / "etc/nyan.conf", nyan_config)
 
     write(output / "etc/vantor-brand.json", json.dumps({
-        "brand": theme["brand"], "edition": "Minimal", "version": "0.1.0", "codename": "Genesis",
+        "brand": theme["brand"], "edition": "Minimal", "architecture": args.arch, "version": "0.1.0", "codename": "Genesis",
         "slogan": theme["slogan"], "branding_path": "/usr/share/vantor/branding",
         "core": {"init": "VANTOR Init 0.1.0", "control": "VANTOR Control 0.1.0", "hardware": "VANTOR Hardware 0.1.0"}
     }, indent=2) + "\n")
-    print(f"[OK] Prepared VANTOR rootfs skeleton at {output}")
+    print(f"[OK] Prepared VANTOR {args.arch} rootfs skeleton at {output}")
     print(f"[OK] Installed {len(BRAND_FILES)} official branding assets.")
     print("[OK] Added VANTOR Init, Control, Hardware, Nyan and TUI installer.")
     print("[OK] Added root and live accounts, wheel group and locked-password sudo policy.")
