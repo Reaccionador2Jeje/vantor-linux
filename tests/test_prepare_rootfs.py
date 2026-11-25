@@ -116,6 +116,19 @@ class PrepareRootfsTests(unittest.TestCase):
             brand = json.loads((output / "etc/vantor-brand.json").read_text())
             self.assertEqual(brand["architecture"], "i486")
 
+    def test_aarch64_rootfs_metadata_is_termux_ready(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "rootfs-aarch64"
+            result = subprocess.run(
+                [sys.executable, str(BUILDER), "--output", str(output), "--arch", "aarch64"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn('NYAN_ARCH:=aarch64', (output / "etc/nyan.conf").read_text())
+            self.assertFalse((output / "usr/bin/vantor-fb-splash").exists())
+            brand = json.loads((output / "etc/vantor-brand.json").read_text())
+            self.assertEqual(brand["architecture"], "aarch64")
+
     def test_installer_configures_root_live_and_wheel_without_touching_host(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             target = Path(temporary) / "target"
