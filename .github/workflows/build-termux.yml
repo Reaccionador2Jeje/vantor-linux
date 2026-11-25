@@ -7,6 +7,7 @@ on:
       - "tools/prepare-rootfs.py"
       - "build/scripts/build-termux-rootfs.sh"
       - "tools/termux/**"
+      - "tests/test_termux.py"
       - "assets/branding/**"
       - "build/sources/sources.json"
       - ".github/workflows/build-termux.yml"
@@ -44,6 +45,12 @@ jobs:
           test -x build/work/rootfs-termux/usr/bin/vantor-termux-shell
           test -x build/work/rootfs-termux/bin/sh
           test -s build/work/rootfs-termux/etc/os-release
+          test -x build/work/rootfs-termux/usr/bin/vantor-info
+          test -x build/work/rootfs-termux/usr/bin/vantor-doctor
+          sh -n tools/termux/vantor
+          sh -n tools/termux/install-vantor
+          sh -n tools/termux/vantor-pd
+          python3 -m unittest discover -s tests -p test_termux.py -v
           build/work/rootfs-termux/bin/busybox --help >/dev/null
       - name: Package reproducible rootfs archive
         run: |
