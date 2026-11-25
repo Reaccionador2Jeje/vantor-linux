@@ -43,4 +43,6 @@ jobs:
           test -f docs/architecture.md
           test -f build/sources/sources.json
           test -f tools/validate-sources.py
+          test -f tools/fetch-sources.py
+          test -f docs/toolchain.md
           echo "Repository layout is valid."
