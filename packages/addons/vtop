@@ -1,0 +1,20 @@
+#!/bin/sh
+set -eu
+echo "VANTOR Process Overview"
+echo
+if command -v ps >/dev/null 2>&1; then
+  ps
+elif [ -d /proc ]; then
+  printf '%-8s %s\n' PID COMMAND
+  for proc in /proc/[0-9]*; do
+    [ -r "$proc/comm" ] || continue
+    pid=${proc##*/}
+    IFS= read -r comm < "$proc/comm" || comm=unknown
+    printf '%-8s %s\n' "$pid" "$comm"
+  done
+else
+  echo "Process information is unavailable" >&2
+  exit 1
+fi
+echo
+echo "Tip: install a full-screen process monitor when one is available for your architecture."
