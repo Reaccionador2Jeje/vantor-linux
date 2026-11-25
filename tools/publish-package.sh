@@ -26,8 +26,18 @@ tag=nyan-repository
 if ! gh release view "$tag" >/dev/null 2>&1; then
   gh release create "$tag" --title "VANTOR Nyan Package Repository" --notes "Official package assets for the VANTOR Linux Nyan repository."
 fi
-# Asset uploads are idempotent; index publication below is retried independently.
-gh release upload "$tag" "$archive" --clobber
+# GitHub Releases may return transient 5xx responses for asset uploads.
+uploaded=0
+for upload_attempt in 1 2 3 4 5; do
+  echo "[Nyan] Uploading $filename (attempt $upload_attempt/5)."
+  if gh release upload "$tag" "$archive" --clobber; then uploaded=1; break; fi
+  if (( upload_attempt < 5 )); then
+    delay=$((upload_attempt * 3))
+    echo "[WARN] Release upload failed; retrying in ${delay}s." >&2
+    sleep "$delay"
+  fi
+done
+(( uploaded == 1 )) || { echo "[ERROR] Could not upload $filename after five attempts." >&2; exit 1; }
 
 branch=$(git branch --show-current)
 [[ -n "$branch" ]] || { echo "Cannot determine publishing branch" >&2; exit 1; }
