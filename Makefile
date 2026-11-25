@@ -1,6 +1,7 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
-.PHONY: help info check check-shell check-config check-sources check-python sources-ready fetch-sources toolchain rootfs boot-files iso clean
+.PHONY: help info check check-shell check-config check-sources check-python sources-ready fetch-sources toolchain kernel rootfs boot-files iso clean
+
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
 	  'Targets:' '  make info          Show project configuration' \
@@ -8,43 +9,67 @@ help:
 	  '  make check-shell   Validate shell scripts' '  make check-config  Validate build configuration' \
 	  '  make check-sources Validate source manifest structure' '  make check-python  Compile and test Python tools' \
 	  '  make sources-ready Require verified source checksums' '  make fetch-sources Download and verify pinned archives' \
-	  '  make toolchain      Build Binutils and GCC pass 1' '  make rootfs         Assemble the VANTOR rootfs skeleton' \
+	  '  make toolchain      Build Binutils and GCC pass 1' '  make kernel         Build VANTOR x86_64 Linux kernel' \
+	  '  make rootfs         Assemble the VANTOR rootfs skeleton' \
 	  '  make boot-files     Check bootloader configuration and builder' \
 	  '  make iso            Build a GRUB ISO after kernel and initramfs exist' \
 	  '  make clean         Remove generated build output'
+
 info:
 	@set -a; source build/config/vantor.conf; set +a; \
-	printf '%s %s (%s)\nTarget: %s\n' \
-	  "$$VANTOR_NAME" "$$VANTOR_VERSION" "$$VANTOR_CODENAME" "$$VANTOR_TARGET"
-check: check-config check-shell check-sources check-python boot-files
+	printf '%s %s (%s)\nTarget: %s\nKernel: Linux %s (%s)\n' \
+	  "$$VANTOR_NAME" "$$VANTOR_VERSION" "$$VANTOR_CODENAME" "$$VANTOR_TARGET" "$$VANTOR_KERNEL_VERSION" "$$VANTOR_KERNEL_ARCH"
+
+check: check-config check-shell check-sources check-python kernel-files boot-files
 	@python3 -m json.tool assets/branding/theme.json > /dev/null
 	@echo "[OK] VANTOR repository checks passed."
+
 check-config:
 	@bash -n build/config/vantor.conf
 	@set -a; source build/config/vantor.conf; set +a; \
-	test "$$VANTOR_ARCH" = "x86_64"; test -n "$$VANTOR_VERSION"; test -n "$$VANTOR_TARGET"
+	test "$$VANTOR_ARCH" = "x86_64"; test -n "$$VANTOR_VERSION"; test -n "$$VANTOR_TARGET"; \
+	test "$$VANTOR_KERNEL_VERSION" = "6.18.65"
 	@echo "[OK] Build configuration is valid."
+
 check-shell:
 	@find build/scripts tools tests -type f -name '*.sh' -exec bash -n {} +
 	@echo "[OK] Shell syntax is valid."
+
 check-sources:
 	@python3 tools/validate-sources.py
+
 check-python:
 	@python3 -m compileall -q tools tests
 	@python3 -m unittest discover -s tests -p 'test_*.py' -v
+
+kernel-files:
+	@test -s build/scripts/build-kernel.sh
+	@test -s kernel/configs/README.md
+	@test -s docs/kernel.md
+	@echo "[OK] VANTOR kernel build files are present."
+
 sources-ready:
 	@python3 tools/validate-sources.py --require-pinned
+
 fetch-sources: sources-ready
 	@python3 tools/fetch-sources.py
+
 toolchain:
 	@bash build/scripts/build-toolchain.sh
+
+kernel:
+	@bash build/scripts/build-kernel.sh
+
 rootfs:
 	@python3 tools/prepare-rootfs.py --output build/work/rootfs
+
 boot-files:
 	@test -s boot/grub/grub.cfg
 	@test -s build/scripts/build-iso.sh
 	@echo "[OK] GRUB configuration and ISO builder are present."
+
 iso:
 	@bash build/scripts/build-iso.sh
+
 clean:
 	rm -rf -- build/work build/distfiles output
