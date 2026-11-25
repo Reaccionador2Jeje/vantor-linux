@@ -64,6 +64,9 @@ check-nyan:
 	@grep -q 'VANTOR-PACKAGES 1' packages/repository/x86_64/Packages
 	@grep -q 'languages)' packages/nyan/nyan
 	@grep -q 'Language:' docs/nyan.md
+	@test -s tests/test_nyan.py
+	@grep -q 'archive-types-$$' packages/nyan/nyan
+	@grep -q 'refusing to overwrite existing system path' packages/nyan/nyan
 	@echo "[OK] Nyan client and repository index are valid."
 
 sources-ready:
