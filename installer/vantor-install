@@ -277,6 +277,7 @@ if [ -f /boot/grub/themes/vantor/theme.txt ]; then
     loadfont unicode
     set gfxmode=auto
     terminal_output gfxterm
+    set gfxpayload=keep
     set theme=/boot/grub/themes/vantor/theme.txt
 else
     terminal_output console
@@ -284,13 +285,13 @@ fi
 
 menuentry "$boot_title" --class vantor {
     search --no-floppy --file --set=root /boot/vantor-kernel
-    linux /boot/vantor-kernel root=$root_device rootfstype=$root_fstype rw rootwait console=tty0 loglevel=4
+    linux /boot/vantor-kernel root=$root_device rootfstype=$root_fstype rw rootwait console=tty0 quiet loglevel=3 vt.global_cursor_default=0 splash
     initrd /boot/vantor-initramfs.cpio.gz
 }
 
 menuentry "VANTOR Linux — Installed (Diagnostic mode)" --class recovery {
     search --no-floppy --file --set=root /boot/vantor-kernel
-    linux /boot/vantor-kernel root=$root_device rootfstype=$root_fstype rw rootwait console=tty0 loglevel=7 initcall_debug
+    linux /boot/vantor-kernel root=$root_device rootfstype=$root_fstype rw rootwait console=tty0 loglevel=7 initcall_debug nosplash
     initrd /boot/vantor-initramfs.cpio.gz
 }
 
