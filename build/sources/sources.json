@@ -3,7 +3,7 @@
   "project": "VANTOR Linux",
   "target": "x86_64-vantor-linux-gnu",
   "status": "bootstrap-pinned",
-  "policy": "Bootstrap sources are pinned using upstream-published checksums. Remaining components stay unpinned until their own upstream digests or signatures are verified.",
+  "policy": "Bootstrap sources are pinned using upstream-published checksums. Kernel 6.18.65 SHA-256 is sourced from kernel.org sha256sums.asc. Remaining components stay unpinned until their own upstream digests or signatures are verified.",
   "sources": [
     {
       "name": "binutils",
@@ -43,10 +43,10 @@
       "version": "6.18.65",
       "archive": "linux-6.18.65.tar.xz",
       "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.65.tar.xz",
-      "sha256": null,
+      "sha256": "c92606f956f09dc50b5a0e2af9e86763fce27ada1647de97f8d1ac8cfc95801d",
       "license": "GPL-2.0-only; see kernel COPYING and source headers",
       "role": "Long-term-support kernel baseline for first boot target",
-      "status": "candidate",
+      "status": "pinned",
       "sha512": null
     },
     {
