@@ -1,0 +1,44 @@
+name: VANTOR CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vantor-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Show project configuration
+        run: make info
+
+      - name: Validate configuration and shell scripts
+        run: make check
+
+      - name: Check required repository paths
+        run: |
+          test -f README.md
+          test -f LICENSE
+          test -f Makefile
+          test -f build/config/vantor.conf
+          test -f docs/architecture.md
+          echo "Repository layout is valid."
