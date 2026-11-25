@@ -34,6 +34,7 @@ check-config:
 
 check-shell:
 	@find build/scripts tools tests -type f -name '*.sh' -exec bash -n {} +
+	@sh -n installer/vantor-install
 	@echo "[OK] Shell syntax is valid."
 
 check-sources:
@@ -45,6 +46,9 @@ check-python:
 
 core-files:
 	@test -s docs/vantor-core.md
+	@test -s installer/vantor-install
+	@grep -q 'root:x:0:0:root' tools/prepare-rootfs.py
+	@grep -q 'live:x:1000:1000' tools/prepare-rootfs.py
 	@grep -q 'VANTOR Init' tools/prepare-rootfs.py
 	@grep -q 'VANTOR Control' tools/prepare-rootfs.py
 	@test -s core/hardware/vantor-hw
@@ -66,6 +70,7 @@ check-nyan:
 	@grep -q 'install-profile)' packages/nyan/nyan
 	@grep -q 'dependency cycle detected' packages/nyan/nyan
 	@grep -q 'install-profile' packages/nyan/nyan
+	@grep -q 'minimal' packages/nyan/nyan
 	@test -s packages/profiles/development/PROFILE.txt
 	@test -s .github/workflows/build-nyan-profiles.yml
 	@bash -n tools/publish-package.sh
