@@ -39,8 +39,9 @@ nyan_progress() {
   esac
   printf '\r\033[2K\033[%sm%-18.18s [%s\033[1;35m%s\033[0m%s] %3s%%' \
     "$color" "$label" "$before" "$catface" "$after" "$percent"
-  [ "$percent" -eq 100 ] && printf '  \033[1;32m%s\033[0m' "$phase"
-  printf '\n'
+  if [ "$percent" -eq 100 ]; then
+    printf '  \033[1;32m%s\033[0m\n' "$phase"
+  fi
 }
 nyan_progress_fail() {
   label=$1
