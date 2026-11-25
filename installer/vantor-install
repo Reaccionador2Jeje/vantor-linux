@@ -103,6 +103,11 @@ install_minimal() {
     [ ! -L "$target" ] || die "target must not be a symbolic link"
     target=$(cd "$target" && pwd -P)
     [ "$target" != "/" ] || die "invalid target"
+    if command -v mountpoint >/dev/null 2>&1; then
+        mountpoint -q "$target" || die "target is not a mounted filesystem"
+    elif ! awk -v path="$target" '$2 == path { found=1 } END { exit !found }' /proc/mounts; then
+        die "target is not a mounted filesystem"
+    fi
     if find "$target" -mindepth 1 -maxdepth 1 ! -name lost+found -print -quit | grep -q .; then
         die "target is not empty (only lost+found is allowed); choose an empty mounted filesystem"
     fi
