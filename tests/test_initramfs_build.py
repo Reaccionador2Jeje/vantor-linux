@@ -16,6 +16,7 @@ class InitramfsBuildTests(unittest.TestCase):
         script = (ROOT / "build/scripts/build-busybox.sh").read_text()
         self.assertIn("--require-pinned --only busybox", script)
         self.assertIn("CONFIG_STATIC=y", script)
+        self.assertIn("CONFIG_TC is not set", script)
         self.assertIn("CONFIG_PREFIX=", script)
 
     def test_iso_and_initramfs_output_contract_match(self):
