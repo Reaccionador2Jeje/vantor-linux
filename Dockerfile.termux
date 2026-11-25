@@ -1,0 +1,6 @@
+# VANTOR ARM64 userspace image. This is a container rootfs, not a bootable VM.
+FROM scratch
+COPY build/work/rootfs-termux/ /
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+WORKDIR /root
+CMD ["/bin/sh"]
