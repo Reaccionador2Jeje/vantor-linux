@@ -25,7 +25,7 @@ class PrepareRootfsTests(unittest.TestCase):
             initramfs_init = (output / "init").read_text()
             self.assertIn("root=/dev/*", initramfs_init)
             self.assertIn("rootfstype=", initramfs_init)
-            self.assertIn("busybox switch_root /newroot /sbin/init", initramfs_init)
+            self.assertIn("busybox switch_root /newroot /sbin/vantor-init", initramfs_init)
             self.assertTrue((output / "sbin/vantor-init").stat().st_mode & 0o111)
             self.assertTrue((output / "sbin/init").is_symlink())
             self.assertEqual((output / "sbin/init").readlink().as_posix(), "/bin/busybox")
