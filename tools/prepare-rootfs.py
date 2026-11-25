@@ -357,12 +357,27 @@ mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
 chmod 1777 /tmp 2>/dev/null || true
 if [ -r /etc/hostname ]; then hostname "$(cat /etc/hostname)" 2>/dev/null || true; else hostname vantor 2>/dev/null || true; fi
 log "VANTOR Linux Minimal boot sequence started."
+RECOVERY_MODE=0
+for boot_arg in $(cat /proc/cmdline 2>/dev/null); do
+    case "$boot_arg" in
+        vantor.recovery|recovery|single) RECOVERY_MODE=1 ;;
+    esac
+done
+if [ "$RECOVERY_MODE" -eq 1 ]; then
+    log "RECOVERY MODE enabled by kernel command line."
+    log "Optional services, automatic network setup and fstab mounts are disabled."
+    echo "[VANTOR] RECOVERY MODE — use vantorctl logs and vantorctl doctor."
+else
+    log "Normal boot mode selected."
+fi
 if command -v mdev >/dev/null 2>&1; then
     echo /bin/mdev > /proc/sys/kernel/hotplug 2>/dev/null || true
     /bin/busybox mdev -s >> "$BOOT_LOG" 2>&1 || true
 fi
 run_step "Load optional kernel modules" /usr/sbin/vantor-modules
-run_step "Mount configured filesystems" /usr/sbin/vantor-storage mount-all
+if [ "$RECOVERY_MODE" -eq 0 ]; then
+    run_step "Mount configured filesystems" /usr/sbin/vantor-storage mount-all
+fi
 mkdir -p /run/vantor-media
 for media_dev in /dev/sr0 /dev/cdrom; do
     [ -b "$media_dev" ] || continue
@@ -371,13 +386,17 @@ for media_dev in /dev/sr0 /dev/cdrom; do
         break
     fi
 done
-run_step "Configure network" /usr/sbin/vantor-network
-for service_file in /etc/vantor/services/*.service; do
-    [ -x "$service_file" ] || continue
-    service_name=${service_file##*/}
-    service_name=${service_name%.service}
-    run_step "Start service $service_name" /usr/sbin/vantor-service start "$service_name"
-done
+if [ "$RECOVERY_MODE" -eq 0 ]; then
+    run_step "Configure network" /usr/sbin/vantor-network
+    for service_file in /etc/vantor/services/*.service; do
+        [ -x "$service_file" ] || continue
+        service_name=${service_file##*/}
+        service_name=${service_name%.service}
+        run_step "Start service $service_name" /usr/sbin/vantor-service start "$service_name"
+    done
+else
+    log "Recovery console ready; automatic network and service startup skipped."
+fi
 /usr/bin/vantor-splash step "VANTOR userspace is ready"
 sleep 1
 /usr/bin/vantor-splash finish
@@ -583,7 +602,7 @@ set -u
 VERSION="0.1.0"
 usage() {
     echo "VANTOR Control $VERSION"
-    echo "Usage: vantorctl {help|version|info|hardware|network|storage|service|doctor|logs|status}"
+    echo "Usage: vantorctl {help|version|info|hardware|network|storage|service|doctor|recovery|logs|status}"
 }
 case "${1:-help}" in
     help|-h|--help) usage ;;
@@ -592,6 +611,19 @@ case "${1:-help}" in
     hardware) exec /usr/bin/vantor-hw ;;
     storage) exec /usr/sbin/vantor-storage "${2:-status}" ;;\n    service) exec /usr/sbin/vantor-service "${2:-help}" "${3:-}" ;;
     doctor) exec /usr/bin/vantor-doctor "$@" ;;
+    recovery)
+        recovery=0
+        for boot_arg in $(cat /proc/cmdline 2>/dev/null); do
+            case "$boot_arg" in vantor.recovery|recovery|single) recovery=1;; esac
+        done
+        if [ "$recovery" -eq 1 ]; then
+            echo "VANTOR recovery mode: ACTIVE"
+            echo "Automatic fstab mounts, network setup and optional services were skipped."
+        else
+            echo "VANTOR recovery mode: inactive"
+            echo "Add 'vantor.recovery' to the kernel command line and reboot to enter recovery mode."
+        fi
+        ;;
     logs)
         if [ -r /var/log/vantor-boot.log ]; then
             if [ "${2:-}" = follow ]; then tail -f /var/log/vantor-boot.log
