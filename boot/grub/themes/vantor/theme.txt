@@ -1,0 +1,63 @@
+# VANTOR Linux — native GRUB theme
+# No external fonts or network assets required.
+desktop-color: "#071321"
+title-text: "VANTOR LINUX"
+title-font: "unicode"
+title-color: "#F4F8FF"
+message-font: "unicode"
+message-color: "#9BB0C8"
+message-bg-color: "#071321"
+terminal-font: "unicode"
+terminal-left: "10%"
+terminal-top: "28%"
+terminal-width: "80%"
+terminal-height: "56%"
+terminal-border: "1"
+
++ label {
+  top = 8%
+  left = 10%
+  width = 80%
+  height = 8%
+  text = "VANTOR LINUX"
+  font = "unicode"
+  color = "#00CFFF"
+  align = "center"
+}
+
++ label {
+  top = 17%
+  left = 10%
+  width = 80%
+  height = 5%
+  text = "ONE SYSTEM. EVERY GENERATION."
+  font = "unicode"
+  color = "#9BB0C8"
+  align = "center"
+}
+
++ boot_menu {
+  left = 10%
+  top = 31%
+  width = 80%
+  height = 48%
+  item_font = "unicode"
+  item_color = "#B9CCE3"
+  selected_item_color = "#00CFFF"
+  item_height = 42
+  item_padding = 10
+  item_spacing = 8
+  icon_width = 0
+  icon_height = 0
+}
+
++ label {
+  top = 88%
+  left = 10%
+  width = 80%
+  height = 5%
+  text = "INDEPENDENT LINUX • UNIVERSAL BY DESIGN"
+  font = "unicode"
+  color = "#9BB0C8"
+  align = "center"
+}
