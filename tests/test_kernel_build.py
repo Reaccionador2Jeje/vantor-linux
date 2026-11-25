@@ -36,7 +36,7 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("depmod", script)
         self.assertIn("--no-print-directory", script)
         self.assertIn("kernelrelease | tail -n 1", script)
-        self.assertIn("printf '%s\\\\n'", script)
+        self.assertIn("printf '%s\\n'", script)
         for filesystem in ("EXT2_FS", "EXT4_FS", "ISO9660_FS", "VFAT_FS", "FAT_FS"):
             self.assertIn(filesystem, script)
         for storage_driver in ("VIRTIO_BLK", "SCSI_VIRTIO", "SATA_AHCI", "BLK_DEV_SR"):
