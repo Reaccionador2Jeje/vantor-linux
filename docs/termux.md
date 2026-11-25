@@ -8,30 +8,47 @@ The Termux target is an **ARM64 userspace running under PRoot**. It is a develop
 - Termux from a trusted distribution source.
 - Free storage for the rootfs (the archive size is reported by the GitHub Release).
 
-## Install
+## Install with PRoot-Distro
 
-In Termux:
+Install the required Termux packages:
 
-```sh
+~~~sh
 pkg update
-pkg install proot tar curl
+pkg install proot-distro curl coreutils
 uname -m
-```
+~~~
 
-The device must report `aarch64`. Download the latest archive from the [VANTOR Termux ARM64 release](https://github.com/Reaccionador2Jeje/vantor-linux/releases/tag/termux-aarch64), then extract it:
+The device must report aarch64. Download the installer and run it:
 
-```sh
-mkdir -p "$HOME/vantor/rootfs"
-curl -fL "https://github.com/Reaccionador2Jeje/vantor-linux/releases/download/termux-aarch64/vantor-termux-aarch64-0.1.0.tar.gz" -o "$HOME/vantor/rootfs.tar.gz"
-tar -xzf "$HOME/vantor/rootfs.tar.gz" -C "$HOME/vantor/rootfs"
-mkdir -p "$HOME/.local/bin"
-curl -fL "https://raw.githubusercontent.com/Reaccionador2Jeje/vantor-linux/main/tools/termux/vantor" -o "$HOME/.local/bin/vantor"
-chmod +x "$HOME/.local/bin/vantor"
-export PATH="$HOME/.local/bin:$PATH"
+~~~sh
+curl -fL "https://raw.githubusercontent.com/Reaccionador2Jeje/vantor-linux/main/tools/termux/install-vantor" -o install-vantor
+sh install-vantor
+~~~
+
+The installer downloads the official GitHub Release archive, verifies its SHA-256 checksum, installs it as the vantor container in PRoot-Distro, and places the vantor and vantor-pd launchers in Termux's executable path.
+
+Start VANTOR:
+
+~~~sh
 vantor
-```
+~~~
 
-Verify the archive against the adjacent `SHA256SUMS` release asset before extraction if you want an independent integrity check.
+Run one command without opening an interactive shell:
+
+~~~sh
+vantor uname -a
+vantor-info
+vantor-doctor
+~~~
+
+You can also use PRoot-Distro directly:
+
+~~~sh
+proot-distro login vantor -- /usr/bin/vantor-termux-shell
+~~~
+
+The archive can also be installed manually with proot-distro install /path/to/vantor-termux-aarch64-0.1.0.tar.gz --name vantor. PRoot-Distro accepts local rootfs archives and OCI images; VANTOR currently publishes the verified rootfs archive on GitHub Releases.
+
 
 ## What works in this target
 
