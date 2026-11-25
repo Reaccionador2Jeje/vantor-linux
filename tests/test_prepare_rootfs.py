@@ -100,12 +100,15 @@ class PrepareRootfsTests(unittest.TestCase):
             fakebin = base / "bin"
             fakebin.mkdir()
             mountpoint = fakebin / "mountpoint"
-            mountpoint.write_text("#!/bin/sh\\nexit 0\\n")
+            mountpoint.write_text("#!/bin/sh\nexit 0\n")
             mountpoint.chmod(0o755)
-            env = dict(os.environ, PATH=str(fakebin) + os.pathsep + os.environ.get("PATH", ""))
+            mounts = base / "mounts"
+            mounts.write_text(f"/dev/vda1 {target} ext4 rw,relatime 0 0\n")
+            env = dict(os.environ, PATH=str(fakebin) + os.pathsep + os.environ.get("PATH", ""),
+                       VANTOR_PROC_MOUNTS=str(mounts))
             result = subprocess.run(
                 ["sh", str(ROOT / "installer/vantor-install"), "--prepare-boot",
-                 str(target), str(kernel), str(initramfs), "/dev/vda1", "ext4", "i486"],
+                 str(target), str(kernel), str(initramfs), "i486"],
                 capture_output=True, text=True, check=False, env=env,
             )
             self.assertEqual(result.returncode, 0, result.stderr)
