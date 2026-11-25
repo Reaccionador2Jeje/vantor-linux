@@ -40,6 +40,8 @@ class DesktopGenesisTests(unittest.TestCase):
         self.assertIn("#071321", (DESKTOP / "bin/vantor-session").read_text())
         self.assertIn("#0C1D30", config)
         self.assertIn("#00CFFF", config)
+        self.assertTrue((DESKTOP / "themes/VANTOR/openbox-3/themerc").is_file())
+        self.assertIn("<name>VANTOR</name>", (DESKTOP / "openbox/rc.xml").read_text())
         openbox = (DESKTOP / "openbox/rc.xml").read_text()
         for shortcut in ("W-Return", "W-e", "W-d", "C-A-Left", "C-A-Right"):
             self.assertIn(shortcut, openbox)
