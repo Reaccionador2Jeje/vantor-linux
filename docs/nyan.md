@@ -1,15 +1,39 @@
 # Nyan — VANTOR package manager
 
-Nyan is VANTOR's native package manager. The current shell prototype supports repository refresh, listing, basic archive installation and removal.
+Nyan is VANTOR's native package manager. It currently supports repository refresh, package discovery, SHA-256-verified archive installation, dependency-first installation, and removal.
 
 ## Commands
+
 - `nyan update` — fetch the architecture-specific index.
-- `nyan list` — list indexed packages and their descriptions.
-- `nyan languages` — list programming-language packages (repository entries tagged `Language:`).
-- `nyan install NAME` — download and verify SHA-256 before extraction.
+- `nyan list` — list available packages.
+- `nyan search TERM` — search package names and descriptions.
+- `nyan show NAME` — inspect version, architecture, description and dependencies.
+- `nyan languages` — list programming-language packages.
+- `nyan install NAME` — resolve and install declared dependencies before the requested package.
+- `nyan profiles` — list planned system profiles and their publication status.
+- `nyan install-profile NAME` — reserved for profiles whose full package sets have been published.
 - `nyan remove NAME` — remove files recorded for a package.
 
 Configuration: `NYAN_REPO`, `NYAN_ARCH`, and `NYAN_ROOT`.
+
+## Repository format
+
+The tab-separated `Packages` index starts with `# VANTOR-PACKAGES 1`. Each row has six required fields and one optional dependency field:
+
+`name<TAB>version<TAB>architecture<TAB>sha256<TAB>archive<TAB>description<TAB>dependency1,dependency2`
+
+The optional seventh field is a comma-separated list of package names. Nyan installs dependencies first and detects dependency cycles. Existing six-field rows remain valid. Dependency installation is not yet transactional: if a later package fails, already installed dependencies remain installed.
+
+## Installation profiles
+
+Nyan exposes four planned profiles:
+
+- `base` — essential system files, shell, init and core utilities.
+- `desktop` — graphics stack, display server, window manager and desktop applications.
+- `development` — compilers, build tools, interpreters and headers.
+- `network` — DHCP, DNS, TLS and network diagnostic tools.
+
+These are profile definitions, not claims that those package sets are already downloadable. The profiles remain unavailable until every required binary package is built, published, and tested on VANTOR. The only currently listed language package is Lua 5.4.9 for x86_64.
 
 ## VANTOR Community Mirror
 
@@ -17,20 +41,17 @@ The initial mirror uses GitHub Releases, not Cloudflare R2:
 - Indexes live under `packages/repository/<arch>/Packages`.
 - Package assets are stored in the GitHub Release tagged `nyan-repository`.
 - The website Worker proxies index requests and redirects archive requests to GitHub Releases.
-- `tools/publish-package.sh` and `.github/workflows/publish-package.yml` automate publishing and SHA-256 index updates.
+- `tools/publish-package.sh` and package workflows automate publishing and SHA-256 index updates.
 
 See [the repository format and publishing guide](../packages/repository/README.md).
 
-## Current limitations
+## Security and limitations
 
-This is experimental, not production-ready. It lacks dependency resolution, signed repository metadata, transactional rollback, upgrades and maintainer scripts. The Genesis client now rejects archive traversal, links and special files, refuses to overwrite existing system paths, and tracks installed file lists. Shared-file ownership is not supported; the package manager remains experimental. SHA-256 alone does not authenticate repository publishers. Do not use this version to modify a real system.
+This is experimental, not production-ready. It lacks signed repository metadata, transactional rollback, upgrade support, maintainer scripts, automatic dependency cleanup and shared-file ownership. The client rejects archive traversal, links and special files, refuses to overwrite existing system paths, and tracks installed file lists. SHA-256 alone does not authenticate repository publishers. Do not use this version to modify a real system.
 
+## Lua 5.4.9
 
-## Programming languages
-
-The first language package, **Lua 5.4.9**, is published for x86_64. Its GitHub Actions workflow builds a static interpreter with musl, verifies the official upstream source checksum, runs smoke tests, and publishes the archive to the `nyan-repository` GitHub Release. The repository index contains its SHA-256 digest.
-
-After the package is published:
+Lua is the first language package, built statically with musl. After its archive is published:
 
 ```sh
 nyan update
@@ -39,4 +60,4 @@ nyan install lua
 lua -v
 ```
 
-Lua is available through the published x86_64 index. The initial package does not yet provide LuaRocks.
+The initial package does not yet provide LuaRocks.
