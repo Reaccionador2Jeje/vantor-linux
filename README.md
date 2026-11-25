@@ -56,11 +56,11 @@ make check
 
 ## Toolchain development
 
-The first x86_64 cross-toolchain plan is documented in [docs/toolchain.md](docs/toolchain.md). Upstream candidates are recorded in `build/sources/sources.json`; they are not build-approved until their SHA-256 digests are verified. `make check` validates the manifest, while `make sources-ready` deliberately fails until every source is pinned. `make fetch-sources` downloads only pinned archives and verifies each digest before saving it.
+The first x86_64 cross-toolchain plan is documented in [docs/toolchain.md](docs/toolchain.md). Initial build scripts now exist for Binutils pass 1 and GCC pass 1, with a manual [GitHub Actions toolchain workflow](.github/workflows/toolchain.yml). Upstream candidates are recorded in `build/sources/sources.json`; they are not build-approved until their SHA-256 digests are verified. `make check` runs repository checks and source-extraction tests. `make sources-ready` deliberately fails until every source is pinned. `make fetch-sources` downloads only pinned archives and verifies each digest before saving it.
 
 ## Build status
 
-The current CI validates repository structure, configuration, and the source manifest. It does **not** yet compile the toolchain, kernel, or ISO. The source downloader is implemented but currently refuses downloads because the source digests have not yet been verified. No bootable image is claimed.
+The current CI validates repository structure, configuration, source metadata, and safe extraction tests. The first-stage build scripts are implemented, but the toolchain workflow cannot yet run because the upstream source SHA-256 digests have not been pinned. The downloader correctly refuses unverified inputs. No compiler, kernel, or bootable image is claimed as built yet.
 
 ## Licensing
 
