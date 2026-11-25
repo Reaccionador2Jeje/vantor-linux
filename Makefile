@@ -173,6 +173,9 @@ rootfs:
 rootfs-legacy:
 	@python3 tools/prepare-rootfs.py --output build/work/rootfs-legacy --arch i486
 
+termux-rootfs:
+	@bash build/scripts/build-termux-rootfs.sh
+
 boot-files:
 	@test -s boot/grub/grub.cfg
 	@test -s boot/grub/grub-legacy.cfg
