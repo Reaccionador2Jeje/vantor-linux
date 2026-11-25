@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
-.PHONY: help info check check-shell check-config check-sources sources-ready clean
+.PHONY: help info check check-shell check-config check-sources sources-ready fetch-sources clean
 
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
