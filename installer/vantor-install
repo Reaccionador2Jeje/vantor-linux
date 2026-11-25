@@ -2,7 +2,7 @@
 # VANTOR Installer — Minimal edition, TUI front end.
 set -eu
 
-VERSION="0.3.0"
+VERSION="0.4.0"
 TARGET=""
 HOSTNAME="vantor"
 USERNAME="live"
@@ -114,9 +114,23 @@ packages_setup() {
  [ -n "$repo" ] || repo="https://vantor-linux.cristopheriguaran-7.workers.dev"
  [ -n "$arch" ] || arch=${NYAN_ARCH:-x86_64}
  NYAN_ROOT="$target" NYAN_REPO="$repo" NYAN_ARCH="$arch" "$NYAN_BIN" update
- packages=$(ask "Additional packages" "Package names separated by spaces (blank skips):" "") || return 0
- for pkg in $packages; do NYAN_ROOT="$target" NYAN_REPO="$repo" NYAN_ARCH="$arch" "$NYAN_BIN" install "$pkg"; done
- message "Package selection complete."
+ echo "=== Nyan package catalog ($arch) ==="
+ NYAN_ROOT="$target" NYAN_REPO="$repo" NYAN_ARCH="$arch" "$NYAN_BIN" browse
+ packages=$(ask "Nyan package manager" "Enter package names separated by spaces, or search:TERM. Blank skips:" "") || return 0
+ [ -n "$packages" ] || { message "No additional packages selected."; return 0; }
+ case "$packages" in search:*)
+   term=${packages#search:}
+   [ -n "$term" ] || die "search term is empty"
+   NYAN_ROOT="$target" NYAN_REPO="$repo" NYAN_ARCH="$arch" "$NYAN_BIN" search "$term"
+   packages=$(ask "Nyan search results" "Enter package names to install, separated by spaces:" "") || return 0
+   ;;
+ esac
+ [ -n "$packages" ] || { message "No packages selected."; return 0; }
+ set -f
+ set -- $packages
+ set +f
+ NYAN_ROOT="$target" NYAN_REPO="$repo" NYAN_ARCH="$arch" "$NYAN_BIN" install "$@"
+ message "Nyan finished processing the selected package set."
 }
 preferences_setup() {
  if [ "$#" -gt 0 ]; then target=$1; else target=$(ask "System preferences" "Installed system root:" "/mnt") || return 0; fi
