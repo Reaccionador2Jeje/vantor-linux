@@ -35,11 +35,11 @@ message() {
 
 menu() {
     if command -v dialog >/dev/null 2>&1; then
-        dialog --clear --title "VANTOR Linux — Minimal" --menu "ONE SYSTEM. EVERY GENERATION.\\n\\nChoose an action:" 18 72 6 \\
-            install "Install VANTOR Minimal" \\
-            configure "Configure installed system" \\
-            boot "Prepare installed boot files" \\
-            about "About this installer" \\
+        dialog --clear --title "VANTOR Linux — Minimal" --menu "ONE SYSTEM. EVERY GENERATION.\n\nChoose an action:" 18 72 6 \
+            install "Install VANTOR Minimal" \
+            configure "Configure installed system" \
+            boot "Prepare installed boot files" \
+            about "About this installer" \
             exit "Exit" 3>&1 1>&2 2>&3
     else
         printf '\n==============================================\n' >/dev/tty
