@@ -30,7 +30,7 @@ jobs:
           test -s desktop/openbox/menu.xml
           test -s desktop/tint2/tint2rc
           root="$PWD/build/vantor-desktop-config"
-          install -D -m 0755 desktop/bin/vantor-session "$root/usr/local/bin/vantor-session"
+          install -D -m 0755 desktop/bin/vantor-session "$root/usr/bin/vantor-session"
           install -D -m 0644 desktop/xsessions/vantor.desktop "$root/usr/share/xsessions/vantor.desktop"
           mkdir -p "$root/usr/share/vantor/desktop"
           cp -a desktop/openbox desktop/tint2 desktop/themes desktop/applications "$root/usr/share/vantor/desktop/"
