@@ -59,6 +59,17 @@
       "role": "Minimal initial userspace",
       "status": "pinned",
       "sha512": null
+    },
+    {
+      "name": "linux-legacy",
+      "version": "6.1.193",
+      "archive": "linux-6.1.193.tar.xz",
+      "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.1.193.tar.xz",
+      "sha256": "e47276bbbc8aa191c5421ff2f6e0da87e25073042bc242e4afb1e53ab4ddcd80",
+      "license": "GPL-2.0-only; see kernel COPYING and source headers",
+      "role": "Legacy x86 kernel retaining 486SX/486DX CPU support",
+      "status": "pinned",
+      "sha512": null
     }
   ]
 }
