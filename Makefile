@@ -64,9 +64,12 @@ kernel-files:
 	@test -s kernel/configs/README.md
 	@test -s docs/kernel.md
 	@test -s build/scripts/build-kernel-legacy.sh
-	@test -s kernel/configs/vantor-i486.config 2>/dev/null || true
+	@grep -q 'M486SX' build/scripts/build-kernel-legacy.sh
+	@grep -q 'linux-legacy' build/sources/sources.json
 	@echo "[INFO] Legacy kernel source is pinned and builder is available."
-	@echo "[OK] VANTOR kernel build files are present."
+	@test -s docs/hardware-compatibility.md
+	@test -s build/scripts/build-kernel-legacy.sh
+	@echo "[OK] VANTOR x86_64 and i486 kernel build files are present."
 
 
 check-nyan:
