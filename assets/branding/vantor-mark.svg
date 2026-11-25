@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">VANTOR emblem</title>
+  <desc id="desc">A metallic V surrounded by a cyan orbital ring.</desc>
+  <defs>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4fbff"/>
+      <stop offset=".42" stop-color="#9db6d3"/>
+      <stop offset=".72" stop-color="#e7f3ff"/>
+      <stop offset="1" stop-color="#7189a8"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00d9ff"/>
+      <stop offset="1" stop-color="#0877ff"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="256" cy="256" r="220" fill="#071321"/>
+  <ellipse cx="256" cy="256" rx="220" ry="88" fill="none" stroke="url(#cyan)" stroke-width="13" transform="rotate(-24 256 256)" filter="url(#glow)"/>
+  <path d="M104 105 L204 105 L256 286 L308 105 L408 105 L282 407 L230 407 Z" fill="url(#metal)" stroke="#d8f5ff" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M256 286 L282 407 L230 407 Z" fill="#00bff3" opacity=".72"/>
+  <path d="M91 286 C130 345 184 377 230 390" fill="none" stroke="#00d9ff" stroke-width="8" stroke-linecap="round" filter="url(#glow)"/>
+</svg>
