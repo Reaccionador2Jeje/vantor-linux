@@ -138,7 +138,7 @@ prepare_boot_files() {
     case "$root_device" in /dev/*) ;; *) die "root device must be an explicit /dev/... partition path";; esac
     case "$root_fstype" in ext2|ext3|ext4|xfs|btrfs) ;; *) die "unsupported root filesystem type: $root_fstype";; esac
     case "$arch" in x86_64|i486) ;; *) die "unsupported boot architecture: $arch";; esac
-    mkdir -p "$target/boot" "$target/boot/grub"
+    mkdir -p "$target/boot" "$target/boot/grub" "$target/etc"
     cp "$kernel" "$target/boot/vantor-kernel"
     cp "$initramfs" "$target/boot/vantor-initramfs.cpio.gz"
     cat > "$target/boot/grub/grub.cfg.tmp" <<EOF
@@ -193,7 +193,6 @@ about() {
 if [ "${1:-}" = "--version" ]; then echo "VANTOR Installer $VERSION"; exit 0; fi
 if [ "${1:-}" = "--prepare-boot" ]; then
     [ "$#" -eq 7 ] || die "usage: vantor-install --prepare-boot TARGET KERNEL INITRAMFS ROOT_DEVICE ROOT_FSTYPE ARCH"
-    [ "$(id -u)" -eq 0 ] || die "run boot preparation as root"
     prepare_boot_files "$2" "$3" "$4" "$5" "$6" "$7"
     exit 0
 fi
