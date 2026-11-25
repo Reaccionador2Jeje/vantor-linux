@@ -1,23 +1,30 @@
-VANTOR Linux — Minimal Profile 0.1.0
+VANTOR Linux — Minimal Profile 0.2.0
 
 Primary edition: VANTOR Minimal.
 
-This profile installs the first bootable-oriented minimal userspace payload:
-- VANTOR Base Files: OS identity, init scripts, root and live account database, wheel policy, Nyan, VANTOR Control, VANTOR Hardware and the TUI installer.
-- Static BusyBox: shell, core command applets and the vi editor applet.
+The installed Minimal system includes the operational essentials:
+- VANTOR Base Files: OS identity, init scripts, root and live account database, wheel policy, Nyan, VANTOR Control, VANTOR Hardware, network/storage/service/module tools and the TUI installer.
+- Static BusyBox: shell, init, core command applets, networking utilities and the vi editor applet.
+- VANTOR command suite: vantorctl, vantor-hw, vantor-network, vantor-storage, vantor-service, vantor-modules and vantor-install.
 
-Account policy:
-- root (UID 0): administrative account; password is locked in the initial image.
-- live (UID 1000): standard Live-session account; password is locked in the initial image.
-- wheel: administrative group for sudo policy when the sudo package is installed.
-- /etc/sudoers.d/10-wheel grants sudo rights to wheel members. The sudo executable is a separate package and is not included yet.
+Privilege policy:
+- root (UID 0): administrative account; password is locked in the initial Live image.
+- live (UID 1000): standard Live-session account; password is locked in the initial Live image.
+- wheel: administrative group for sudo.
+- /etc/sudoers.d/10-wheel grants sudo rights to wheel members. The sudo executable is being integrated into the base image; the policy file alone does not provide sudo functionality.
+
+Included editor:
+- vi (BusyBox applet).
+
+Optional Nyan editor packages:
+- nano: planned.
+- vim: planned.
 
 Not included yet:
-- sudo executable
-- nano and full Vim
-- Fastfetch
-- network manager and DHCP client
-- partitioning and bootloader installation workflow
-- graphical desktop
+- Working sudo executable (integration in progress).
+- Nano and full Vim.
+- Fastfetch and optional network tools.
+- Complete partitioning and bootloader installation workflow.
+- Graphical desktop.
 
 The installer never formats or partitions disks. The destination filesystem must be mounted separately.
