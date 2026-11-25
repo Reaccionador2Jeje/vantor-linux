@@ -39,17 +39,18 @@ if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
     reset='\033[0m'
 fi
 
-# Large VANTOR orbital emblem, aligned beside system information.
-printf '  %b          .-=================-.%b       %bVANTOR LINUX%b\n' "$cyan" "$reset" "$metal" "$reset"
-printf '  %b       .-'''                   '''-.%b       %b%s%b\n' "$cyan" "$reset" "$metal" "$os" "$reset"
-printf '  %b     .'''        %b\\       /%b       '''.%b     %b%s%b\n' "$cyan" "$metal" "$cyan" "$reset" "$blue" "ONE SYSTEM. EVERY GENERATION." "$reset"
-printf '  %b    /           %b\\     /%b           \\%b    Host:         %s\n' "$cyan" "$metal" "$cyan" "$reset" "$host"
-printf '  %b   |             %b\\   /%b             |%b   Kernel:       %s\n' "$cyan" "$metal" "$cyan" "$reset" "$kernel"
-printf '  %b   |              %b\\ /%b              |%b   Architecture: %s\n' "$cyan" "$metal" "$cyan" "$reset" "$arch"
-printf '  %b   |               %bV%b               |%b   CPU:          %s\n' "$cyan" "$metal" "$cyan" "$reset" "$cpu"
-printf '  %b    \\                             /%b    Memory:       %s\n' "$cyan" "$reset" "$mem"
-printf '  %b     '''.                         .'''%b     Uptime:       %s\n' "$cyan" "$reset" "$uptime"
-printf '  %b       '''-._________________.-'%b       Shell:        %s\n' "$cyan" "$reset" "$shell"
-printf '  %b                                      %bInit:          %s%b\n' "$muted" "$muted" "$init" "$reset"
-printf '  %b                                      %bNyan:         native%b\n' "$muted" "$muted" "$reset"
+# Large VANTOR orbital V emblem with a compact system summary.
+printf "  %b       .-=======================-.%b    %bVANTOR LINUX%b\\n" "$cyan" "$reset" "$metal" "$reset"
+printf "  %b     .                           .%b    %b%s%b\\n" "$cyan" "$reset" "$metal" "$os" "$reset"
+printf "  %b    /        %b\\\\             /%b        \\\\%b   %b%s%b\\n" "$cyan" "$metal" "$cyan" "$reset" "$blue" "ONE SYSTEM. EVERY GENERATION." "$reset"
+printf "  %b   |          %b\\\\           /%b          |%b   Host:         %s\\n" "$cyan" "$metal" "$cyan" "$reset" "$host"
+printf "  %b   |           %b\\\\         /%b           |%b   Kernel:       %s\\n" "$cyan" "$metal" "$cyan" "$reset" "$kernel"
+printf "  %b   |            %b\\\\       /%b            |%b   Architecture: %s\\n" "$cyan" "$metal" "$cyan" "$reset" "$arch"
+printf "  %b   |             %b\\\\     /%b             |%b   CPU:          %s\\n" "$cyan" "$metal" "$cyan" "$reset" "$cpu"
+printf "  %b   |              %b\\\\   /%b              |%b   Memory:       %s\\n" "$cyan" "$metal" "$cyan" "$reset" "$mem"
+printf "  %b   |               %b\\\\ /%b               |%b   Uptime:       %s\\n" "$cyan" "$metal" "$cyan" "$reset" "$uptime"
+printf "  %b   |                %bV%b                |%b   Shell:        %s\\n" "$cyan" "$metal" "$cyan" "$reset" "$shell"
+printf "  %b    \\\\                             /%b    Init:         %s\\n" "$cyan" "$reset" "$init"
+printf "  %b     .                         .%b    Nyan:         native\\n" "$cyan" "$reset"
+printf "  %b       -_____________________- %b    Profile:      VANTOR\\n" "$cyan" "$reset"
 printf '\n'
