@@ -31,6 +31,7 @@ Nyan — VANTOR package manager
 Usage:
   nyan update
   nyan list
+  nyan languages
   nyan install PACKAGE
   nyan remove PACKAGE
 Environment:
@@ -54,6 +55,12 @@ case "$cmd" in
     index="$NYAN_STATE/Packages"
     [ -s "$index" ] || die "run 'nyan update' first"
     awk -F '\t' '!/^#/ && NF >= 5 { printf "%-22s %-12s %s\n", $1, $2, $5 }' "$index"
+    ;;
+  languages)
+    index="$NYAN_STATE/Packages"
+    [ -s "$index" ] || die "run 'nyan update' first"
+    echo "Programming languages available from the configured repository:"
+    awk -F '\t' '!/^#/ && NF >= 6 && $6 ~ /^Language:/ { printf "  %-18s %-10s %s\\n", $1, $2, substr($6, 10) }' "$index"
     ;;
   install)
     [ "$#" -eq 2 ] || die "usage: nyan install PACKAGE"
