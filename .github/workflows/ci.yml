@@ -31,20 +31,23 @@ jobs:
       - name: Show project configuration
         run: make info
 
-      - name: Validate configuration and shell scripts
+      - name: Validate configuration, shell scripts and source manifest
         run: make check
 
-      - name: Compile Python tools\n        run: python3 -m compileall -q tools\n\n      - name: Check required repository paths
+      - name: Compile Python tools
+        run: python3 -m compileall -q tools
+
+      - name: Check required repository paths
         run: |
           test -f README.md
           test -f LICENSE
           test -f Makefile
           test -f build/config/vantor.conf
           test -f docs/architecture.md
+          test -f docs/toolchain.md
           test -f build/sources/sources.json
           test -f tools/validate-sources.py
           test -f tools/fetch-sources.py
-          test -f docs/toolchain.md
           test -f tools/extract-source.py
           test -f build/scripts/build-binutils.sh
           test -f build/scripts/build-gcc.sh
