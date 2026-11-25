@@ -39,6 +39,53 @@ else
     printf '\nCONFIG_STATIC=y\n' >> "$BUILD_DIR/.config"
 fi
 
+# Keep the vi editor applet in the Minimal bootstrap.
+if grep -q '^# CONFIG_VI is not setmake -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS"
+make -C "$SOURCE_DIR" O="$BUILD_DIR" CONFIG_PREFIX="$ROOTFS" install
+
+[[ -x "$ROOTFS/bin/busybox" ]] || { echo "[ERROR] BusyBox install did not produce /bin/busybox." >&2; exit 1; }
+grep -q '^CONFIG_VI=y
+"$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
+echo "[OK] Static BusyBox installed into build/work/rootfs."
+echo "[INFO] The VANTOR initramfs can now be assembled with: make initramfs"
+ "$BUILD_DIR/.config"; then
+    sed -i 's/^# CONFIG_VI is not set$/CONFIG_VI=y/' "$BUILD_DIR/.config"
+elif ! grep -q '^CONFIG_VI=ymake -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS"
+make -C "$SOURCE_DIR" O="$BUILD_DIR" CONFIG_PREFIX="$ROOTFS" install
+
+[[ -x "$ROOTFS/bin/busybox" ]] || { echo "[ERROR] BusyBox install did not produce /bin/busybox." >&2; exit 1; }
+"$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
+echo "[OK] Static BusyBox installed into build/work/rootfs."
+echo "[INFO] The VANTOR initramfs can now be assembled with: make initramfs"
+ "$BUILD_DIR/.config"; then
+    printf '\nCONFIG_VI=y\n' >> "$BUILD_DIR/.config"
+fi
+
+make -C "$SOURCE_DIR" O="$BUILD_DIR" oldconfig </dev/null
+make -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS"
+make -C "$SOURCE_DIR" O="$BUILD_DIR" CONFIG_PREFIX="$ROOTFS" install
+
+[[ -x "$ROOTFS/bin/busybox" ]] || { echo "[ERROR] BusyBox install did not produce /bin/busybox." >&2; exit 1; }
+"$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
+echo "[OK] Static BusyBox installed into build/work/rootfs."
+echo "[INFO] The VANTOR initramfs can now be assembled with: make initramfs"
+ "$BUILD_DIR/.config" || { echo "[ERROR] BusyBox vi applet is not enabled." >&2; exit 1; }
+"$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
+echo "[OK] Static BusyBox installed into build/work/rootfs."
+echo "[INFO] The VANTOR initramfs can now be assembled with: make initramfs"
+ "$BUILD_DIR/.config"; then
+    sed -i 's/^# CONFIG_VI is not set$/CONFIG_VI=y/' "$BUILD_DIR/.config"
+elif ! grep -q '^CONFIG_VI=ymake -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS"
+make -C "$SOURCE_DIR" O="$BUILD_DIR" CONFIG_PREFIX="$ROOTFS" install
+
+[[ -x "$ROOTFS/bin/busybox" ]] || { echo "[ERROR] BusyBox install did not produce /bin/busybox." >&2; exit 1; }
+"$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
+echo "[OK] Static BusyBox installed into build/work/rootfs."
+echo "[INFO] The VANTOR initramfs can now be assembled with: make initramfs"
+ "$BUILD_DIR/.config"; then
+    printf '\nCONFIG_VI=y\n' >> "$BUILD_DIR/.config"
+fi
+
 make -C "$SOURCE_DIR" O="$BUILD_DIR" oldconfig </dev/null
 make -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS"
 make -C "$SOURCE_DIR" O="$BUILD_DIR" CONFIG_PREFIX="$ROOTFS" install
