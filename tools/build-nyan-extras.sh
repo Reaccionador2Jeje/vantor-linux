@@ -22,21 +22,21 @@ make_pkg() {
 for arch in x86_64 i486; do
   make_pkg "$arch" vantor-hardware \
     "VANTOR read-only hardware inventory utility" \
-    core/hardware/vantor-hw usr/bin/vantor-hw
+    core/hardware/vantor-hw usr/local/bin/vantor-hw
   make_pkg "$arch" vantor-installer \
     "VANTOR text-mode system installer" \
-    installer/vantor-install usr/sbin/vantor-install
+    installer/vantor-install usr/local/sbin/vantor-install
   for file in vantor-mark.svg vantor-lockup.svg theme.json theme.css; do
     stage="$OUT/stage-$arch-vantor-branding"
-    mkdir -p "$stage/usr/share/vantor/branding"
-    cp "$ROOT/assets/branding/$file" "$stage/usr/share/vantor/branding/$file"
+    mkdir -p "$stage/usr/local/share/vantor/branding"
+    cp "$ROOT/assets/branding/$file" "$stage/usr/local/share/vantor/branding/$file"
   done
   tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \
     -czf "$OUT/vantor-branding-0.1.0-$arch.tar.gz" -C "$OUT/stage-$arch-vantor-branding" .
   tar -tzf "$OUT/vantor-branding-0.1.0-$arch.tar.gz" >/dev/null
   stage="$OUT/stage-$arch-vantor-docs"
-  mkdir -p "$stage/usr/share/doc/vantor"
-  cp "$ROOT/README.md" "$ROOT/LICENSE" "$ROOT/docs/nyan.md" "$stage/usr/share/doc/vantor/"
+  mkdir -p "$stage/usr/local/share/doc/vantor"
+  cp "$ROOT/README.md" "$ROOT/LICENSE" "$ROOT/docs/nyan.md" "$stage/usr/local/share/doc/vantor/"
   tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \
     -czf "$OUT/vantor-docs-0.1.0-$arch.tar.gz" -C "$stage" .
   tar -tzf "$OUT/vantor-docs-0.1.0-$arch.tar.gz" >/dev/null
