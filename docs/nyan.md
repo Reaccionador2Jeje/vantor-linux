@@ -31,7 +31,9 @@ Nyan exposes five profile names:
 
 - `minimal` — the primary VANTOR edition. Its meta-package depends on `vantor-base-files`, which contains the VANTOR bootstrap userspace and static BusyBox.
 - `base` — reserved for a future split of the Minimal base into smaller independently maintained packages.
-- `desktop` — graphics stack, display server, window manager and desktop applications; not yet published.
+- `desktop` — lightweight VANTOR Openbox session; not yet published as a complete installable profile.
+- `wayland` — Wayland foundation and compositor packages; planned.
+- `xfce4`, `gnome`, `kde-plasma`, `lxqt`, `lxde` — optional desktop profiles; planned and not installable yet. See [desktop profile definitions](../desktop/profiles/README.md).
 - `development` — Lua 5.4.9 starter language environment.
 - `network` — DHCP, DNS, TLS and network diagnostic tools; not yet published.
 
