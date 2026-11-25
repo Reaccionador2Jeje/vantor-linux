@@ -61,12 +61,12 @@ tar -xJf "$NANO_TARBALL" -C "$WORK/src"
 mkdir -p "$WORK/build-nano"
 (
   cd "$WORK/build-nano"
-  export CPPFLAGS="-I$WORK/sysroot/usr/local/include"
+  export CPPFLAGS="-I$WORK/sysroot/usr/local/include/ncursesw -I$WORK/sysroot/usr/local/include"
   export LDFLAGS="-static -L$WORK/sysroot/usr/local/lib -Wl,--gc-sections"
   export LIBS="-lncursesw -ltinfow"
   if ! "$WORK/src/nano-9.2/configure" \
     --build="$BUILD_TRIPLET" --host="$TARGET" --prefix=/usr/local \
-    --disable-nls --enable-tiny; then
+    --disable-nls --disable-manpages --enable-tiny; then
     echo "[ERROR] nano configure failed; relevant config.log diagnostics:" >&2
     grep -A8 -B4 -E "cannot find|undefined reference|error:|failed program" config.log | tail -n 100 >&2 || tail -n 100 config.log >&2
     exit 1
