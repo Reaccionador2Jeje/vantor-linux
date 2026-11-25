@@ -1,0 +1,19 @@
+#!/data/data/com.termux/files/usr/bin/sh
+# VANTOR ARM64 userspace launcher for Termux + PRoot.
+set -eu
+PREFIX="${PREFIX:-/data/data/com.termux/files/usr}"
+ROOTFS="${VANTOR_ROOTFS:-$HOME/vantor/rootfs}"
+if ! command -v proot >/dev/null 2>&1; then
+  echo "VANTOR: install PRoot first: pkg install proot" >&2
+  exit 1
+fi
+if [ ! -x "$ROOTFS/bin/busybox" ]; then
+  echo "VANTOR: rootfs not found at $ROOTFS" >&2
+  echo "Extract the VANTOR Termux ARM64 rootfs into that directory first." >&2
+  exit 1
+fi
+exec proot -0 -r "$ROOTFS" \
+  -b /dev -b /proc -b /sys \
+  -b "$PREFIX/tmp:/tmp" \
+  -b "$HOME:/host-home" \
+  -w /root /usr/bin/vantor-termux-shell
