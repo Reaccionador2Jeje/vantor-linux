@@ -19,10 +19,6 @@ check "Nyan configuration" /etc/nyan.conf
 check "Nyan executable" /usr/bin/nyan
 check "VANTOR control utility" /usr/sbin/vantorctl
 check "VANTOR init" /sbin/init
-if command -v nyan >/dev/null 2>&1; then
-  if nyan update >/dev/null 2>&1; then echo '[ OK ] Nyan repository reachable'
-  else echo '[WARN] Nyan repository unavailable (check network/DNS)'; fi
-fi
 if [ "$fail" -ne 0 ]; then
   echo "Some checks need attention. No changes were made."
   exit 1
