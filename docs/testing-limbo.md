@@ -31,6 +31,29 @@ Use this profile after the project produces a bootable BIOS-compatible ISO:
 
 The initial test target is legacy BIOS boot. UEFI testing is a separate validation step and should only be marked supported after it succeeds.
 
+## VANTOR Core validation checklist
+
+After the ISO has been produced by GitHub Actions, use the following checks from the Live console:
+
+| Area | Command or observation | Expected result |
+|---|---|---|
+| PID 1 | `vantorctl status` | Init PID reports BusyBox init |
+| Hardware | `vantorctl hardware` | CPU, memory, block, PCI, VirtIO, USB and NIC inventory; unavailable buses are reported clearly |
+| Storage | `vantorctl storage scan` | Detected virtual disks and mounted filesystems |
+| Filesystems | `vantorctl storage filesystems` | Kernel filesystem list includes ext2/ext4 and ISO9660 where configured |
+| Modules | `cat /proc/modules` | Loaded optional modules, if any; built-in drivers need not appear here |
+| Network | `vantorctl network` | Available NIC names and link states |
+| DHCP/DNS | `cat /etc/resolv.conf` | Resolver entries appear only if DHCP/static network configuration supplied them |
+| Services | `vantorctl service list` | Installed optional service scripts, or a clear empty-list message |
+
+Capture the diagnostic boot entry output if the normal splash hides an error. A successful ISO build or boot-catalog inspection is not evidence that the guest reached the Live console.
+
+### Installed-root validation boundary
+
+The initramfs now loads available modules before looking for `root=/dev/...`, waits a bounded interval for the device, mounts the selected ext2/ext4 filesystem, and hands control to `/sbin/vantor-init`. The installed root then uses BusyBox init and mounts configured `/etc/fstab` entries.
+
+The current installer can prepare the kernel, initramfs, GRUB configuration and fstab on an already-mounted target. Its GRUB installation action still requires GRUB's installer utility and BIOS modules to be bundled in the Live environment. Therefore, do not mark a complete disk-install/GRUB boot as validated until that missing installer dependency is resolved and the installed-root path is tested in Limbo.
+
 ## Important constraints
 
 - Limbo emulates an x86_64 computer; it does not turn an ARM Android processor into a native x86_64 CPU. Emulation may be slow.
