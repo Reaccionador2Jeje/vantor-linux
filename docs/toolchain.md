@@ -17,9 +17,11 @@ distribution's target libraries or headers.
 7. **BusyBox** — build the first minimal target userspace.
 8. **Kernel and initramfs** — build a kernel and a tiny initramfs, then boot it under QEMU.
 
-Each stage must use an explicit prefix and sysroot under `build/work`; it must
-not write into the runner's system directories. Build logs and tool versions
-will be retained as CI artifacts once the build stage is enabled.
+The first two stages now have build scripts: `build-binutils.sh` and `build-gcc.sh`.
+`build-toolchain.sh` orchestrates them after source verification. They install only
+under `build/tools` and `build/sysroot`, never into the runner's system directories.
+The manual `VANTOR Toolchain` GitHub Actions workflow installs host build dependencies,
+runs `make toolchain`, and uploads build logs and toolchain artifacts.
 
 ## Candidate upstream versions (2026-11-24)
 
@@ -38,6 +40,8 @@ upstream checksum or signature before changing an entry to `pinned`.
 ## Source integrity
 
 - `tools/validate-sources.py` validates the JSON manifest.
+- `tools/extract-source.py` extracts verified archives with Python's safe `data` filter.
+- `tests/test_source_tools.py` checks normal extraction, path traversal rejection, and existing-directory handling.
 - `make sources-ready` fails until every source has a verified 64-character SHA-256 and status `pinned`.
 - `tools/fetch-sources.py` refuses unpinned entries, downloads over HTTPS,
   verifies SHA-256, and only then moves an archive into `build/distfiles`.
@@ -56,5 +60,6 @@ successfully. Each stage must publish:
 - a smoke test proving the compiler emits VANTOR-targeted ELF objects;
 - a clean-run reproducibility check where practical.
 
-No bootable ISO is claimed until the kernel and initramfs boot successfully in
-QEMU and the guest reaches a VANTOR login or shell.
+The initial toolchain workflow is intentionally blocked while any source remains
+unpinned. No bootable ISO is claimed until the kernel and initramfs boot successfully
+in QEMU and the guest reaches a VANTOR login or shell.
