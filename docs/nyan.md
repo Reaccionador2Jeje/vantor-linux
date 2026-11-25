@@ -71,3 +71,13 @@ The initial package does not yet provide LuaRocks.
 ## Installed package inspection
 
 Use `nyan installed` to inspect the package database for the current root. Use `nyan verify` after an installation or system repair to confirm that every file recorded for each package still exists. A named check (`nyan verify busybox`) limits verification to one package. This checks file presence and ownership records; it does not yet validate installed file contents against per-file hashes or repair packages automatically.
+
+
+## Catalog, batch installs and progress animation
+
+- `nyan browse` lists all packages published in the current architecture index.
+- `nyan search TERM` searches package names and descriptions.
+- `nyan install PACKAGE [PACKAGE ...]` installs several requested packages in one invocation and resolves each package's declared dependencies.
+- On an interactive terminal, installation phases display a compact Nyan Cat-inspired animated progress line. When stdout is not a terminal, the animation is suppressed so scripts and logs stay clean.
+
+The catalog is architecture-specific. Only packages present in the selected repository index are installable; planned packages are not treated as published packages.
