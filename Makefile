@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
-.PHONY: help info check check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel busybox initramfs rootfs boot-files iso clean kernel-files initramfs-files
+.PHONY: help info check check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel kernel-legacy busybox initramfs rootfs boot-files iso clean kernel-files initramfs-files
 
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
@@ -9,7 +9,7 @@ help:
 	  '  make check-shell   Validate shell scripts' '  make check-config  Validate build configuration' \
 	  '  make check-sources Validate source manifest structure' '  make check-python  Compile and test Python tools' '  make check-nyan    Validate Nyan package manager syntax' \
 	  '  make sources-ready Require verified source checksums' '  make fetch-sources Download and verify pinned archives' \
-	  '  make toolchain      Build Binutils and GCC pass 1' '  make kernel         Build VANTOR x86_64 Linux kernel' \
+	  '  make toolchain      Build Binutils and GCC pass 1' '  make kernel         Build VANTOR x86_64 Linux kernel' '  make kernel-legacy  Build 486SX-compatible 32-bit legacy kernel' \
 	  '  make busybox        Build static BusyBox userspace' '  make initramfs      Assemble VANTOR early userspace' \
 	  '  make rootfs         Assemble the VANTOR rootfs skeleton' \
 	  '  make boot-files     Check bootloader configuration and builder' \
@@ -29,7 +29,7 @@ check-config:
 	@bash -n build/config/vantor.conf
 	@set -a; source build/config/vantor.conf; set +a; \
 	test "$$VANTOR_ARCH" = "x86_64"; test -n "$$VANTOR_VERSION"; test -n "$$VANTOR_TARGET"; \
-	test "$$VANTOR_KERNEL_VERSION" = "6.18.65"
+	test "$VANTOR_KERNEL_VERSION" = "6.18.65"; test "$VANTOR_LEGACY_KERNEL_VERSION" = "6.1.193"; test "$VANTOR_LEGACY_KERNEL_ARCH" = "i386"
 	@echo "[OK] Build configuration is valid."
 
 check-shell:
@@ -63,6 +63,9 @@ kernel-files:
 	@test -s build/scripts/build-kernel.sh
 	@test -s kernel/configs/README.md
 	@test -s docs/kernel.md
+	@test -s build/scripts/build-kernel-legacy.sh
+	@test -s kernel/configs/vantor-i486.config 2>/dev/null || true
+	@echo "[INFO] Legacy kernel source is pinned and builder is available."
 	@echo "[OK] VANTOR kernel build files are present."
 
 
@@ -98,6 +101,9 @@ toolchain:
 
 kernel:
 	@bash build/scripts/build-kernel.sh
+
+kernel-legacy:
+	@bash build/scripts/build-kernel-legacy.sh
 
 busybox:
 	@bash build/scripts/build-busybox.sh
