@@ -15,3 +15,5 @@ The GitHub Actions workflow downloads the official source, verifies its publishe
 The package is not considered available to users until the workflow completes successfully and the repository index contains the package row.
 
 The package archive is validated from a saved tar listing so CI can run with strict pipeline error handling.
+
+The CI build verifies the interpreter is static from ELF file metadata before packaging.
