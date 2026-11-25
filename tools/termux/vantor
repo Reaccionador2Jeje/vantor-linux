@@ -28,10 +28,13 @@ host_doctor() {
   printf 'Host architecture: %s\n' "$(uname -m)"
   [ "$(uname -m)" = aarch64 ] || { echo "[FAIL] ARM64 host required"; failed=1; }
   command -v proot >/dev/null 2>&1 || { echo "[FAIL] PRoot missing; run: pkg install proot"; failed=1; }
-  [ -x "$ROOTFS/bin/busybox" ] || { echo "[FAIL] Rootfs missing: $ROOTFS"; failed=1; }
-  [ -x "$ROOTFS/usr/bin/vantor-termux-shell" ] || { echo "[FAIL] VANTOR shell missing"; failed=1; }
   if [ -x "$ROOTFS/bin/busybox" ]; then
     "$ROOTFS/bin/busybox" --help >/dev/null 2>&1 || { echo "[FAIL] BusyBox cannot execute"; failed=1; }
+  elif command -v proot-distro >/dev/null 2>&1 && proot-distro list 2>/dev/null | grep -Eiq '(^|[[:space:]])vantor([[:space:]]|$)'; then
+    echo "[OK] PRoot-Distro container found."
+  else
+    echo "[FAIL] VANTOR rootfs/container not installed."
+    failed=1
   fi
   if [ "$failed" -eq 0 ]; then
     echo "[OK] Host and VANTOR userspace are ready."
