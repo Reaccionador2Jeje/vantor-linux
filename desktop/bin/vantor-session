@@ -1,0 +1,52 @@
+#!/bin/sh
+# VANTOR Desktop session bootstrap for an X11 display.
+set -eu
+
+CONFIG_DIR=/usr/share/vantor/desktop
+OPENBOX_CONFIG="$CONFIG_DIR/openbox/rc.xml"
+OPENBOX_MENU="$CONFIG_DIR/openbox/menu.xml"
+TINT2_CONFIG="$CONFIG_DIR/tint2/tint2rc"
+
+if [ -z "$DISPLAY" ]; then
+    echo "VANTOR Desktop must be started from an X11 session (DISPLAY is empty)." >&2
+    exit 1
+fi
+
+for program in openbox tint2 xsetroot; do
+    if ! command -v "$program" >/dev/null 2>&1; then
+        echo "VANTOR Desktop: required program not found: $program" >&2
+        exit 127
+    fi
+done
+
+if [ ! -r "$OPENBOX_CONFIG" ] || [ ! -r "$OPENBOX_MENU" ] || [ ! -r "$TINT2_CONFIG" ]; then
+    echo "VANTOR Desktop: configuration files are missing from $CONFIG_DIR." >&2
+    exit 1
+fi
+
+# Keep the initial graphics path simple and compatible with old virtual GPUs.
+xsetroot -solid "#071321"
+if command -v xset >/dev/null 2>&1; then
+    xsetroot -cursor_name left_ptr 2>/dev/null || true
+fi
+
+tint2 -c "$TINT2_CONFIG" &
+PANEL_PID=$!
+
+if command -v pcmanfm >/dev/null 2>&1; then
+    pcmanfm --desktop --profile vantor >/dev/null 2>&1 &
+    DESKTOP_PID=$!
+else
+    DESKTOP_PID=
+fi
+
+cleanup() {
+    kill "$PANEL_PID" 2>/dev/null || true
+    if [ -n "$DESKTOP_PID" ]; then
+        kill "$DESKTOP_PID" 2>/dev/null || true
+    fi
+}
+trap cleanup EXIT HUP INT TERM
+
+# Openbox owns the window lifecycle. Returning to the display manager ends the session.
+exec openbox --config-file "$OPENBOX_CONFIG"
