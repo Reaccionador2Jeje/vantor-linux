@@ -77,7 +77,7 @@ class NyanIntegrationTests(unittest.TestCase):
         index = self.repo / "repo" / "x86_64" / "Packages"
         existing = index.read_text().splitlines() if index.exists() else ["# VANTOR-PACKAGES 1"]
         existing.append(f"{name}\t1.0\tx86_64\t{digest}\t{name}.tar.gz\tTest package\t{dependencies}")
-        index.write_text("\\n".join(existing) + "\\n")
+        index.write_text("\n".join(existing) + "\n")
 
     def run_nyan(self, *args: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(["sh", str(NYAN), *args], env=self.env, capture_output=True, text=True, check=False)
