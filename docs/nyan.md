@@ -73,13 +73,13 @@ The initial package does not yet provide LuaRocks.
 The isolated workflow `.github/workflows/build-nyan-extras.yml` also builds six architecture-independent POSIX-shell packages (architecture `all`), so the same verified archive can be installed on x86_64 and i486:
 
 - `vantor-about` — release, kernel, architecture, hostname and uptime summary.
-- `vantor-doctor` — read-only checks of core VANTOR filesystems, commands and repository reachability.
+- `vantor-doctor` — read-only checks of core VANTOR filesystems and commands.
 - `vantor-netdiag` — interface, route, DNS and default-gateway report.
 - `vantor-logview` — simple log viewer with pager fallback.
 - `vantor-config-backup` — creates a configuration archive and refuses to overwrite an existing output.
 - `vantor-mountinfo` — readable mounted-filesystem report.
 
-The commands are installed under `/usr/local/bin`. They use POSIX shell and the base system's BusyBox utilities; no compiler, libc or desktop stack is required. The doctor, network and mount reports are diagnostic-only. Configuration backup reads selected system configuration and writes a new archive in the current directory.
+The commands are installed under `/usr/local/bin`. They use POSIX shell and the base system's BusyBox utilities; no compiler, libc or desktop stack is required. The doctor, network and mount reports are diagnostic-only. Configuration backup reads selected system configuration and writes a new archive in the current directory. The same architecture-independent archive is indexed separately for x86_64 and i486 so Nyan can discover it through each architecture's normal index.
 
 These packages are marked `building` in `packages/catalog.tsv` until the isolated workflow successfully publishes their archives and updates the `all` repository index. They do not change kernel, ISO, legacy or general CI workflows.
 
