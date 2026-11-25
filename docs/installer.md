@@ -77,3 +77,10 @@ The installer menu now provides two additional actions:
 - **Install GRUB bootloader** checks that the installed target is mounted and already has a generated `/boot/grub/grub.cfg`. It identifies the parent whole disk from sysfs, rejects partition paths, and requires the user to type the exact disk path before running `grub-install --target=i386-pc`.
 
 Important: the current Live image does not yet bundle `grub-install` and its BIOS modules. The menu therefore reports that the feature is unavailable and makes no disk changes until those tools are included in a future image. This implementation is a guarded integration point, not proof of a working installed bootloader. The disk inventory is informational only; partitioning and formatting remain manual.
+
+
+## Mounting an existing installation partition
+
+The installer menu includes **Mount existing Linux partition**. It accepts an existing block device and an ext2, ext3, or ext4 filesystem, then mounts it at a user-selected absolute mount point (default `/mnt/vantor-target`). It refuses non-`/dev` paths, non-block devices, unsupported filesystem types, symbolic-link mount points, and mount points that are already in use. It does not create partitions, format filesystems, or erase data.
+
+After mounting, choose **Install VANTOR Minimal** and enter that exact mount point. The installer now passes the selected target through to the hostname/locale/timezone and additional-package steps, avoiding accidental writes to a different default path.
