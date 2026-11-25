@@ -13,6 +13,7 @@ SOURCE_DIR="$ROOT/build/work/sources/linux-$VANTOR_KERNEL_VERSION"
 ARCHIVE="$ROOT/build/distfiles/linux-$VANTOR_KERNEL_VERSION.tar.xz"
 BUILD_DIR="$ROOT/build/work/kernel"
 OUTPUT="$BUILD_DIR/arch/x86/boot/bzImage"
+MODULES_DIR="$ROOT/build/work/modules"
 
 echo "[VANTOR] Validating the pinned Linux source..."
 python3 tools/validate-sources.py --require-pinned --only linux
