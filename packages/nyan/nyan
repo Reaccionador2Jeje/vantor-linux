@@ -4,6 +4,7 @@ set -eu
 
 NYAN_ROOT=${NYAN_ROOT:-/}
 NYAN_CONFIG="${NYAN_ROOT%/}/etc/nyan.conf"
+# Load the selected root's architecture before applying the host defaults.
 [ ! -r "$NYAN_CONFIG" ] || . "$NYAN_CONFIG"
 NYAN_REPO=${NYAN_REPO:-https://vantor-linux.cristopheriguaran-7.workers.dev}
 NYAN_ARCH=${NYAN_ARCH:-x86_64}
