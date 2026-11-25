@@ -36,7 +36,7 @@ class NyanIntegrationTests(unittest.TestCase):
         self.root.mkdir()
         catalog = self.root / "usr/share/nyan/catalog.tsv"
         catalog.parent.mkdir(parents=True)
-        catalog.write_text("# package\\tcategory\\tstatus\\tdescription\\nbusybox\\tsystem\\tbundled\\tCore shell and utilities\\nsudo\\tadmin\\tplanned\\tPrivilege elevation\\n")
+        catalog.write_text("# package\tcategory\tstatus\tdescription\nbusybox\tsystem\tbundled\tCore shell and utilities\nsudo\tadmin\tplanned\tPrivilege elevation\n")
         self.env = dict(os.environ)
         self.env.update({
             "NYAN_ROOT": str(self.root),
