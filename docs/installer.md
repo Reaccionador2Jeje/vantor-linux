@@ -37,3 +37,21 @@ sh installer/vantor-install --configure /tmp/vantor-root vantor tester
 ```
 
 This command only creates account and hostname configuration under the supplied target directory. It does not install packages or touch the running host.
+
+
+## Installed-system boot preparation
+
+The installer now supports a target-only boot-file preparation command:
+
+    vantor-install --prepare-boot TARGET KERNEL INITRAMFS ARCH
+
+- TARGET must be a mounted filesystem, not / or a symlink.
+- KERNEL and INITRAMFS must be existing, non-empty files.
+- The root block device and filesystem type are detected from the target mount entry in /proc/mounts; the command does not accept a user-supplied disk path.
+- Supported root filesystems are ext2, ext3 and ext4.
+- Copies the kernel and initramfs into /boot, writes a GRUB menu and creates a root entry in /etc/fstab.
+- Does not partition, format, erase or install GRUB to a disk. GRUB installation remains a separate, explicit step.
+
+The initramfs entry point recognizes root=/dev/... and rootfstype=..., mounts the installed root and uses BusyBox switch_root to hand off to the installed /sbin/init. Without a root device argument, it continues into the Live system as before.
+
+This flow is the boot plumbing; it still requires the Live environment to expose the kernel/initramfs files and a separate GRUB installation step before a target disk can boot independently.
