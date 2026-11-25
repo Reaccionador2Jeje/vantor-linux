@@ -49,7 +49,7 @@ HOME_URL="https://github.com/Reaccionador2Jeje/vantor-linux"
     write(output / "etc/os-release", os_release)
     write(output / "etc/vantor-release", "VANTOR Linux 0.1.0 (Genesis)\n")
     write(output / "etc/hostname", "vantor\n")
-    write(output / "etc/issue", "\n\nVANTOR Linux \r (\l)\nONE SYSTEM. EVERY GENERATION.\n\n")
+    write(output / "etc/issue", "\n\nVANTOR Linux \\r (\\l)\nONE SYSTEM. EVERY GENERATION.\n\n")
     write(output / "etc/motd", """
 Welcome to VANTOR Linux Genesis.
 ONE SYSTEM. EVERY GENERATION.
