@@ -51,6 +51,8 @@ Usage:
   nyan install PACKAGE
   nyan install-profile PROFILE
   nyan profiles
+  nyan installed
+  nyan verify [PACKAGE]
   nyan remove PACKAGE
 Environment: NYAN_ROOT, NYAN_REPO, NYAN_ARCH
 EOF
@@ -191,6 +193,57 @@ case "$cmd" in
     index=$(index_file); [ -s "$index" ] || die "run 'nyan update' first"
     mkdir -p "$NYAN_STATE/installed" "$NYAN_CACHE"
     install_one "$2"
+    ;;
+  installed)
+    [ "$#" -eq 1 ] || die "usage: nyan installed"
+    dir="$NYAN_STATE/installed"
+    printf "%-24s %-12s %s\\n" "PACKAGE" "VERSION" "STATUS"
+    found=0
+    for record in "$dir"/*; do
+      [ -f "$record" ] || continue
+      case "$record" in *.files) continue;; esac
+      name=${record##*/}
+      valid_name "$name" || continue
+      version=$(awk -F '\\t' 'NR==1 {print $2}' "$record")
+      printf "%-24s %-12s installed\\n" "$name" "${version:-unknown}"
+      found=1
+    done
+    [ "$found" -eq 1 ] || say "no packages installed"
+    ;;
+  verify)
+    [ "$#" -le 2 ] || die "usage: nyan verify [PACKAGE]"
+    dir="$NYAN_STATE/installed"
+    [ -d "$dir" ] || die "no installed package database"
+    failed=0
+    if [ "$#" -eq 2 ]; then
+      valid_name "$2" || die "invalid package name: $2"
+      set -- "$2"
+    else
+      set -- 
+      for record in "$dir"/*; do
+        [ -f "$record" ] || continue
+        case "$record" in *.files) continue;; esac
+        set -- "$@" "${record##*/}"
+      done
+    fi
+    for name do
+      record="$dir/$name"
+      files="$dir/$name.files"
+      if [ ! -s "$record" ] || [ ! -s "$files" ]; then
+        printf "nyan: verify: incomplete record for %s\\n" "$name" >&2
+        failed=1
+        continue
+      fi
+      missing=0
+      while IFS= read -r item; do
+        [ -n "$item" ] || continue
+        case "$item" in /*|../*|*/../*|*/..) printf "nyan: verify: unsafe file record: %s\\n" "$item" >&2; missing=1; continue;; esac
+        target="${NYAN_ROOT%/}/$item"
+        [ -e "$target" ] || [ -L "$target" ] || { printf "nyan: verify: missing %s\\n" "$item" >&2; missing=1; }
+      done < "$files"
+      if [ "$missing" -eq 0 ]; then say "verified $name"; else failed=1; fi
+    done
+    [ "$failed" -eq 0 ] || die "verification failed"
     ;;
   remove)
     [ "$#" -eq 2 ] || die "usage: nyan remove PACKAGE"
