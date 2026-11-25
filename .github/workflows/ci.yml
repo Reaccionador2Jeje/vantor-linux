@@ -34,7 +34,7 @@ jobs:
       - name: Validate configuration and shell scripts
         run: make check
 
-      - name: Check required repository paths
+      - name: Compile Python tools\n        run: python3 -m compileall -q tools\n\n      - name: Check required repository paths
         run: |
           test -f README.md
           test -f LICENSE
@@ -45,4 +45,8 @@ jobs:
           test -f tools/validate-sources.py
           test -f tools/fetch-sources.py
           test -f docs/toolchain.md
+          test -f tools/extract-source.py
+          test -f build/scripts/build-binutils.sh
+          test -f build/scripts/build-gcc.sh
+          test -f build/scripts/build-toolchain.sh
           echo "Repository layout is valid."
