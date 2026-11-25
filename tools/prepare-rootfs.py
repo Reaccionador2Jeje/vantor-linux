@@ -568,7 +568,7 @@ set -u
 VERSION="0.1.0"
 usage() {
     echo "VANTOR Control $VERSION"
-    echo "Usage: vantorctl {help|version|info|hardware|network|storage|service|status}"
+    echo "Usage: vantorctl {help|version|info|hardware|network|storage|service|doctor|status}"
 }
 case "${1:-help}" in
     help|-h|--help) usage ;;
@@ -576,6 +576,7 @@ case "${1:-help}" in
     info) [ -r /etc/os-release ] && cat /etc/os-release ;;
     hardware) exec /usr/bin/vantor-hw ;;
     storage) exec /usr/sbin/vantor-storage "${2:-status}" ;;\n    service) exec /usr/sbin/vantor-service "${2:-help}" "${3:-}" ;;
+    doctor) exec /usr/bin/vantor-doctor "$@" ;;
     network)
         echo "== Network interfaces =="
         if [ -d /sys/class/net ]; then
