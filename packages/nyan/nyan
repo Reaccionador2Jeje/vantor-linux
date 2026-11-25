@@ -1,0 +1,103 @@
+#!/bin/sh
+# Nyan — VANTOR package manager (Genesis prototype)
+set -eu
+
+NYAN_ROOT=${NYAN_ROOT:-/}
+NYAN_REPO=${NYAN_REPO:-https://vantor-linux.cristopheriguaran-7.workers.dev}
+NYAN_ARCH=${NYAN_ARCH:-x86_64}
+NYAN_STATE="${NYAN_ROOT%/}/var/lib/nyan"
+NYAN_CACHE="${NYAN_ROOT%/}/var/cache/nyan"
+INDEX_URL="$NYAN_REPO/repo/$NYAN_ARCH/Packages"
+
+die() { echo "nyan: error: $*" >&2; exit 1; }
+say() { printf 'nyan: %s\n' "$*"; }
+fetch() {
+  url=$1 output=$2
+  if command -v curl >/dev/null 2>&1; then curl -fL --retry 2 -o "$output" "$url"
+  elif command -v wget >/dev/null 2>&1; then wget -q -O "$output" "$url"
+  else die "curl or wget is required"
+  fi
+}
+safe_archive() {
+  archive=$1
+  tar -tzf "$archive" >/dev/null 2>&1 || die "invalid package archive"
+  tar -tzf "$archive" | while IFS= read -r item; do
+    case "$item" in /*|../*|*/../*|*/..) die "unsafe archive path: $item";; esac
+  done
+}
+usage() {
+  cat <<'EOF'
+Nyan — VANTOR package manager
+Usage:
+  nyan update
+  nyan list
+  nyan install PACKAGE
+  nyan remove PACKAGE
+Environment:
+  NYAN_ROOT  alternate filesystem root (default /)
+  NYAN_REPO  repository URL
+  NYAN_ARCH  package architecture (default x86_64)
+EOF
+}
+[ "$#" -ge 1 ] || { usage; exit 2; }
+cmd=$1
+case "$cmd" in
+  update)
+    mkdir -p "$NYAN_STATE"
+    tmp="$NYAN_STATE/Packages.tmp"
+    fetch "$INDEX_URL" "$tmp"
+    grep -q '^# VANTOR-PACKAGES 1$' "$tmp" || die "repository index format is unsupported"
+    mv "$tmp" "$NYAN_STATE/Packages"
+    say "repository index updated ($NYAN_ARCH)"
+    ;;
+  list)
+    index="$NYAN_STATE/Packages"
+    [ -s "$index" ] || die "run 'nyan update' first"
+    awk -F '\t' '!/^#/ && NF >= 5 { printf "%-22s %-12s %s\n", $1, $2, $5 }' "$index"
+    ;;
+  install)
+    [ "$#" -eq 2 ] || die "usage: nyan install PACKAGE"
+    name=$2
+    case "$name" in *[!A-Za-z0-9+_.-]*|'') die "invalid package name";; esac
+    index="$NYAN_STATE/Packages"
+    [ -s "$index" ] || die "run 'nyan update' first"
+    row=$(awk -F '\t' -v n="$name" '$1==n {print; exit}' "$index")
+    [ -n "$row" ] || die "package not found: $name"
+    oldifs=$IFS; IFS="$(printf '\t')"; set -- $row; IFS=$oldifs
+    pkg=$1 version=$2 arch=$3 digest=$4 archive=$5
+    [ "$arch" = "$NYAN_ARCH" ] || [ "$arch" = "all" ] || die "package architecture mismatch"
+    case "$digest" in *[!0-9a-f]*|'') die "invalid SHA-256 in repository index";; esac
+    [ "${#digest}" -eq 64 ] || die "invalid SHA-256 length"
+    case "$archive" in *[!A-Za-z0-9._+-]*|*..*) die "invalid archive filename";; esac
+    mkdir -p "$NYAN_CACHE" "$NYAN_STATE/installed"
+    file="$NYAN_CACHE/$archive"
+    fetch "$NYAN_REPO/packages/$NYAN_ARCH/$archive" "$file"
+    actual=$(sha256sum "$file" | awk '{print $1}')
+    [ "$actual" = "$digest" ] || die "SHA-256 verification failed"
+    safe_archive "$file"
+    temp="$NYAN_CACHE/unpack-$name-$$"
+    rm -rf "$temp"; mkdir -p "$temp"
+    tar -xzf "$file" -C "$temp"
+    (cd "$temp" && find . -type f -o -type l) | sed 's#^./##' > "$NYAN_STATE/installed/$name.files"
+    tar -xzf "$file" -C "${NYAN_ROOT%/}/"
+    printf '%s\t%s\t%s\n' "$name" "$version" "$digest" > "$NYAN_STATE/installed/$name"
+    rm -rf "$temp"
+    say "installed $name $version"
+    ;;
+  remove)
+    [ "$#" -eq 2 ] || die "usage: nyan remove PACKAGE"
+    name=$2
+    case "$name" in *[!A-Za-z0-9+_.-]*|'') die "invalid package name";; esac
+    record="$NYAN_STATE/installed/$name"
+    files="$NYAN_STATE/installed/$name.files"
+    [ -s "$record" ] && [ -s "$files" ] || die "package is not recorded as installed"
+    while IFS= read -r item; do
+      case "$item" in /*|../*|*/../*|*/..) die "unsafe installed-file record";; esac
+      rm -f "${NYAN_ROOT%/}/$item"
+    done < "$files"
+    rm -f "$record" "$files"
+    say "removed $name (shared dependencies are not managed yet)"
+    ;;
+  -h|--help|help) usage ;;
+  *) usage; die "unknown command: $cmd" ;;
+esac
