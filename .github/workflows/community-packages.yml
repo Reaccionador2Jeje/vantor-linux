@@ -1,0 +1,48 @@
+name: Community package submissions
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "incoming/**"
+      - "packages/repository/**"
+      - "tools/validate-submissions.py"
+      - ".github/workflows/community-packages.yml"
+  push:
+    branches: [main]
+    paths:
+      - "incoming/**"
+      - "tools/publish-submissions.sh"
+      - ".github/workflows/community-packages.yml"
+permissions:
+  contents: read
+concurrency:
+  group: vantor-community-packages-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Validate all community submissions
+        run: python3 tools/validate-submissions.py
+  publish:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Publish accepted community packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash tools/publish-submissions.sh
