@@ -92,6 +92,15 @@ if command -v mdev >/dev/null 2>&1; then
     echo /bin/mdev > /proc/sys/kernel/hotplug 2>/dev/null || true
     /bin/busybox mdev -s 2>/dev/null || true
 fi
+# Expose the booted VANTOR ISO read-only so the installer can copy its kernel/initramfs.
+mkdir -p /run/vantor-media
+for media_dev in /dev/sr0 /dev/cdrom; do
+    [ -b "$media_dev" ] || continue
+    if mount -t iso9660 -o ro "$media_dev" /run/vantor-media 2>/dev/null; then
+        echo "[VANTOR] Installation media mounted at /run/vantor-media."
+        break
+    fi
+done
 # Start DHCP only on detected non-loopback interfaces.
 if command -v udhcpc >/dev/null 2>&1 && [ -d /sys/class/net ]; then
     for iface_path in /sys/class/net/*; do
