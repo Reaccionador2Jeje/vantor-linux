@@ -101,13 +101,16 @@ ttyS0::respawn:/bin/busybox getty -L -n -l /usr/bin/vantor-live-session 115200 t
     write(output / "usr/bin/vantor-splash", """#!/bin/sh
 # VANTOR Genesis splash: framebuffer renderer first, ANSI console fallback.
 set -u
-if [ -x /usr/bin/vantor-fb-splash ] && [ -c /dev/fb0 ]; then
-    /usr/bin/vantor-fb-splash "$@" && exit 0
-fi
-TTY=/dev/tty0
-[ -w "$TTY" ] || exit 0
 [ -r /proc/cmdline ] || exit 0
 case " $(cat /proc/cmdline) " in *" nosplash "*) exit 0;; esac
+TTY=/dev/tty0
+if [ -x /usr/bin/vantor-fb-splash ] && [ -c /dev/fb0 ]; then
+    if /usr/bin/vantor-fb-splash "$@"; then
+        [ "${1:-}" != finish ] || printf '\\033[?25h\\033[0m' > "$TTY" 2>/dev/null || true
+        exit 0
+    fi
+fi
+[ -w "$TTY" ] || exit 0
 emit() { printf '%b' "$1" > "$TTY"; }
 case "${1:-start}" in
     start)
