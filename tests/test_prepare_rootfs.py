@@ -36,12 +36,19 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertEqual((output / "etc/shadow").stat().st_mode & 0o777, 0o600)
             self.assertEqual((output / "etc/sudoers.d/10-wheel").stat().st_mode & 0o777, 0o440)
             self.assertIn("NYAN_REPO:=", (output / "etc/nyan.conf").read_text())
+            inittab = (output / "etc/inittab").read_text()
+            self.assertIn("/etc/init.d/rcS", inittab)
+            self.assertIn("vantor-live-session", inittab)
+            self.assertIn("ttyS0", inittab)
+            self.assertIn("udhcpc", (output / "etc/init.d/rcS").read_text())
+            self.assertIn("su -s /bin/sh - live", (output / "usr/bin/vantor-live-session").read_text())
+            self.assertEqual((output / "etc/fstab").stat().st_mode & 0o777, 0o644)
             self.assertTrue((output / "usr/share/vantor/branding/vantor-mark.svg").is_file())
             brand = json.loads((output / "etc/vantor-brand.json").read_text())
             self.assertEqual(brand["brand"], "VANTOR Linux")
             self.assertEqual(brand["core"]["init"], "VANTOR Init 0.1.0")
             self.assertEqual(brand["core"]["hardware"], "VANTOR Hardware 0.1.0")
-            for script in ("init", "sbin/vantor-init", "usr/bin/vantorctl", "usr/bin/vantor-hw", "usr/bin/nyan", "usr/bin/vantor-install"):
+            for script in ("init", "sbin/vantor-init", "etc/init.d/rcS", "usr/bin/vantor-live-session", "usr/bin/vantorctl", "usr/bin/vantor-hw", "usr/bin/nyan", "usr/bin/vantor-install"):
                 check = subprocess.run(["sh", "-n", str(output / script)], capture_output=True, text=True, check=False)
                 self.assertEqual(check.returncode, 0, f"{script}: {check.stderr}")
 
