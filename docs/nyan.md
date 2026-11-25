@@ -24,16 +24,16 @@ The tab-separated `Packages` index starts with `# VANTOR-PACKAGES 1`. Each row h
 
 The optional seventh field is a comma-separated list of package names. Nyan installs dependencies first and detects dependency cycles. Published installation profiles are represented by meta-packages named `vantor-profile-PROFILE`; `nyan install-profile development` installs the profile package and its dependencies. Existing six-field rows remain valid. Dependency installation is not yet transactional: if a later package fails, already installed dependencies remain installed.
 
-## Installation profiles
+Nyan exposes five profile names:
 
-Nyan exposes four planned profiles:
+- `minimal` — the primary VANTOR edition. Its meta-package depends on `vantor-base-files`, which contains the VANTOR bootstrap userspace and static BusyBox.
+- `base` — reserved for a future split of the Minimal base into smaller independently maintained packages.
+- `desktop` — graphics stack, display server, window manager and desktop applications; not yet published.
+- `development` — Lua 5.4.9 starter language environment.
+- `network` — DHCP, DNS, TLS and network diagnostic tools; not yet published.
 
-- `base` — essential system files, shell, init and core utilities.
-- `desktop` — graphics stack, display server, window manager and desktop applications.
-- `development` — compilers, build tools, interpreters and headers.
-- `network` — DHCP, DNS, TLS and network diagnostic tools.
+The Minimal package workflow is `.github/workflows/build-nyan-minimal.yml`. It builds the base payload from the rootfs generator and BusyBox, then publishes the base package and Minimal meta-package. It does not make sudo, nano, full Vim or Fastfetch available yet; those remain separate package targets.
 
-The development profile is the first installable profile. Its meta-package depends on Lua 5.4.9 and installs a profile manifest. It is a starter programming environment, not a complete compiler toolchain. Base, desktop and network remain unavailable until their real package sets are built, published and tested.
 
 ## VANTOR Community Mirror
 
