@@ -50,7 +50,7 @@ jobs:
             publish "build/nyan-extras/vantor-docs-0.1.0-$arch.tar.gz" vantor-docs "$arch" "VANTOR system and Nyan documentation"
           done
           for tool in vantor-about vantor-doctor vantor-netdiag vantor-logview vantor-config-backup vantor-mountinfo; do
-            publish "build/nyan-extras/$tool-0.1.0-all.tar.gz" "$tool" all "0.1.0" "VANTOR utility: $tool"
+            publish "build/nyan-extras/$tool-0.1.0-all.tar.gz" "$tool" all "VANTOR utility: $tool"
           done
       - name: Upload package archives
         uses: actions/upload-artifact@v4
