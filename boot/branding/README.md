@@ -1,12 +1,24 @@
-# Boot identity integration
+# VANTOR boot identity
 
-VANTOR's boot visuals must use the shared identity in `assets/branding`.
+The x86_64 Live ISO uses the native GRUB theme at
+`boot/grub/themes/vantor/theme.txt`, staged at
+`/boot/grub/themes/vantor/theme.txt`. It is loaded locally by GRUB and uses
+GRUB's bundled Unicode font; it has no network or remote-font dependency.
 
-Planned integration points:
-- GRUB theme: dark navy background, titanium V mark, cyan selection/highlight.
-- Kernel/early userspace splash: compact V mark and a restrained cyan progress indicator.
-- Installer: same palette and typography, with high-contrast text fallback.
+Visual language:
+- Deep Space background: `#071321`
+- Cyan title and selected entry: `#00CFFF`
+- Titanium menu text: `#B9CCE3`
+- Muted Steel supporting text: `#9BB0C8`
+- Slogan: **ONE SYSTEM. EVERY GENERATION.**
 
-Do not add a runtime dependency on remote assets or fonts. Copy required assets into the generated boot image during the image-building stage. Keep a text-only fallback for firmware and emulators with limited graphics support.
+The i486 Legacy menu deliberately remains in BIOS text mode for compatibility
+with older graphics adapters and emulators. It shares the VANTOR palette,
+product naming and slogan.
 
-This directory documents the integration contract; the bootloader and splash are not yet configured because the boot image stage has not been implemented.
+The installed x86_64 boot configuration also receives the theme when the
+installer can read it from the Live media. Legacy installations retain the
+text-mode fallback.
+
+The kernel/early-userspace splash is a separate surface and is not implemented
+by this GRUB theme.
