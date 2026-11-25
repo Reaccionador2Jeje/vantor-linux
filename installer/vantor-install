@@ -228,7 +228,8 @@ while :; do
             configure_target "$target" "$hostname" "$username"
             message "System account configuration completed."
             ;;
-        boot) prepare_boot_interactive ;;\n        about) about ;;
+        boot) prepare_boot_interactive ;;
+        about) about ;;
         exit) clear 2>/dev/null || true; exit 0 ;;
         *) exit 0 ;;
     esac
