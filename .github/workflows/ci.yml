@@ -1,19 +1,15 @@
 name: VANTOR CI
-
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
-
 permissions:
   contents: read
-
 concurrency:
-  group: vantor-ci-${{ github.ref }}
+  group: vantor-ci-\${{ github.ref }}
   cancel-in-progress: true
-
 jobs:
   validate:
     name: Validate repository
@@ -22,21 +18,20 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.x"
-
       - name: Show project configuration
         run: make info
-
-      - name: Validate configuration, shell scripts and source manifest
+      - name: Validate configuration, shell scripts, sources and tests
         run: make check
-
-      - name: Validate visual identity metadata
-        run: python -m json.tool assets/branding/theme.json > /dev/null
-
+      - name: Assemble and inspect VANTOR rootfs skeleton
+        run: |
+          make rootfs
+          test -s build/work/rootfs/etc/os-release
+          test -x build/work/rootfs/init
+          test -s build/work/rootfs/usr/share/vantor/branding/vantor-mark.svg
       - name: Check required repository paths
         run: |
           test -f README.md
@@ -47,6 +42,7 @@ jobs:
           test -f docs/toolchain.md
           test -f docs/testing-limbo.md
           test -f docs/branding.md
+          test -f docs/rootfs-genesis.md
           test -f assets/branding/README.md
           test -f assets/branding/vantor-mark.svg
           test -f assets/branding/vantor-lockup.svg
@@ -57,9 +53,11 @@ jobs:
           test -f tools/validate-sources.py
           test -f tools/fetch-sources.py
           test -f tools/extract-source.py
+          test -f tools/prepare-rootfs.py
           test -f build/scripts/build-binutils.sh
           test -f build/scripts/build-gcc.sh
           test -f build/scripts/build-toolchain.sh
           test -f .github/workflows/toolchain.yml
           test -f tests/test_source_tools.py
-          echo "Repository layout and branding assets are valid."
+          test -f tests/test_prepare_rootfs.py
+          echo "Repository layout, rootfs builder and branding assets are valid."
