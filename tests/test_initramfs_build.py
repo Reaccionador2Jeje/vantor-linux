@@ -19,6 +19,12 @@ class InitramfsBuildTests(unittest.TestCase):
         self.assertIn("CONFIG_TC is not set", script)
         self.assertIn("CONFIG_PREFIX=", script)
 
+    def test_busybox_switch_root_is_enabled_for_both_architectures(self):
+        for name in ("build-busybox.sh", "build-busybox-legacy.sh"):
+            script = (ROOT / "build/scripts" / name).read_text()
+            self.assertIn("CONFIG_SWITCH_ROOT y", script)
+            self.assertIn("switch_root", script)
+
     def test_iso_and_initramfs_output_contract_match(self):
         initramfs = (ROOT / "build/scripts/build-initramfs.sh").read_text()
         iso = (ROOT / "build/scripts/build-iso.sh").read_text()
