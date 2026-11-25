@@ -214,5 +214,19 @@ class NyanIntegrationTests(unittest.TestCase):
         self.assertEqual(installed.returncode, 0, installed.stderr)
         self.assertEqual((self.root / "usr/share/arch-test").read_text(), "i486 package\n")
 
+    def test_browse_and_batch_install_multiple_packages(self) -> None:
+        self.add_package("first", "usr/bin/first", b"first")
+        self.add_package("second", "usr/bin/second", b"second")
+        self.assertEqual(self.run_nyan("update").returncode, 0)
+        catalog = self.run_nyan("browse")
+        self.assertEqual(catalog.returncode, 0, catalog.stderr)
+        self.assertIn("first", catalog.stdout)
+        self.assertIn("second", catalog.stdout)
+        installed = self.run_nyan("install", "first", "second")
+        self.assertEqual(installed.returncode, 0, installed.stderr)
+        self.assertEqual((self.root / "usr/bin/first").read_bytes(), b"first")
+        self.assertEqual((self.root / "usr/bin/second").read_bytes(), b"second")
+        self.assertNotIn("\\033[", installed.stdout)
+
 if __name__ == "__main__":
     unittest.main()
