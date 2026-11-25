@@ -26,6 +26,8 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertTrue((output / "usr/bin/vantor-hw").stat().st_mode & 0o111)
             self.assertTrue((output / "usr/bin/nyan").stat().st_mode & 0o111)
             self.assertTrue((output / "usr/bin/vantor-install").stat().st_mode & 0o111)
+            self.assertTrue((output / "usr/share/nyan/catalog.tsv").is_file())
+            self.assertIn("fastfetch", (output / "usr/share/nyan/catalog.tsv").read_text())
             self.assertIn("root:x:0:0:", (output / "etc/passwd").read_text())
             self.assertIn("live:x:1000:1000:", (output / "etc/passwd").read_text())
             self.assertIn("wheel:x:10:live", (output / "etc/group").read_text())
