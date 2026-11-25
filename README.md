@@ -56,11 +56,11 @@ make check
 
 ## Toolchain development
 
-The first x86_64 cross-toolchain plan is documented in [docs/toolchain.md](docs/toolchain.md). Initial build scripts now exist for Binutils pass 1 and GCC pass 1, with a manual [GitHub Actions toolchain workflow](.github/workflows/toolchain.yml). Upstream candidates are recorded in `build/sources/sources.json`; they are not build-approved until their SHA-256 digests are verified. `make check` runs repository checks and source-extraction tests. `make sources-ready` deliberately fails until every source is pinned. `make fetch-sources` downloads only pinned archives and verifies each digest before saving it.
+The first x86_64 cross-toolchain plan is documented in [docs/toolchain.md](docs/toolchain.md), and Android VM testing is documented in [docs/testing-limbo.md](docs/testing-limbo.md). Limbo PC Emulator is the selected manual test target. Initial build scripts now exist for Binutils pass 1 and GCC pass 1, with a manual [GitHub Actions toolchain workflow](.github/workflows/toolchain.yml). Upstream candidates are recorded in `build/sources/sources.json`; they are not build-approved until their SHA-256 digests are verified. `make check` runs repository checks and source-extraction tests. `make sources-ready` deliberately fails until every source is pinned. `make fetch-sources` downloads only pinned archives and verifies each digest before saving it.
 
 ## Build status
 
-The current CI validates repository structure, configuration, source metadata, and safe extraction tests. The first-stage build scripts are implemented, but the toolchain workflow cannot yet run because the upstream source SHA-256 digests have not been pinned. The downloader correctly refuses unverified inputs. No compiler, kernel, or bootable image is claimed as built yet.
+The current CI validates repository structure, configuration, source metadata, and safe extraction tests. The first-stage build scripts are implemented. Binutils and GCC bootstrap archives now have upstream-published SHA-256/SHA-512 pins; glibc, Linux, and BusyBox remain unpinned and are excluded from the bootstrap build. No compiler, kernel, or bootable image is claimed as built yet.
 
 ## Licensing
 
