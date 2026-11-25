@@ -9,7 +9,7 @@ source "$ROOT/build/config/vantor.conf"
 
 TOOLS_PREFIX="$ROOT/build/tools"
 SYSROOT="$ROOT/build/sysroot"
-SOURCE="$ROOT/build/work/sources/binutils"
+SOURCE="$ROOT/build/work/sources/binutils-2.47"
 BUILD="$ROOT/build/work/build-binutils"
 
 [[ -f "$SOURCE/configure" ]] || { echo "[ERROR] Binutils source not extracted: $SOURCE" >&2; exit 1; }
