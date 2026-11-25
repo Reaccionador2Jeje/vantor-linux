@@ -34,7 +34,8 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("make kernel", workflow)
         self.assertIn("build/work/kernel/vantor-kernel", workflow)
         self.assertIn("actions/upload-artifact@v4", workflow)
-        self.assertIn("CONFIG_LOCALVERSION", workflow)
+        self.assertIn("CONFIG_FRAMEBUFFER_CONSOLE=y", workflow)
+        self.assertIn("make check", workflow)
 
     def test_framebuffer_splash_renderer_is_valid_c(self) -> None:
         source = ROOT / "core/boot/vantor-fb-splash.c"
