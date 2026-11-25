@@ -1,0 +1,77 @@
+name: Build VANTOR Minimal package
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "tools/prepare-rootfs.py"
+      - "installer/**"
+      - "build/scripts/build-busybox.sh"
+      - "build/sources/sources.json"
+      - "packages/profiles/minimal/**"
+      - ".github/workflows/build-nyan-minimal.yml"
+      - "tools/publish-package.sh"
+permissions:
+  contents: write
+concurrency:
+  group: vantor-nyan-publish
+  cancel-in-progress: false
+jobs:
+  build-minimal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out VANTOR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential bzip2 cpio gzip
+      - name: Build minimal userspace
+        run: |
+          make rootfs
+          make busybox
+      - name: Prepare package without archive symlinks
+        run: |
+          set -euo pipefail
+          root="$PWD/build/work/rootfs"
+          test -x "$root/bin/busybox"
+          find "$root" -type l -delete
+          # The kernel needs /bin/sh to execute /init before applet links exist.
+          cp "$root/bin/busybox" "$root/bin/sh"
+          # BusyBox init is the first complete PID 1 for the installed minimal system.
+          cp "$root/bin/busybox" "$root/sbin/init"
+          tar -czf build/vantor-base-files-0.1.0-x86_64.tar.gz -C "$root" .
+          tar -tzf build/vantor-base-files-0.1.0-x86_64.tar.gz
+      - name: Assemble Minimal profile metapackage
+        run: |
+          set -euo pipefail
+          root="$PWD/build/package-vantor-profile-minimal"
+          mkdir -p "$root/usr/share/vantor/profiles"
+          cp packages/profiles/minimal/PROFILE.txt "$root/usr/share/vantor/profiles/minimal.txt"
+          tar -czf build/vantor-profile-minimal-0.1.0-x86_64.tar.gz -C "$root" .
+      - name: Publish base system package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bash tools/publish-package.sh \
+            build/vantor-base-files-0.1.0-x86_64.tar.gz \
+            vantor-base-files 0.1.0 x86_64 \
+            "VANTOR Minimal base files, BusyBox, init and system accounts"
+      - name: Publish Minimal profile
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bash tools/publish-package.sh \
+            build/vantor-profile-minimal-0.1.0-x86_64.tar.gz \
+            vantor-profile-minimal 0.1.0 x86_64 \
+            "VANTOR primary Minimal installation profile" \
+            vantor-base-files
+      - name: Upload package build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vantor-minimal-packages-${{ github.sha }}
+          path: build/*.tar.gz
+          if-no-files-found: error
+          retention-days: 14
