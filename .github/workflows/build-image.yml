@@ -34,12 +34,22 @@ jobs:
       - name: Check out VANTOR
         uses: actions/checkout@v4
 
+      - name: Restore verified source and compiler caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/distfiles
+            ${{ runner.temp }}/vantor-ccache
+          key: vantor-${{ 'image' }}-cache-${{ runner.os }}-${{ hashFiles('build/sources/sources.json', 'build/scripts/build-kernel.sh', 'kernel/configs/vantor-x86_64.config') }}
+          restore-keys: |
+            vantor-${{ 'image' }}-cache-${{ runner.os }}-
+
       - name: Install image build dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             build-essential bc bison flex libssl-dev libelf-dev libncurses-dev \
-            dwarves kmod python3 xz-utils bzip2 cpio gzip \
+            dwarves kmod ccache python3 xz-utils bzip2 cpio gzip \
             grub-pc-bin grub-efi-amd64-bin grub-common xorriso mtools
 
       - name: Validate repository and pinned sources
@@ -48,7 +58,15 @@ jobs:
           python3 tools/validate-sources.py --require-pinned --only linux busybox
 
       - name: Build kernel, rootfs, BusyBox, initramfs and ISO
-        run: make image
+        env:
+          CCACHE_DIR: ${{ runner.temp }}/vantor-ccache
+          CCACHE_COMPRESS: "true"
+          CCACHE_MAXSIZE: 3G
+          VANTOR_BUILD_JOBS: 4
+        run: |
+          ccache --zero-stats
+          make image
+          ccache --show-stats
 
       - name: Inspect ISO and boot payload
         run: |
