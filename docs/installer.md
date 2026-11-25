@@ -84,3 +84,8 @@ Important: the current Live image does not yet bundle `grub-install` and its BIO
 The installer menu includes **Mount existing Linux partition**. It accepts an existing block device and an ext2, ext3, or ext4 filesystem, then mounts it at a user-selected absolute mount point (default `/mnt/vantor-target`). It refuses non-`/dev` paths, non-block devices, unsupported filesystem types, symbolic-link mount points, and mount points that are already in use. It does not create partitions, format filesystems, or erase data.
 
 After mounting, choose **Install VANTOR Minimal** and enter that exact mount point. The installer now passes the selected target through to the hostname/locale/timezone and additional-package steps, avoiding accidental writes to a different default path.
+
+
+## Nyan package catalog and batch installation
+
+Installer 0.4.0 refreshes the selected architecture's Nyan index and displays every package published for that architecture. Enter one or more package names separated by spaces to install them in one Nyan invocation; enter `search:TERM` to search the catalog and then choose package names from the results. The installer uses the target root, repository mirror and architecture selected for that installation. Nyan validates each package name and resolves dependencies. During interactive terminal installs, Nyan displays a small animated Nyan Cat-style progress indicator for resolving, downloading, verifying and unpacking each package. Non-interactive output remains clean and machine-readable. The catalog only contains packages actually published for the selected architecture; it does not imply that every planned package exists yet.
