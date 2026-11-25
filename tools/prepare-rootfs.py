@@ -131,8 +131,43 @@ fi
 """)
 
     write(output / "init", """#!/bin/sh
-# First-stage entry point for VANTOR early userspace.
+# VANTOR initramfs entry point: Live boot or switch to installed root.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+mount -t proc proc /proc 2>/dev/null || true
+mount -t sysfs sysfs /sys 2>/dev/null || true
+mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
+/bin/busybox mdev -s 2>/dev/null || true
+
+rootdev=""
+rootfstype=""
+for arg in $(cat /proc/cmdline 2>/dev/null); do
+    case "$arg" in
+        root=/dev/*) rootdev="${arg#root=}";;
+        rootfstype=*) rootfstype="${arg#rootfstype=}";;
+    esac
+done
+
+if [ -n "$rootdev" ]; then
+    mkdir -p /newroot
+    mounted=0
+    if [ -n "$rootfstype" ]; then
+        mount -t "$rootfstype" -o rw "$rootdev" /newroot && mounted=1
+    else
+        for fs in ext4 ext3 ext2; do
+            mount -t "$fs" -o rw "$rootdev" /newroot && { rootfstype="$fs"; mounted=1; break; }
+        done
+    fi
+    if [ "$mounted" -eq 1 ] && [ -x /newroot/sbin/init ]; then
+        mkdir -p /newroot/dev /newroot/proc /newroot/sys /newroot/run
+        mount -o move /dev /newroot/dev 2>/dev/null || true
+        mount -o move /proc /newroot/proc 2>/dev/null || true
+        mount -o move /sys /newroot/sys 2>/dev/null || true
+        exec /bin/busybox switch_root /newroot /sbin/init
+    fi
+    echo "[VANTOR] Could not mount installed root $rootdev ($rootfstype)."
+    exec /bin/sh
+fi
+
 if [ -x /sbin/vantor-init ]; then
     exec /sbin/vantor-init "$@"
 fi
