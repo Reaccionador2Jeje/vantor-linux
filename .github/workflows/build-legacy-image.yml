@@ -10,6 +10,8 @@ on:
       - "build/scripts/build-iso-legacy.sh"
       - "build/config/vantor.conf"
       - "build/sources/sources.json"
+      - "tools/extract-source.py"
+      - "tests/test_source_tools.py"
       - "tools/prepare-rootfs.py"
       - "boot/grub/grub-legacy.cfg"
       - "Makefile"
