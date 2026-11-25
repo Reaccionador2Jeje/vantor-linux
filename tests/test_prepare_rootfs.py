@@ -58,6 +58,9 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertIn("/bin/busybox getty", inittab)
             rc_s = (output / "etc/init.d/rcS").read_text()
             self.assertIn("udhcpc", rc_s)
+            self.assertIn("/usr/sbin/vantor-modules", rc_s)
+            self.assertTrue((output / "usr/sbin/vantor-modules").stat().st_mode & 0o111)
+            self.assertIn("virtio_net", (output / "etc/modules").read_text())
             self.assertIn("/usr/bin/vantor-splash start", rc_s)
             self.assertIn('/usr/bin/vantor-splash step "Starting network services"', rc_s)
             self.assertIn("/usr/bin/vantor-splash finish", rc_s)
@@ -70,7 +73,7 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertEqual(brand["brand"], "VANTOR Linux")
             self.assertEqual(brand["core"]["init"], "VANTOR Init 0.1.0")
             self.assertEqual(brand["core"]["hardware"], "VANTOR Hardware 0.1.0")
-            for script in ("init", "sbin/vantor-init", "etc/init.d/rcS", "usr/bin/vantor-splash", "usr/bin/vantor-live-session", "usr/bin/vantorctl", "usr/bin/vantor-hw", "usr/bin/nyan", "usr/bin/vantor-install"):
+            for script in ("init", "sbin/vantor-init", "usr/sbin/vantor-modules", "etc/init.d/rcS", "usr/bin/vantor-splash", "usr/bin/vantor-live-session", "usr/bin/vantorctl", "usr/bin/vantor-hw", "usr/bin/nyan", "usr/bin/vantor-install"):
                 check = subprocess.run(["sh", "-n", str(output / script)], capture_output=True, text=True, check=False)
                 self.assertEqual(check.returncode, 0, f"{script}: {check.stderr}")
 
