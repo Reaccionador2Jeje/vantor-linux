@@ -194,9 +194,20 @@ EOF
 
 prepare_boot_interactive() {
     target=$(ask "Boot files" "Mounted installed system directory:" "/mnt") || return 0
-    kernel=$(ask "Kernel" "Path to the VANTOR kernel file:" "/boot/vantor-kernel") || return 0
-    initramfs=$(ask "Initramfs" "Path to the VANTOR initramfs archive:" "/boot/vantor-initramfs.cpio.gz") || return 0
     arch=$(ask "Architecture" "Installed system architecture (x86_64 or i486):" "${NYAN_ARCH:-x86_64}") || return 0
+    case "$arch" in
+        i486)
+            kernel_default="/run/vantor-media/boot/vantor-legacy-kernel"
+            initramfs_default="/run/vantor-media/boot/vantor-legacy-initramfs.cpio.gz"
+            ;;
+        x86_64)
+            kernel_default="/run/vantor-media/boot/vantor-kernel"
+            initramfs_default="/run/vantor-media/boot/vantor-initramfs.cpio.gz"
+            ;;
+        *) die "unsupported architecture: $arch";;
+    esac
+    kernel=$(ask "Kernel" "Path to the VANTOR kernel file:" "$kernel_default") || return 0
+    initramfs=$(ask "Initramfs" "Path to the VANTOR initramfs archive:" "$initramfs_default") || return 0
     prepare_boot_files "$target" "$kernel" "$initramfs" "$arch"
     message "Boot files, GRUB menu and fstab prepared. GRUB still needs to be installed to the selected disk using a dedicated bootloader step."
 }
