@@ -1,0 +1,24 @@
+#!/bin/sh
+set -eu
+[ "$#" -gt 0 ] || { echo "Usage: filetype FILE ..." >&2; exit 2; }
+for file do
+  if [ ! -e "$file" ]; then printf '%s: cannot open\n' "$file"; continue; fi
+  if [ -d "$file" ]; then kind=directory
+  elif [ -L "$file" ]; then kind=symbolic-link
+  elif [ ! -s "$file" ]; then kind=empty
+  else
+    magic=$(od -An -tx1 -N8 "$file" 2>/dev/null | tr -d ' \n')
+    case "$magic" in
+      7f454c46*) kind=ELF-executable;;
+      1f8b*) kind=gzip-data;;
+      425a68*) kind=bzip2-data;;
+      504b0304*) kind=ZIP-archive;;
+      25504446*) kind=PDF-document;;
+      89504e47*) kind=PNG-image;;
+      ffd8ff*) kind=JPEG-image;;
+      2321*) kind=shell-or-script-text;;
+      *) if grep -Iq . "$file"; then kind=text; else kind=unknown-binary; fi;;
+    esac
+  fi
+  printf '%s: %s\n' "$file" "$kind"
+done
