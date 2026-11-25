@@ -116,6 +116,14 @@ class PrepareRootfsTests(unittest.TestCase):
             brand = json.loads((output / "etc/vantor-brand.json").read_text())
             self.assertEqual(brand["architecture"], "i486")
 
+    def test_termux_launcher_has_valid_shell_syntax(self) -> None:
+        launcher = ROOT / "tools" / "termux" / "vantor"
+        result = subprocess.run(["sh", "-n", str(launcher)], capture_output=True, text=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        content = launcher.read_text()
+        self.assertIn("proot -0 -r", content)
+        self.assertIn("/usr/bin/vantor-termux-shell", content)
+
     def test_aarch64_rootfs_metadata_is_termux_ready(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary) / "rootfs-aarch64"
