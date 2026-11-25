@@ -59,6 +59,7 @@ jobs:
           test -f tools/extract-source.py
           test -f tools/prepare-rootfs.py
           test -f core/hardware/vantor-hw
+          test -f core/boot/vantor-fb-splash.c
           test -f docs/vantor-core.md
           test -f build/scripts/build-binutils.sh
           test -f build/scripts/build-gcc.sh
