@@ -1,5 +1,5 @@
 # VANTOR-PACKAGES 1
 lua	5.4.9	x86_64	7ec8d0e95e2048710852b1ee79a767bf8e13f940d824f188876f1b91c7cf039c	lua-5.4.9-x86_64.tar.gz	Language: Lua 5.4.9 interpreter, compiler and static development library
 vantor-profile-development	0.1.0	x86_64	64ca831943980061d35d2b0bb02e677bc34980808d2d7377cf42e0138ccc5fbe	vantor-profile-development-0.1.0-x86_64.tar.gz	Profile: VANTOR development tools and programming languages	lua
-vantor-profile-minimal	0.1.0	x86_64	98d5f4e11a69cd5dc1b2d941af66746b92e27a7e9a25ff79e98f5060905f8b99	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
 vantor-base-files	0.1.0	x86_64	88813a99a7b87db639de36a563a8ff048807fb5ed7c9f9f6571830506b4e79a6	vantor-base-files-0.1.0-x86_64.tar.gz	VANTOR Minimal base files, BusyBox, init and system accounts	
+vantor-profile-minimal	0.1.0	x86_64	d749df8759517126fc7df374c93d8cc43702ecac5281f91c755f134f45417a7d	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
