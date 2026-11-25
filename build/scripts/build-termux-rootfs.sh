@@ -38,7 +38,6 @@ set_config CONFIG_STATIC y
 set_config CONFIG_VI y
 set_config CONFIG_ASH y
 set_config CONFIG_SH_IS_ASH y
-set_config CONFIG_SH_IS_ASH y
 set_config CONFIG_FEATURE_PREFER_APPLETS y
 set_config CONFIG_MDEV y
 set_config CONFIG_UDHCPC y
