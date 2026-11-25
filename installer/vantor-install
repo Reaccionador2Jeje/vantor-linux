@@ -50,7 +50,7 @@ menu() {
         printf ' VANTOR LINUX — MINIMAL INSTALLER %s\n' "$VERSION" >/dev/tty
         printf ' ONE SYSTEM. EVERY GENERATION.\n' >/dev/tty
         printf '==============================================\n' >/dev/tty
-        printf '1) Install VANTOR Minimal\n2) Configure installed system\n3) Prepare installed boot files\n4) About\n5) Exit\nSelect: ' >/dev/tty
+        printf '1) Install VANTOR Minimal\n2) Configure installed system\n3) Prepare installed boot files\n4) Configure network\n5) Nyan mirror\n6) Additional packages\n7) System preferences\n8) About\n9) Exit\nSelect: ' >/dev/tty
         IFS= read -r choice </dev/tty || return 1
         case "$choice" in 1) printf install;; 2) printf configure;; 3) printf boot;; 4) printf network;; 5) printf mirror;; 6) printf packages;; 7) printf prefs;; 8) printf about;; *) printf exit;; esac
     fi
@@ -186,6 +186,7 @@ install_minimal() {
     message "The installer will install the published Minimal profile into $target. It will not partition or format disks."
     repo=$(ask "Nyan mirror" "HTTPS repository base URL:" "https://vantor-linux.cristopheriguaran-7.workers.dev") || return 0
     case "$repo" in https://*) ;; *) die "mirror must use HTTPS";; esac
+    mkdir -p "$target/etc"
     printf '# Nyan repository\nNYAN_REPO=%s\nNYAN_ARCH=%s\n' "$repo" "${NYAN_ARCH:-x86_64}" > "$target/etc/nyan.conf"
     NYAN_ROOT="$target" NYAN_REPO="$repo" "$NYAN_BIN" update
     NYAN_ROOT="$target" "$NYAN_BIN" install-profile minimal
