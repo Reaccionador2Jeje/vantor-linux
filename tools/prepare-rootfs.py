@@ -336,6 +336,8 @@ if command -v mdev >/dev/null 2>&1; then
     /bin/busybox mdev -s 2>/dev/null || true
 fi
 /usr/sbin/vantor-modules
+# Mount configured filesystems only; never partition or format storage.
+ /usr/sbin/vantor-storage mount-all >/dev/console 2>&1 || echo "[VANTOR] Some fstab entries could not be mounted."
 # Expose the booted VANTOR ISO read-only so the installer can copy its kernel/initramfs.
 mkdir -p /run/vantor-media
 for media_dev in /dev/sr0 /dev/cdrom; do
@@ -416,7 +418,10 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 mount -t proc proc /proc 2>/dev/null || true
 mount -t sysfs sysfs /sys 2>/dev/null || true
 mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
+mount -t tmpfs -o mode=0755,nosuid tmpfs /run 2>/dev/null || true
 /bin/busybox mdev -s 2>/dev/null || true
+# Load storage and filesystem drivers before looking for an installed root.
+[ ! -x /usr/sbin/vantor-modules ] || /usr/sbin/vantor-modules
 
 rootdev=""
 rootfstype=""
@@ -428,6 +433,13 @@ for arg in $(cat /proc/cmdline 2>/dev/null); do
 done
 
 if [ -n "$rootdev" ]; then
+    # rootwait is bounded so a missing disk cannot hang the machine forever.
+    waited=0
+    while [ ! -b "$rootdev" ] && [ "$waited" -lt 20 ]; do
+        sleep 1
+        waited=$((waited + 1))
+        /bin/busybox mdev -s 2>/dev/null || true
+    done
     mkdir -p /newroot
     mounted=0
     if [ -n "$rootfstype" ]; then
@@ -437,7 +449,7 @@ if [ -n "$rootdev" ]; then
             mount -t "$fs" -o rw "$rootdev" /newroot && { rootfstype="$fs"; mounted=1; break; }
         done
     fi
-    if [ "$mounted" -eq 1 ] && [ -x /newroot/sbin/init ]; then
+    if [ "$mounted" -eq 1 ] && [ -x /newroot/sbin/vantor-init ]; then
         mkdir -p /newroot/dev /newroot/proc /newroot/sys /newroot/run
         mount -o move /dev /newroot/dev 2>/dev/null || true
         mount -o move /proc /newroot/proc 2>/dev/null || true
@@ -496,20 +508,66 @@ log "No system init is installed; entering emergency shell."
 exec /bin/sh
 """, 0o755)
 
+    # The init symlink is explicit: both Live and installed boots enter BusyBox init.
+    init_link = output / "sbin/init"
+    if init_link.exists() or init_link.is_symlink():
+        init_link.unlink()
+    init_link.symlink_to("/bin/busybox")
+
+    write(output / "usr/sbin/vantor-storage", """#!/bin/sh
+# VANTOR Storage: non-destructive block/filesystem inspection and fstab mounting.
+set -u
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+action=${1:-status}
+case "$action" in
+    scan|status)
+        echo "VANTOR STORAGE INVENTORY"
+        if [ -d /sys/class/block ]; then
+            for device in /sys/class/block/*; do
+                [ -e "$device" ] || continue
+                name=${device##*/}
+                sectors=unknown
+                [ -r "$device/size" ] && IFS= read -r sectors < "$device/size"
+                model=unknown
+                [ -r "$device/device/model" ] && IFS= read -r model < "$device/device/model"
+                printf '%s sectors=%s model=%s\\n' "$name" "$sectors" "$model"
+            done
+        else
+            echo "Block device inventory unavailable (sysfs not mounted)."
+        fi
+        echo
+        echo "Mounted filesystems:"
+        cat /proc/mounts 2>/dev/null || true
+        ;;
+    filesystems)
+        echo "Kernel filesystem support:"
+        cat /proc/filesystems 2>/dev/null || echo "procfs unavailable"
+        ;;
+    mount-all)
+        echo "Mounting configured filesystems from /etc/fstab (no formatting or partition changes)."
+        mount -a
+        ;;
+    *)
+        echo "Usage: vantor-storage {scan|status|filesystems|mount-all}" >&2
+        exit 2
+        ;;
+esac
+""", 0o755)
+
     write(output / "usr/bin/vantorctl", """#!/bin/sh
 # VANTOR Control 0.1.0 - read-only system diagnostics.
 set -u
 VERSION="0.1.0"
 usage() {
     echo "VANTOR Control $VERSION"
-    echo "Usage: vantorctl {help|version|info|hardware|network|service|status}"
+    echo "Usage: vantorctl {help|version|info|hardware|network|storage|service|status}"
 }
 case "${1:-help}" in
     help|-h|--help) usage ;;
     version|--version) echo "VANTOR Control $VERSION" ;;
     info) [ -r /etc/os-release ] && cat /etc/os-release ;;
     hardware) exec /usr/bin/vantor-hw ;;
-    service) exec /usr/sbin/vantor-service "${2:-help}" "${3:-}" ;;
+    storage) exec /usr/sbin/vantor-storage "${2:-status}" ;;\n    service) exec /usr/sbin/vantor-service "${2:-help}" "${3:-}" ;;
     network)
         echo "== Network interfaces =="
         if [ -d /sys/class/net ]; then
