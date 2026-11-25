@@ -15,6 +15,19 @@ INDEX_URL="$NYAN_REPO/repo/$NYAN_ARCH/Packages"
 INSTALL_STACK=""
 
 die() { echo "nyan: error: $*" >&2; exit 1; }
+nyan_cat() {
+  label=$1 phase=$2
+  [ -t 1 ] || return 0
+  case "$phase" in
+    0) catface='[=^.^=]'; trail='';;
+    1) catface='[=^o^=]'; trail='~~~~';;
+    2) catface='[=^.^=]'; trail='~~~~~~~';;
+    3) catface='[=^w^=]'; trail='~~~~~~~~~~';;
+    *) catface='[=^.^=]'; trail='~~~~~~~~~~~~';;
+  esac
+  printf '\r\033[1;36m%s\033[0m \033[1;35m%s\033[0m  %s\033[K' "$trail" "$catface" "$label"
+  [ "$phase" -eq 4 ] && printf '\n'
+}
 say() { printf 'nyan: %s\n' "$*"; }
 valid_name() { case "$1" in ''|*[!A-Za-z0-9+_.-]*) return 1;; esac; }
 fetch() {
@@ -49,7 +62,8 @@ Usage:
   nyan search TERM
   nyan show PACKAGE
   nyan languages
-  nyan install PACKAGE
+  nyan install PACKAGE [PACKAGE ...]
+  nyan browse
   nyan install-profile PROFILE
   nyan profiles
   nyan installed
@@ -66,6 +80,7 @@ install_one() {
   local name record row oldifs pkg version arch digest archive description dependencies dependency file actual temp owned_file item target
   name=$1
   valid_name "$name" || die "invalid package name: $name"
+  nyan_cat "Resolving $name" 0
   record="$NYAN_STATE/installed/$name"
   [ ! -s "$record" ] || return 0
   case " $INSTALL_STACK " in *" $name "*) die "dependency cycle detected at $name";; esac
@@ -102,12 +117,15 @@ install_one() {
   case "$archive" in *[!A-Za-z0-9._+-]*|*..*) die "invalid archive filename";; esac
   mkdir -p "$NYAN_CACHE" "$NYAN_STATE/installed"
   file="$NYAN_CACHE/$archive"
+  nyan_cat "Downloading $name" 1
   fetch "$NYAN_REPO/packages/$NYAN_ARCH/$archive" "$file"
+  nyan_cat "Verifying $name" 2
   actual=$(sha256sum "$file" | awk '{print $1}')
   [ "$actual" = "$digest" ] || die "SHA-256 verification failed for $name"
   safe_archive "$file"
   temp="$NYAN_CACHE/unpack-$name-$$"
   rm -rf "$temp"; mkdir -p "$temp"
+  nyan_cat "Unpacking $name" 3
   tar -xzf "$file" -C "$temp"
   (cd "$temp" && find . -type f -o -type l) | sed 's#^./##' > "$NYAN_STATE/installed/$name.files"
   for owned_file in "$NYAN_STATE"/installed/*.files; do
@@ -124,6 +142,7 @@ install_one() {
   tar -xzf "$file" -C "${NYAN_ROOT%/}"
   printf '%s\t%s\t%s\n' "$name" "$version" "$digest" > "$record"
   rm -rf "$temp"
+  nyan_cat "Installed $name $version" 4
   say "installed $name $version"
 }
 [ "$#" -ge 1 ] || { usage; exit 2; }
@@ -189,11 +208,18 @@ case "$cmd" in
     install_one "$package"
     say "profile '$2' installed"
     ;;
+  browse)
+    index=$(index_file); [ -s "$index" ] || die "run 'nyan update' first"
+    printf "Available Nyan packages for %s:\\n" "$NYAN_ARCH"
+    awk -F '\\t' '!/^#/ && NF >= 6 {printf "  %-24s %-12s %s\\n",$1,$2,$6}' "$index"
+    ;;
   install)
-    [ "$#" -eq 2 ] || die "usage: nyan install PACKAGE"
+    [ "$#" -ge 2 ] || die "usage: nyan install PACKAGE [PACKAGE ...]"
     index=$(index_file); [ -s "$index" ] || die "run 'nyan update' first"
     mkdir -p "$NYAN_STATE/installed" "$NYAN_CACHE"
-    install_one "$2"
+    shift
+    for package do install_one "$package"; done
+    say "requested package set processed"
     ;;
   installed)
     [ "$#" -eq 1 ] || die "usage: nyan installed"
