@@ -180,7 +180,8 @@ esac
     }, indent=2) + "\n")
     print(f"[OK] Prepared VANTOR rootfs skeleton at {output}")
     print(f"[OK] Installed {len(BRAND_FILES)} official branding assets.")
-    print("[OK] Added VANTOR Init, Control, Hardware, Nyan and TUI installer.")\n    print("[OK] Added root and live accounts, wheel group and locked-password sudo policy.")
+    print("[OK] Added VANTOR Init, Control, Hardware, Nyan and TUI installer.")
+    print("[OK] Added root and live accounts, wheel group and locked-password sudo policy.")
     print("[INFO] Full service supervision and network configuration are not implemented yet.")
     return 0
 
