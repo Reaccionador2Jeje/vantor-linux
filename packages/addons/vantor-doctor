@@ -1,0 +1,30 @@
+#!/bin/sh
+# Read-only first-line VANTOR system diagnostics.
+set -u
+fail=0
+check() {
+  label=$1 path=$2
+  if [ -e "$path" ]; then printf '[ OK ] %s\n' "$label"
+  else printf '[WARN] %s (missing: %s)\n' "$label" "$path"; fail=1
+  fi
+}
+echo "VANTOR Doctor — read-only system checks"
+check "procfs" /proc
+check "sysfs" /sys
+check "device filesystem" /dev
+check "kernel release" /proc/sys/kernel/osrelease
+check "memory information" /proc/meminfo
+check "CPU information" /proc/cpuinfo
+check "Nyan configuration" /etc/nyan.conf
+check "Nyan executable" /usr/bin/nyan
+check "VANTOR control utility" /usr/sbin/vantorctl
+check "VANTOR init" /sbin/init
+if command -v nyan >/dev/null 2>&1; then
+  if nyan update >/dev/null 2>&1; then echo '[ OK ] Nyan repository reachable'
+  else echo '[WARN] Nyan repository unavailable (check network/DNS)'; fi
+fi
+if [ "$fail" -ne 0 ]; then
+  echo "Some checks need attention. No changes were made."
+  exit 1
+fi
+echo "Basic checks passed. No changes were made."
