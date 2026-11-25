@@ -15,3 +15,4 @@ vantor-mountinfo	0.1.0	x86_64	41ec5296aeb3d61268c08c054dc047bfec8ae91cb9958b22db
 fastfetch	0.1.0	x86_64	8876a20daa2365acd7e8cb7478743f46b2144006a3a2050adb86bd3b1db42d1f	fastfetch-0.1.0-all.tar.gz	VANTOR terminal utility: fastfetch	
 tree	0.1.0	x86_64	e0559e688ff82f846c514d87dbc5778f383b90f96f9e4ec93fcf4983ad9d1007	tree-0.1.0-all.tar.gz	VANTOR terminal utility: tree	
 vantor-base-files	0.1.0	x86_64	c26423924370bd2287bffb3a3c4fa8222dac184108cd56ef7e9a0e0f428a469a	vantor-base-files-0.1.0-x86_64.tar.gz	VANTOR Minimal base files, BusyBox, init and system accounts	
+watch	0.1.0	x86_64	31ffe73f07926fccbc27760c5a4de2f6439400adb6eab0821139f1999f3fe950	watch-0.1.0-all.tar.gz	VANTOR terminal utility: watch	
