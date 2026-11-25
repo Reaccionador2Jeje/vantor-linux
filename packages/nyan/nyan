@@ -153,22 +153,31 @@ case "$cmd" in
     awk -F '\t' '!/^#/ && NF >= 6 && $6 ~ /^Language:/ {printf "  %-18s %-10s %s\n",$1,$2,substr($6,10)}' "$index"
     ;;
   profiles)
+    index=$(index_file); [ -s "$index" ] || die "run 'nyan update' first"
     echo "VANTOR installation profiles:"
-    echo "  base         Essential command-line system"
-    echo "  desktop      Graphical desktop environment (planned)"
-    echo "  development  Compilers and programming languages"
-    echo "  network      Network utilities and diagnostics"
-    echo "Profiles become installable as their complete package sets are published."
+    for profile in base desktop development network; do
+      case "$profile" in
+        base) description="Essential command-line system";;
+        desktop) description="Graphical desktop environment";;
+        development) description="Compilers and programming languages";;
+        network) description="Network utilities and diagnostics";;
+      esac
+      if package_row "vantor-profile-$profile" >/dev/null 2>&1 && [ -n "$(package_row "vantor-profile-$profile")" ]; then
+        printf "  %-13s available — %s\\n" "$profile" "$description"
+      else
+        printf "  %-13s planned   — %s\\n" "$profile" "$description"
+      fi
+    done
     ;;
   install-profile)
     [ "$#" -eq 2 ] || die "usage: nyan install-profile PROFILE"
-    case "$2" in
-      base) die "base profile is not published yet; run 'nyan profiles' for availability";;
-      desktop) die "desktop profile is not published yet; run 'nyan profiles' for availability";;
-      development) die "development profile is not published yet; run 'nyan profiles' for availability";;
-      network) die "network profile is not published yet; run 'nyan profiles' for availability";;
-      *) die "unknown profile: $2";;
-    esac
+    case "$2" in base|desktop|development|network) ;; *) die "unknown profile: $2";; esac
+    index=$(index_file); [ -s "$index" ] || die "run 'nyan update' first"
+    package="vantor-profile-$2"
+    [ -n "$(package_row "$package")" ] || die "profile '$2' is not published yet"
+    mkdir -p "$NYAN_STATE/installed" "$NYAN_CACHE"
+    install_one "$package"
+    say "profile '$2' installed"
     ;;
   install)
     [ "$#" -eq 2 ] || die "usage: nyan install PACKAGE"
