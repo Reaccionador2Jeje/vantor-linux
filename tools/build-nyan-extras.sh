@@ -19,7 +19,7 @@ make_pkg() {
   sha256sum "$archive"
 }
 
-for arch in x86_64 i486; do
+for arch in x86_64 i486 aarch64; do
   make_pkg "$arch" vantor-hardware \
     "VANTOR read-only hardware inventory utility" \
     core/hardware/vantor-hw usr/local/bin/vantor-hw
@@ -62,7 +62,7 @@ for tool in fastfetch tree watch which filetype vtop; do
   rm -rf "$stage"
   mkdir -p "$stage/usr/local/bin" "$stage/usr/local/share/doc/$tool"
   install -m 0755 "$ROOT/packages/addons/$tool" "$stage/usr/local/bin/$tool"
-  printf '%s\n' "$tool — VANTOR terminal utility" "POSIX shell implementation; supports x86_64 and i486." > "$stage/usr/local/share/doc/$tool/README"
+  printf '%s\n' "$tool — VANTOR terminal utility" "POSIX shell implementation; supports x86_64, i486 and aarch64." > "$stage/usr/local/share/doc/$tool/README"
   tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \
     -czf "$OUT/$tool-0.1.0-all.tar.gz" -C "$stage" .
   tar -tzf "$OUT/$tool-0.1.0-all.tar.gz" >/dev/null
