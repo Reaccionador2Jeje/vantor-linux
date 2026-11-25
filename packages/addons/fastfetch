@@ -1,0 +1,18 @@
+#!/bin/sh
+set -eu
+os=VANTOR
+[ ! -r /etc/os-release ] || { . /etc/os-release; os=${PRETTY_NAME:-VANTOR}; }
+host=$(hostname 2>/dev/null || echo unknown)
+kernel=$(uname -sr 2>/dev/null || echo unknown)
+arch=$(uname -m 2>/dev/null || echo unknown)
+uptime=unknown
+if [ -r /proc/uptime ]; then uptime=$(awk '{printf "%.0fh %.0fm",int($1/3600),int(($1%3600)/60)}' /proc/uptime); fi
+mem=unknown
+if [ -r /proc/meminfo ]; then mem=$(awk '/MemTotal:/ {printf "%.0f MiB",$2/1024}' /proc/meminfo); fi
+printf '  \033[1;36m      /\\_/\\\033[0m       \033[1;36m%s\033[0m\n' "$os"
+printf '  \033[1;36m     ( o.o )\033[0m      Host: %s\n' "$host"
+printf '  \033[1;36m      > ^ <\033[0m       Kernel: %s\n' "$kernel"
+printf '                     Architecture: %s\n' "$arch"
+printf '                     Memory: %s\n' "$mem"
+printf '                     Uptime: %s\n' "$uptime"
+printf '                     Shell: %s\n' "${SHELL:-/bin/sh}"
