@@ -14,7 +14,7 @@ done
 # Join paths without turning the system root into an empty prefix.
 nyan_path() {
   case "$NYAN_ROOT" in
-    /) printf '/ %s' "$1" | tr -d ' ' ;;
+    /) printf '/%s' "${1#/}" ;;
     *) printf '%s/%s' "$NYAN_ROOT" "${1#/}" ;;
   esac
 }
