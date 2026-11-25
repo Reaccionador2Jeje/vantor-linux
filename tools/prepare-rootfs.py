@@ -72,7 +72,7 @@ devtmpfs  /dev    devtmpfs  mode=0755         0 0
 tmpfs     /run    tmpfs     mode=0755,nosuid  0 0
 tmpfs     /tmp    tmpfs     mode=1777,nosuid  0 0
 """)
-    write(output / "etc/inittab", """# VANTOR Minimal BusyBox init configuration
+    write(output / "etc/inittab", """# BusyBox init is PID 1: it reaps children and supervises respawn entries.\n# VANTOR rcS runs once before the managed console sessions.\n# VANTOR Minimal BusyBox init configuration
 ::sysinit:/etc/init.d/rcS
 tty1::respawn:/bin/busybox getty -L -n -l /usr/bin/vantor-live-session 0 tty1 vt100
 ttyS0::respawn:/bin/busybox getty -L -n -l /usr/bin/vantor-live-session 115200 ttyS0 vt100
@@ -244,6 +244,80 @@ fi
 exit 0
 """, 0o755)
 
+    write(output / "usr/sbin/vantor-service", """#!/bin/sh
+# VANTOR Service Control: manage foreground daemons with BusyBox start-stop-daemon.
+set -u
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+SERVICE_DIR=/etc/vantor/services
+RUNTIME_DIR=/run/vantor/services
+usage() {
+    echo "VANTOR Service Control"
+    echo "Usage: vantor-service {list|start|stop|restart|status} SERVICE"
+}
+valid_name() {
+    case "$1" in ''|*[!A-Za-z0-9_-]*) return 1;; esac
+    [ "${#1}" -le 48 ]
+}
+[ -x /bin/busybox ] || { echo "vantor-service: BusyBox is missing." >&2; exit 1; }
+command -v start-stop-daemon >/dev/null 2>&1 || { echo "vantor-service: start-stop-daemon applet is unavailable." >&2; exit 1; }
+mkdir -p "$RUNTIME_DIR"
+action=${1:-help}
+name=${2:-}
+if [ "$action" = list ]; then
+    found=0
+    for script in "$SERVICE_DIR"/*.service; do
+        [ -x "$script" ] || continue
+        found=1
+        printf '%s\\n' "${script##*/}" | sed 's/\\.service$//'
+    done
+    [ "$found" -eq 1 ] || echo "No optional services are installed."
+    exit 0
+fi
+case "$action" in start|stop|restart|status) ;; *) usage; exit 2;; esac
+valid_name "$name" || { usage >&2; exit 2; }
+script="$SERVICE_DIR/$name.service"
+pidfile="$RUNTIME_DIR/$name.pid"
+[ -x "$script" ] || { echo "vantor-service: service not found: $name" >&2; exit 1; }
+is_running() {
+    [ -s "$pidfile" ] || return 1
+    pid=$(cat "$pidfile")
+    case "$pid" in ''|*[!0-9]*) return 1;; esac
+    kill -0 "$pid" 2>/dev/null
+}
+start_service() {
+    if is_running; then echo "$name is already running."; return 0; fi
+    rm -f "$pidfile"
+    start-stop-daemon --start --background --make-pidfile --pidfile "$pidfile" --exec "$script" || {
+        rm -f "$pidfile"
+        echo "Failed to start $name." >&2
+        return 1
+    }
+    echo "Started $name."
+}
+stop_service() {
+    if ! is_running; then rm -f "$pidfile"; echo "$name is not running."; return 0; fi
+    pid=$(cat "$pidfile")
+    kill -TERM "$pid" 2>/dev/null || true
+    count=0
+    while kill -0 "$pid" 2>/dev/null && [ "$count" -lt 5 ]; do
+        sleep 1
+        count=$((count + 1))
+    done
+    if kill -0 "$pid" 2>/dev/null; then kill -KILL "$pid" 2>/dev/null || true; fi
+    rm -f "$pidfile"
+    echo "Stopped $name."
+}
+case "$action" in
+    start) start_service;;
+    stop) stop_service;;
+    restart) stop_service && start_service;;
+    status) if is_running; then echo "$name is running (PID $(cat "$pidfile"))."; else echo "$name is stopped."; exit 1; fi;;
+esac
+""", 0o755)
+
+    (output / "etc/vantor/services").mkdir(parents=True, exist_ok=True)
+    (output / "etc/vantor/services").chmod(0o755)
+
     write(output / "etc/init.d/rcS", """#!/bin/sh
 # VANTOR early system setup; safe to run more than once.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -271,6 +345,13 @@ for media_dev in /dev/sr0 /dev/cdrom; do
 done
 # Parse validated settings without sourcing an executable shell file.
 /usr/sbin/vantor-network >/dev/console 2>&1 || true
+# Start optional foreground daemons registered under /etc/vantor/services.
+for service_file in /etc/vantor/services/*.service; do
+    [ -x "$service_file" ] || continue
+    service_name=${service_file##*/}
+    service_name=${service_name%.service}
+    /usr/sbin/vantor-service start "$service_name" || echo "[VANTOR] Service failed: $service_name"
+done
     /usr/bin/vantor-splash step "VANTOR userspace is ready"
     sleep 1
     /usr/bin/vantor-splash finish
@@ -419,13 +500,14 @@ set -u
 VERSION="0.1.0"
 usage() {
     echo "VANTOR Control $VERSION"
-    echo "Usage: vantorctl {help|version|info|hardware|network|status}"
+    echo "Usage: vantorctl {help|version|info|hardware|network|service|status}"
 }
 case "${1:-help}" in
     help|-h|--help) usage ;;
     version|--version) echo "VANTOR Control $VERSION" ;;
     info) [ -r /etc/os-release ] && cat /etc/os-release ;;
     hardware) exec /usr/bin/vantor-hw ;;
+    service) exec /usr/sbin/vantor-service "${2:-help}" "${3:-}" ;;
     network)
         echo "== Network interfaces =="
         if [ -d /sys/class/net ]; then
@@ -479,7 +561,7 @@ esac
     print(f"[OK] Installed {len(BRAND_FILES)} official branding assets.")
     print("[OK] Added VANTOR Init, Control, Hardware, Nyan and TUI installer.")
     print("[OK] Added root and live accounts, wheel group and locked-password sudo policy.")
-    print("[INFO] Full service supervision and network configuration are not implemented yet.")
+    print("[INFO] BusyBox init supervises PID 1 sessions; VANTOR Service Control manages optional daemons.")
     return 0
 
 if __name__ == "__main__":
