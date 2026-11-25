@@ -18,7 +18,7 @@ Each package recipe must pin its source version, URL, checksum, build instructio
 
 ## Optional universal utilities
 
-The isolated Nyan extras workflow also builds six POSIX-shell add-ons for both supported architectures: `vantor-about`, `vantor-doctor`, `vantor-netdiag`, `vantor-logview`, `vantor-config-backup` and `vantor-mountinfo`. Their archive payloads are architecture-independent, but each package is published into both the x86_64 and i486 indexes so the existing Nyan client can discover them normally. They install under `/usr/local/bin` and rely on BusyBox/base commands rather than another C runtime.
+The isolated Nyan extras workflow also builds six POSIX-shell add-ons for x86_64, i486 and aarch64: `vantor-about`, `vantor-doctor`, `vantor-netdiag`, `vantor-logview`, `vantor-config-backup` and `vantor-mountinfo`. Their archive payloads are architecture-independent, but each package is published into the x86_64, i486 and aarch64 indexes so the existing Nyan client can discover them normally. They install under `/usr/local/bin` and rely on BusyBox/base commands rather than another C runtime.
 
 
 The current utility batch adds `fastfetch` (a VANTOR-branded shell implementation), `tree`, `watch`, `which`, `filetype`, and `vtop`. They are architecture-independent POSIX-shell packages published separately into both architecture indexes. Native Nano, Dialog, htop and curl packages remain planned until their runtime dependencies and x86_64/i486 builds are verified.
