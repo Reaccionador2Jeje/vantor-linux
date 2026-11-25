@@ -1,0 +1,33 @@
+:root {
+  color-scheme: dark;
+  --vantor-bg: #071321;
+  --vantor-surface: #0c1d30;
+  --vantor-surface-raised: #132a43;
+  --vantor-border: #24435f;
+  --vantor-cyan: #00cfff;
+  --vantor-blue: #0877ff;
+  --vantor-metal: #b9cce3;
+  --vantor-text: #f4f8ff;
+  --vantor-muted: #9bb0c8;
+  --vantor-success: #42d6a4;
+  --vantor-warning: #ffc857;
+  --vantor-danger: #ff647c;
+  --vantor-radius: 12px;
+  --vantor-font-display: "Orbitron", "Rajdhani", sans-serif;
+  --vantor-font-ui: "Rajdhani", "Noto Sans", sans-serif;
+}
+body {
+  background: var(--vantor-bg);
+  color: var(--vantor-text);
+  font-family: var(--vantor-font-ui);
+}
+:focus-visible {
+  outline: 2px solid var(--vantor-cyan);
+  outline-offset: 3px;
+}
+a, .accent { color: var(--vantor-cyan); }
+.panel {
+  background: var(--vantor-surface);
+  border: 1px solid var(--vantor-border);
+  border-radius: var(--vantor-radius);
+}
