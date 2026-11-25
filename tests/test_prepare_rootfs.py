@@ -41,7 +41,7 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertIn("vantor-live-session", inittab)
             self.assertIn("ttyS0", inittab)
             self.assertIn("udhcpc", (output / "etc/init.d/rcS").read_text())
-            self.assertIn("su -s /bin/sh - live", (output / "usr/bin/vantor-live-session").read_text())
+            self.assertIn("/bin/busybox su -s /bin/sh - live", (output / "usr/bin/vantor-live-session").read_text())
             self.assertEqual((output / "etc/fstab").stat().st_mode & 0o777, 0o644)
             self.assertTrue((output / "usr/share/vantor/branding/vantor-mark.svg").is_file())
             brand = json.loads((output / "etc/vantor-brand.json").read_text())
