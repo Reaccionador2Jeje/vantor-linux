@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+echo "VANTOR Mount Information"
+if [ -r /proc/mounts ]; then
+  awk 'BEGIN{printf "%-24s %-24s %-12s %s\n","DEVICE","MOUNTPOINT","FILESYSTEM","OPTIONS"} {printf "%-24s %-24s %-12s %s\n",$1,$2,$3,$4}' /proc/mounts
+else
+  echo "/proc/mounts is unavailable" >&2
+  exit 1
+fi
