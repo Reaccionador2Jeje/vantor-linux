@@ -37,3 +37,9 @@ vantor-netdiag	network	building	Network interfaces, routes, DNS and default gate
 vantor-logview	diagnostics	building	Simple system log viewer with pager fallback
 vantor-config-backup	backup	building	Create a non-overwriting archive of VANTOR system configuration
 vantor-mountinfo	storage	building	Readable mounted filesystem and mount-options report
+fastfetch	diagnostics	building	Compact VANTOR system summary with branded terminal output
+tree	files	building	Recursive directory tree viewer
+watch	system	building	Repeat a command at a configurable interval
+which	system	building	Locate executable commands in PATH
+filetype	files	building	Identify common file formats from magic bytes
+vtop	diagnostics	building	Compact process overview using procfs or ps
