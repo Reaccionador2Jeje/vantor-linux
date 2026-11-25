@@ -34,6 +34,9 @@ class NyanIntegrationTests(unittest.TestCase):
         self.thread.start()
         self.root = self.base / "target-root"
         self.root.mkdir()
+        catalog = self.root / "usr/share/nyan/catalog.tsv"
+        catalog.parent.mkdir(parents=True)
+        catalog.write_text("# package\\tcategory\\tstatus\\tdescription\\nbusybox\\tsystem\\tbundled\\tCore shell and utilities\\nsudo\\tadmin\\tplanned\\tPrivilege elevation\\n")
         self.env = dict(os.environ)
         self.env.update({
             "NYAN_ROOT": str(self.root),
@@ -81,6 +84,14 @@ class NyanIntegrationTests(unittest.TestCase):
 
     def run_nyan(self, *args: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(["sh", str(NYAN), *args], env=self.env, capture_output=True, text=True, check=False)
+
+    def test_catalog_shows_bundled_and_planned_packages(self) -> None:
+        result = self.run_nyan("catalog")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("busybox", result.stdout)
+        self.assertIn("bundled", result.stdout)
+        self.assertIn("sudo", result.stdout)
+        self.assertIn("planned", result.stdout)
 
     def test_update_install_and_remove(self) -> None:
         self.make_archive("sample", [("usr/bin/sample", b"hello VANTOR\n", "file")])
