@@ -77,6 +77,11 @@ install_one() {
   done
   IFS=$oldifs
   INSTALL_STACK=${INSTALL_STACK% $name}
+  # Recursive shell functions share ordinary variables; reload this package's row
+  # after dependency traversal so child metadata cannot overwrite the parent.
+  row=$(package_row "$name")
+  oldifs=$IFS; IFS="$(printf '\\t')"; set -- $row; IFS=$oldifs
+  pkg=$1 version=$2 arch=$3 digest=$4 archive=$5 description=$6 dependencies=${7:-}
   case "$digest" in *[!0-9a-f]*|'') die "invalid SHA-256 for $name";; esac
   [ "${#digest}" -eq 64 ] || die "invalid SHA-256 length for $name"
   case "$archive" in *[!A-Za-z0-9._+-]*|*..*) die "invalid archive filename";; esac
