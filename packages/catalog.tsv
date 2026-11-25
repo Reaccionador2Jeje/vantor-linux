@@ -20,3 +20,7 @@ mesa	desktop	planned	OpenGL graphics stack
 openbox	desktop	planned	Lightweight window manager
 tint2	desktop	planned	Panel and taskbar
 xterm	desktop	planned	Terminal emulator
+xinit	desktop	planned	X11 session launcher for VANTOR Desktop
+xsetroot	desktop	planned	Minimal X11 root-window utilities
+pcmanfm	desktop	planned	Optional desktop icons and file manager
+vantor-desktop	desktop	building	VANTOR-branded Openbox and tint2 session configuration
