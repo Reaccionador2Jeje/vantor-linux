@@ -13,3 +13,5 @@ This directory defines the reproducible build of the first official Nyan program
 The GitHub Actions workflow downloads the official source, verifies its published SHA-256, builds and smoke-tests the interpreter, assembles a root-relative package archive, and publishes it to the Nyan GitHub Releases mirror.
 
 The package is not considered available to users until the workflow completes successfully and the repository index contains the package row.
+
+The package archive is validated from a saved tar listing so CI can run with strict pipeline error handling.
