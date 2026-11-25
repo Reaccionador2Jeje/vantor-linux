@@ -16,7 +16,7 @@ def write(path: Path, content: str, mode: int = 0o644) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "build" / "work" / "rootfs")
-    parser.add_argument("--arch", choices=("x86_64", "i486"), default="x86_64")
+    parser.add_argument("--arch", choices=("x86_64", "i486", "aarch64"), default="x86_64")
     args = parser.parse_args()
     output = args.output.resolve()
     if output == Path("/") or output == ROOT or output == ROOT / "rootfs":
