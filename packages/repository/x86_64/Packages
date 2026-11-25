@@ -20,5 +20,5 @@ watch	0.1.0	x86_64	a20d171c86256b4295296bfa42067984472f0356d94cd1349c402ad2f328c
 which	0.1.0	x86_64	71e066a4c0840ff9ff1e654c1b0815300cb48b3e889cac3057a4f566e89dbabf	which-0.1.0-all.tar.gz	VANTOR terminal utility: which	
 filetype	0.1.0	x86_64	707fb6392fb407e4115289dab8723c4fa66c78de78314db0c89160e53a949f93	filetype-0.1.0-all.tar.gz	VANTOR terminal utility: filetype	
 vtop	0.1.0	x86_64	4e120837a680b1dc094670cfd19d48c4bbded96f48229b6a61dce669538715ce	vtop-0.1.0-all.tar.gz	VANTOR terminal utility: vtop	
-vantor-profile-minimal	0.1.0	x86_64	49cf89fb67a7ed4597ab51dbcfb060802a8274d2bc03ec1d7a1084a5599d1811	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
 vantor-base-files	0.1.0	x86_64	b6dc5aad7eb9917ab962d54ee990931769f54227ae5fce7b34b71948a9f8964d	vantor-base-files-0.1.0-x86_64.tar.gz	VANTOR Minimal base files, BusyBox, init and system accounts	
+vantor-profile-minimal	0.1.0	x86_64	18a7e97cb1d205940fc9649d252963f48c8f1420ec693c3ad80cc9e6179badf0	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
