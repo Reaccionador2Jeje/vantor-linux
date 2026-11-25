@@ -5,8 +5,8 @@ ROOT="$(cd -- "$(dirname -- "$0")/../.." && pwd)"
 cd "$ROOT"
 source build/config/vantor.conf
 
-: "$VANTOR_KERNEL_VERSION"
-: "$VANTOR_BUILD_JOBS"
+: "${VANTOR_KERNEL_VERSION}"
+: "${VANTOR_BUILD_JOBS}"
 
 ARCH=x86
 SOURCE_DIR="$ROOT/build/work/sources/linux-$VANTOR_KERNEL_VERSION"
@@ -29,7 +29,7 @@ fi
     exit 1
 }
 
-mkdir -p "$BUILD_DIR" "$ROOT/build/logs"
+mkdir -p "$BUILD_DIR" "$ROOT/build/logs" "$ROOT/build/work/kernel"
 export ARCH
 export KBUILD_BUILD_USER=vantor
 export KBUILD_BUILD_HOST=build
@@ -61,10 +61,34 @@ done
 make -C "$SOURCE_DIR" O="$BUILD_DIR" olddefconfig
 cp "$CONFIG" "$ROOT/kernel/configs/vantor-x86_64.config"
 
-echo "[VANTOR] Building bzImage..."
-make -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS" bzImage 2>&1 | tee "$ROOT/build/logs/kernel-bzImage.log"
+echo "[VANTOR] Building bzImage and loadable modules..."
+make -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS" bzImage modules 2>&1 | tee "$ROOT/build/logs/kernel-build.log"
 
 [[ -s "$OUTPUT" ]] || { echo "[ERROR] Kernel build completed without bzImage." >&2; exit 1; }
 install -D -m 0644 "$OUTPUT" "$ROOT/build/work/kernel/vantor-kernel"
+
+echo "[VANTOR] Installing modules into isolated staging tree..."
+rm -rf -- "$MODULES_DIR"
+mkdir -p "$MODULES_DIR"
+make -C "$SOURCE_DIR" O="$BUILD_DIR" \
+    INSTALL_MOD_PATH="$MODULES_DIR" INSTALL_MOD_STRIP=1 modules_install
+
+KERNEL_RELEASE="$(make -s -C "$SOURCE_DIR" O="$BUILD_DIR" kernelrelease)"
+[[ "$KERNEL_RELEASE" =~ ^[A-Za-z0-9._+-]+$ ]] || {
+    echo "[ERROR] Invalid kernel release string: $KERNEL_RELEASE" >&2
+    exit 1
+}
+MODULES_RELEASE_DIR="$MODULES_DIR/lib/modules/$KERNEL_RELEASE"
+[[ -d "$MODULES_RELEASE_DIR" ]] || {
+    echo "[ERROR] Module installation did not create $MODULES_RELEASE_DIR" >&2
+    exit 1
+}
+if command -v depmod >/dev/null 2>&1; then
+    depmod -b "$MODULES_DIR" "$KERNEL_RELEASE"
+else
+    echo "[WARN] depmod unavailable; target system must regenerate module dependencies."
+fi
+printf '%s\\n' "$KERNEL_RELEASE" > "$ROOT/build/work/kernel/kernelrelease"
+
 echo "[OK] VANTOR kernel built: build/work/kernel/vantor-kernel"
-echo "[INFO] Modules and initramfs assembly are separate next steps."
+echo "[OK] VANTOR modules staged for $KERNEL_RELEASE"
