@@ -49,7 +49,7 @@ jobs:
           make -C "/tmp/lua-${LUA_VERSION}" linux CC=musl-gcc MYCFLAGS="-O2" MYLDFLAGS="-static" -j2
           "/tmp/lua-${LUA_VERSION}/src/lua" -e 'assert(_VERSION == "Lua 5.4"); print(_VERSION .. " runtime OK")'
           file "/tmp/lua-${LUA_VERSION}/src/lua"
-          if ldd "/tmp/lua-${LUA_VERSION}/src/lua" 2>&1 | grep -q "not a dynamic executable"; then
+          if file "/tmp/lua-${LUA_VERSION}/src/lua" | grep -q "statically linked"; then
             echo "Lua interpreter is statically linked."
           else
             echo "Lua interpreter is not static; refusing to publish." >&2
