@@ -32,6 +32,10 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("modules_install", script)
         self.assertIn("INSTALL_MOD_PATH", script)
         self.assertIn("depmod", script)
+        for filesystem in ("EXT2_FS", "EXT3_FS", "EXT4_FS", "ISO9660_FS", "VFAT_FS", "FAT_FS"):
+            self.assertIn(filesystem, script)
+        for storage_driver in ("VIRTIO_BLK", "VIRTIO_SCSI", "SATA_AHCI", "BLK_DEV_SR"):
+            self.assertIn(storage_driver, script)
 
     def test_x86_64_kernel_workflow_builds_and_uploads_kernel(self) -> None:
         workflow = (ROOT / ".github/workflows/build-kernel.yml").read_text()
@@ -41,6 +45,15 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("CONFIG_FRAMEBUFFER_CONSOLE=y", workflow)
         self.assertIn("build/work/modules/lib/modules", workflow)
         self.assertIn("make check", workflow)
+
+    def test_complete_x86_64_image_workflow_assembles_and_uploads_iso(self) -> None:
+        workflow = (ROOT / ".github/workflows/build-image.yml").read_text()
+        self.assertIn("make image", workflow)
+        self.assertIn("grub-efi-amd64-bin", workflow)
+        self.assertIn("xorriso -indev", workflow)
+        self.assertIn("actions/upload-artifact@v4", workflow)
+        makefile = (ROOT / "Makefile").read_text()
+        self.assertIn("Build kernel, rootfs, BusyBox, initramfs and ISO", makefile)
 
     def test_framebuffer_splash_renderer_is_valid_c(self) -> None:
         source = ROOT / "core/boot/vantor-fb-splash.c"
