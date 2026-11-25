@@ -1,0 +1,46 @@
+# VANTOR Openbox theme — flat, low-overhead, no compositor required
+border.width: 1
+padding.width: 4
+padding.height: 3
+window.active.border.color: #00CFFF
+window.inactive.border.color: #24435F
+window.active.title.bg: flat solid
+window.active.title.bg.color: #0C1D30
+window.active.title.bg.colorTo: #132A43
+window.active.label.text.color: #F4F8FF
+window.inactive.title.bg: flat solid
+window.inactive.title.bg.color: #0C1D30
+window.inactive.title.bg.colorTo: #0C1D30
+window.inactive.label.text.color: #9BB0C8
+window.active.button.unpressed.bg: flat solid
+window.active.button.unpressed.bg.color: #132A43
+window.active.button.unpressed.image.color: #B9CCE3
+window.active.button.pressed.bg: flat solid
+window.active.button.pressed.bg.color: #0877FF
+window.active.button.pressed.image.color: #F4F8FF
+window.inactive.button.unpressed.bg: flat solid
+window.inactive.button.unpressed.bg.color: #0C1D30
+window.inactive.button.unpressed.image.color: #9BB0C8
+window.active.handle.bg: flat solid
+window.active.handle.bg.color: #0C1D30
+window.inactive.handle.bg: flat solid
+window.inactive.handle.bg.color: #0C1D30
+window.active.grip.bg: flat solid
+window.active.grip.bg.color: #00CFFF
+window.inactive.grip.bg: flat solid
+window.inactive.grip.bg.color: #24435F
+menu.border.color: #24435F
+menu.separator.color: #24435F
+menu.title.bg: flat solid
+menu.title.bg.color: #132A43
+menu.title.text.color: #00CFFF
+menu.items.bg: flat solid
+menu.items.bg.color: #0C1D30
+menu.items.text.color: #F4F8FF
+menu.items.active.bg: flat solid
+menu.items.active.bg.color: #0877FF
+menu.items.active.text.color: #FFFFFF
+osd.border.color: #00CFFF
+osd.bg: flat solid
+osd.bg.color: #0C1D30
+osd.label.text.color: #F4F8FF
