@@ -1,7 +1,6 @@
 # VANTOR-PACKAGES 1
 vantor-base-files	0.1.0	i486	502c7e380f348eebaeb7eda94ca3ab75b6c441497bf33becbca9ec5b159ff3c9	vantor-base-files-0.1.0-i486.tar.gz	VANTOR Minimal i486 base files and static 486-compatible BusyBox	
 vantor-profile-minimal	0.1.0	i486	2ca599033521bc2db1d8bbc6f558d7463fddcf51befd75c58b7a18c1d470d0a6	vantor-profile-minimal-0.1.0-i486.tar.gz	VANTOR Minimal profile for 486SX/486DX and later 32-bit PCs	vantor-base-files
-watch	0.1.0	i486	31ffe73f07926fccbc27760c5a4de2f6439400adb6eab0821139f1999f3fe950	watch-0.1.0-all.tar.gz	VANTOR terminal utility: watch	
 which	0.1.0	i486	a6af5a1c6b43d1531f5d23a058a577b8c76a99fb7d587dd67ee78c29d7ab58e1	which-0.1.0-all.tar.gz	VANTOR terminal utility: which	
 filetype	0.1.0	i486	4392e89bcd40ac84a189439f50ec9b6735551204ce906c8aef6bdc95e466ede6	filetype-0.1.0-all.tar.gz	VANTOR terminal utility: filetype	
 vtop	0.1.0	i486	9a446dd88e382f518c293abbf6b3f5e36a3690c353d3c61dccf1a3328b689941	vtop-0.1.0-all.tar.gz	VANTOR terminal utility: vtop	
@@ -20,3 +19,4 @@ vantor-config-backup	0.1.0	i486	da492a2980e087e71ba22aae042f63a24d2b355fc3a3f974
 vantor-mountinfo	0.1.0	i486	41ec5296aeb3d61268c08c054dc047bfec8ae91cb9958b22dba5129aac2913f1	vantor-mountinfo-0.1.0-all.tar.gz	VANTOR utility: vantor-mountinfo (architecture-independent)	
 fastfetch	0.1.0	i486	8876a20daa2365acd7e8cb7478743f46b2144006a3a2050adb86bd3b1db42d1f	fastfetch-0.1.0-all.tar.gz	VANTOR terminal utility: fastfetch	
 tree	0.1.0	i486	e0559e688ff82f846c514d87dbc5778f383b90f96f9e4ec93fcf4983ad9d1007	tree-0.1.0-all.tar.gz	VANTOR terminal utility: tree	
+watch	0.1.0	i486	31ffe73f07926fccbc27760c5a4de2f6439400adb6eab0821139f1999f3fe950	watch-0.1.0-all.tar.gz	VANTOR terminal utility: watch	
