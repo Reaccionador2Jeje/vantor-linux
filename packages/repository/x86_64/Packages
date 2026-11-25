@@ -3,7 +3,7 @@ lua	5.4.9	x86_64	7ec8d0e95e2048710852b1ee79a767bf8e13f940d824f188876f1b91c7cf039
 vantor-profile-development	0.1.0	x86_64	64ca831943980061d35d2b0bb02e677bc34980808d2d7377cf42e0138ccc5fbe	vantor-profile-development-0.1.0-x86_64.tar.gz	Profile: VANTOR development tools and programming languages	lua
 vantor-base-files	0.1.0	x86_64	4c8b1d82418d5cd9d64e9d6c5c614892551ad9712e2ac6d8a552f18bdcb213a0	vantor-base-files-0.1.0-x86_64.tar.gz	VANTOR Minimal base files, BusyBox, init and system accounts	
 vantor-profile-minimal	0.1.0	x86_64	4a96e939bd33f8ee2feca9bfbf49051db76591fac3e123ab109254426432cb22	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
-vantor-hardware	0.1.0	x86_64	d2dd76572977e23adb06319e44c2ce1eb9d8f399bde705e175dcc89fcbf63e26	vantor-hardware-0.1.0-x86_64.tar.gz	VANTOR read-only hardware inventory utility	
 vantor-installer	0.1.0	x86_64	b65cc8c15b1846ba01ac8142ee0d4c549543acb4239c952a2394b8fe216dfbfe	vantor-installer-0.1.0-x86_64.tar.gz	VANTOR text-mode system installer	vantor-base-files
 vantor-branding	0.1.0	x86_64	af7f0574bd4d3a7a2098f62f6852792318985429dff1ecdfc4f46408e272e088	vantor-branding-0.1.0-x86_64.tar.gz	Official VANTOR identity assets	
 vantor-docs	0.1.0	x86_64	07bf9060bc2a26609ae0d0ee1e5657c70db9fd72d3858a0e33d551a6a7331b4f	vantor-docs-0.1.0-x86_64.tar.gz	VANTOR system and Nyan documentation	
+vantor-hardware	0.1.0	x86_64	d2dd76572977e23adb06319e44c2ce1eb9d8f399bde705e175dcc89fcbf63e26	vantor-hardware-0.1.0-x86_64.tar.gz	VANTOR read-only hardware inventory utility	
