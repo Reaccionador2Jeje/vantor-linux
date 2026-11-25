@@ -1,0 +1,55 @@
+name: Publish Nyan package
+on:
+  workflow_dispatch:
+    inputs:
+      package_path:
+        description: Repository-relative path to a .tar.gz package archive
+        required: true
+        type: string
+      name:
+        description: Package name
+        required: true
+        type: string
+      version:
+        description: Package version
+        required: true
+        type: string
+      architecture:
+        description: Target architecture
+        required: true
+        type: choice
+        options: [x86_64, aarch64, all]
+      description:
+        description: Short package description
+        required: true
+        type: string
+permissions:
+  contents: write
+concurrency:
+  group: vantor-nyan-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out VANTOR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate package archive
+        env:
+          PACKAGE_PATH: ${{ inputs.package_path }}
+        run: |
+          test -f "$PACKAGE_PATH"
+          case "$PACKAGE_PATH" in *.tar.gz) ;; *) echo "Expected .tar.gz archive"; exit 1;; esac
+      - name: Publish release asset and update repository index
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PACKAGE_PATH: ${{ inputs.package_path }}
+          PACKAGE_NAME: ${{ inputs.name }}
+          PACKAGE_VERSION: ${{ inputs.version }}
+          PACKAGE_ARCH: ${{ inputs.architecture }}
+          PACKAGE_DESCRIPTION: ${{ inputs.description }}
+        run: |
+          bash tools/publish-package.sh "$PACKAGE_PATH" "$PACKAGE_NAME" "$PACKAGE_VERSION" "$PACKAGE_ARCH" "$PACKAGE_DESCRIPTION"
