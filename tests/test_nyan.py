@@ -4,6 +4,7 @@ import hashlib
 import http.server
 import io
 import os
+import pty
 import shutil
 import subprocess
 import tarfile
@@ -84,6 +85,22 @@ class NyanIntegrationTests(unittest.TestCase):
 
     def run_nyan(self, *args: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(["sh", str(NYAN), *args], env=self.env, capture_output=True, text=True, check=False)
+
+    def run_nyan_tty(self, *args: str) -> tuple[subprocess.CompletedProcess[bytes], str]:
+        master, slave = pty.openpty()
+        try:
+            result = subprocess.run(
+                ["sh", str(NYAN), *args],
+                env=self.env,
+                stdout=slave,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+            output = os.read(master, 65536).decode("utf-8", errors="replace")
+            return result, output
+        finally:
+            os.close(master)
+            os.close(slave)
 
     def test_catalog_shows_bundled_and_planned_packages(self) -> None:
         result = self.run_nyan("catalog")
@@ -213,6 +230,18 @@ class NyanIntegrationTests(unittest.TestCase):
         installed = self.run_nyan("install", "arch-test")
         self.assertEqual(installed.returncode, 0, installed.stderr)
         self.assertEqual((self.root / "usr/share/arch-test").read_text(), "i486 package\n")
+
+    def test_each_package_gets_its_own_nyan_cat_progress_bar(self) -> None:
+        self.add_package("first", "usr/bin/first", b"first")
+        self.add_package("second", "usr/bin/second", b"second")
+        self.assertEqual(self.run_nyan("update").returncode, 0)
+        result, output = self.run_nyan_tty("install", "first", "second")
+        self.assertEqual(result.returncode, 0, result.stderr.decode(errors="replace"))
+        self.assertIn("first", output)
+        self.assertIn("second", output)
+        self.assertIn("=^.^=", output)
+        self.assertIn("100%", output)
+        self.assertIn("done", output)
 
     def test_browse_and_batch_install_multiple_packages(self) -> None:
         self.add_package("first", "usr/bin/first", b"first")
