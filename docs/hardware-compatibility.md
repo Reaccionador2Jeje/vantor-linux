@@ -7,7 +7,7 @@ VANTOR Minimal is designed as a small console-first system. Hardware support is 
 | Profile | CPU baseline | Kernel line | State |
 |---|---|---|---|
 | Minimal x86_64 | AMD64 / Intel 64 | Linux 6.18.y | Main profile; build source still awaits a verified pin |
-| Minimal Legacy i486 | 486SX / 486DX and newer IA-32 | Linux 6.1.y | Legacy kernel builder and source pin added; compile and physical boot validation pending |
+| Minimal Legacy i486 | 486SX / 486DX and newer IA-32 | Linux 6.1.y | Kernel and separate static i486 BusyBox build pipelines added; compilation and physical boot validation pending |
 | 386 / 286 / 8086 | 80386 and earlier | Not supported by the selected modern kernel | Out of scope for this Linux build |
 
 Linux 6.18 no longer offers 486 CPU support. VANTOR therefore uses the maintained 6.1.y source line for the 486 profile. The Linux 6.1.193 kernel.org checksum is pinned in build/sources/sources.json; the build is still subject to CI and hardware testing.
