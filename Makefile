@@ -29,9 +29,15 @@ termux-files:
 	@test -s docs/termux.md
 	@test -s build/scripts/build-termux-rootfs.sh
 	@test -s tools/termux/vantor
+	@test -s tools/termux/install-vantor
+	@test -s tools/termux/vantor-pd
+	@test -s tests/test_termux.py
 	@test -s .github/workflows/build-termux.yml
 	@bash -n build/scripts/build-termux-rootfs.sh
 	@sh -n tools/termux/vantor
+	@sh -n tools/termux/install-vantor
+	@sh -n tools/termux/vantor-pd
+	@python3 -m unittest discover -s tests -p test_termux.py -v
 	@grep -q 'aarch64' tools/prepare-rootfs.py
 	@echo "[OK] VANTOR Termux ARM64 target files are present."
 
