@@ -11,9 +11,9 @@ VANTOR Core is the first project-owned userspace layer in Genesis. It is deliber
 - **VANTOR Hardware 0.1.0** (`/usr/bin/vantor-hw`): read-only inventory of CPU, memory, block devices, PCI devices and bound drivers, VirtIO devices, USB devices and network interfaces.
 - **VANTOR Modules** (`/usr/sbin/vantor-modules`): loads optional storage, filesystem, VirtIO, USB and network drivers listed in `/etc/modules` through BusyBox `modprobe`; built-in kernel drivers are unaffected. The initramfs invokes this before searching for an installed root filesystem.
 - **VANTOR Network** (`/usr/sbin/vantor-network`): reads installer settings as data (never executes the config file), validates interface and IPv4 fields, applies static IPv4 or discovers network interfaces and starts BusyBox DHCP. The DHCP hook configures the address, default route and DNS resolver.
-- **VANTOR Service Control** (`/usr/sbin/vantor-service`): starts, stops, restarts, lists and checks optional foreground daemons using BusyBox `start-stop-daemon`. Service scripts live in `/etc/vantor/services/*.service`; runtime PID files live in `/run/vantor/services/`.
+- **VANTOR Service Control** (`/usr/sbin/vantor-service`): starts, stops, restarts, lists and checks optional foreground daemons using BusyBox `start-stop-daemon` and the VANTOR supervisor. Service scripts live in `/etc/vantor/services/*.service`; optional policy files use `/etc/vantor/services/*.policy`; runtime PID files live in `/run/vantor/services/`; per-service logs are stored in `/var/log/vantor-services/`. Restart policies are `never` (default), `on-failure`, or `always`, with a configurable 1–60 second delay. The supervisor caps consecutive restarts at five to prevent endless crash loops.
 - **VANTOR Storage** (`/usr/sbin/vantor-storage`): reports block devices, mounted filesystems and kernel filesystem support. `mount-all` mounts configured `/etc/fstab` entries; it never partitions, formats or edits disks.
-- **Process supervision**: BusyBox `init` is PID 1 and uses `/etc/inittab` to run `rcS` and respawn local console sessions. VANTOR Service Control manages optional daemons, but is not a crash-restarting supervisor.
+- **Process supervision**: BusyBox `init` is PID 1 and uses `/etc/inittab` to run `rcS` and respawn local console sessions. VANTOR Service Control manages optional daemons, and restarts services according to their optional policy files.
 
 ## Commands
 
@@ -28,14 +28,14 @@ VANTOR Core is the first project-owned userspace layer in Genesis. It is deliber
 | `vantorctl service list` | List installed optional services |
 | `vantorctl service start NAME` | Start a service |
 | `vantorctl service stop NAME` | Stop a service |
-| `vantorctl service status NAME` | Check a service process |
+| `vantorctl service status NAME` | Check a service process and policy |\n| `vantor-service logs NAME` | Read a service log |\n| `vantor-service logs NAME follow` | Follow a service log |
 | `vantorctl status` | Show release, kernel, PID 1 and uptime |
 | `vantor-doctor` | Run offline base-system health checks without changing files or settings |
 | `vantorctl version` | Show command version |
 
 VANTOR Hardware reads procfs and sysfs only. It does not load drivers, change device state, configure networking, or write to hardware. Missing procfs/sysfs data is reported as unavailable rather than guessed. For isolated tests, the collector accepts `VANTOR_PROC_ROOT` and `VANTOR_SYS_ROOT` fixture paths.
 
-## Build and test
+Example policy file `/etc/vantor/services/example.policy`:\n\n```ini\nrestart=on-failure\nrestart-delay=3\n```\n\nService programs must stay in the foreground; the supervisor owns their lifecycle. A maximum of five consecutive restarts is allowed before the service is left stopped for manual diagnosis.\n\n## Build and test
 
 `make rootfs` generates these files under `build/work/rootfs`. `make check` runs rootfs generator tests and validates generated shell syntax. `make image` performs the ordered x86_64 kernel → rootfs → BusyBox → initramfs → ISO pipeline. `make image-legacy` builds the 486-compatible BIOS ISO with its own BusyBox and initramfs; the legacy initramfs explicitly skips x86_64 kernel modules.
 
