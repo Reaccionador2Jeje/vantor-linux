@@ -6,7 +6,7 @@
 
 - Uses `dialog` when available.
 - Falls back to a keyboard-driven terminal menu when `dialog` is absent.
-- Offers installation, installed-system account configuration and an About screen.
+- Offers installation, installed-system account configuration, boot-file preparation and an About screen.
 - The UI and provisioning logic live in one small shell program for the early BusyBox environment.
 
 ## Minimal installation flow
