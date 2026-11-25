@@ -9,6 +9,7 @@ NYAN_REPO=${NYAN_REPO:-https://vantor-linux.cristopheriguaran-7.workers.dev}
 NYAN_ARCH=${NYAN_ARCH:-x86_64}
 NYAN_STATE="${NYAN_ROOT%/}/var/lib/nyan"
 NYAN_CACHE="${NYAN_ROOT%/}/var/cache/nyan"
+NYAN_CATALOG="${NYAN_ROOT%/}/usr/share/nyan/catalog.tsv"
 INDEX_URL="$NYAN_REPO/repo/$NYAN_ARCH/Packages"
 INSTALL_STACK=""
 
@@ -146,6 +147,11 @@ case "$cmd" in
     [ "$#" -eq 2 ] || die "usage: nyan show PACKAGE"
     row=$(package_row "$2"); [ -n "$row" ] || die "package not found: $2"
     printf '%s\n' "$row" | awk -F '\t' '{printf "Name: %s\nVersion: %s\nArchitecture: %s\nDescription: %s\nDependencies: %s\n",$1,$2,$3,$6,($7==""?"none":$7)}'
+    ;;
+  catalog)
+    [ -r "$NYAN_CATALOG" ] || die "package catalog is not installed"
+    printf "%-24s %-15s %-10s %s\\n" "PACKAGE" "CATEGORY" "STATUS" "DESCRIPTION"
+    awk -F '\\t' '!/^#/ && NF >= 4 {printf "%-24s %-15s %-10s %s\\n",$1,$2,$3,$4}' "$NYAN_CATALOG"
     ;;
   languages)
     index=$(index_file); [ -s "$index" ] || die "run 'nyan update' first"
