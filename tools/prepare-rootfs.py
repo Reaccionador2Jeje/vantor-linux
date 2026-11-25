@@ -343,10 +343,10 @@ run_step() {
     log "START: $label"
     if "$@" >> "$BOOT_LOG" 2>&1; then
         log "OK: $label"
-        return 0
+    else
+        result=$?
+        log "WARN: $label (exit $result)"
     fi
-    result=$?
-    log "WARN: $label (exit $result)"
     return 0
 }
 mount -t proc proc /proc 2>/dev/null || true
