@@ -2,18 +2,19 @@
   "schema_version": 1,
   "project": "VANTOR Linux",
   "target": "x86_64-vantor-linux-gnu",
-  "status": "candidate",
-  "policy": "Versions are candidates selected from upstream release pages. SHA-256 values must be independently verified before downloads/builds are enabled. Unstable upstream releases are excluded from the initial baseline.",
+  "status": "bootstrap-pinned",
+  "policy": "Bootstrap sources are pinned using upstream-published checksums. Remaining components stay unpinned until their own upstream digests or signatures are verified.",
   "sources": [
     {
       "name": "binutils",
       "version": "2.47",
       "archive": "binutils-2.47.tar.xz",
       "url": "https://sourceware.org/pub/binutils/releases/binutils-2.47.tar.xz",
-      "sha256": null,
+      "sha256": "9fa42a8770ff1fdb3059a6d5c7b7030899acee58b343364bc42b6facfa35ce65",
       "license": "GPL-3.0-or-later (component files may vary)",
       "role": "Assembler, linker and binary utilities",
-      "status": "candidate"
+      "status": "pinned",
+      "sha512": null
     },
     {
       "name": "gcc",
@@ -23,7 +24,8 @@
       "sha256": null,
       "license": "GPL-3.0-or-later with GCC Runtime Library Exception where applicable",
       "role": "Initial cross-compiler and compiler runtime",
-      "status": "candidate"
+      "status": "pinned",
+      "sha512": "c51c30ca7422d0cbecf504b2e0f33c3aca31e0f90a76b65217f465163fa6fa17b3f5de39e145c47e5bab90ac0ce7fff3b03c8d553ae36e01faaea5a50f8648d1"
     },
     {
       "name": "glibc",
@@ -33,7 +35,8 @@
       "sha256": null,
       "license": "LGPL-2.1-or-later; component files may vary",
       "role": "Target C library",
-      "status": "candidate"
+      "status": "candidate",
+      "sha512": null
     },
     {
       "name": "linux",
@@ -43,7 +46,8 @@
       "sha256": null,
       "license": "GPL-2.0-only; see kernel COPYING and source headers",
       "role": "Long-term-support kernel baseline for first boot target",
-      "status": "candidate"
+      "status": "candidate",
+      "sha512": null
     },
     {
       "name": "busybox",
@@ -53,7 +57,8 @@
       "sha256": null,
       "license": "GPL-2.0-only",
       "role": "Minimal initial userspace",
-      "status": "candidate"
+      "status": "candidate",
+      "sha512": null
     }
   ]
 }
