@@ -47,6 +47,9 @@ check-python:
 core-files:
 	@test -s docs/vantor-core.md
 	@test -s installer/vantor-install
+	@test -s docs/installer.md
+	@test -s .github/workflows/build-nyan-minimal.yml
+	@test -s packages/profiles/minimal/PROFILE.txt
 	@grep -q 'root:x:0:0:root' tools/prepare-rootfs.py
 	@grep -q 'live:x:1000:1000' tools/prepare-rootfs.py
 	@grep -q 'VANTOR Init' tools/prepare-rootfs.py
@@ -73,6 +76,7 @@ check-nyan:
 	@grep -q 'minimal' packages/nyan/nyan
 	@test -s packages/profiles/development/PROFILE.txt
 	@test -s .github/workflows/build-nyan-profiles.yml
+	@test -s .github/workflows/build-nyan-minimal.yml
 	@bash -n tools/publish-package.sh
 	@grep -q 'install dependencies' docs/nyan.md
 	@grep -q 'Language:' docs/nyan.md
