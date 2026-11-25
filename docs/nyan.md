@@ -96,6 +96,19 @@ The Nyan extras workflow also builds six additional architecture-independent too
 
 All six are POSIX-shell tools installed under `/usr/local/bin`; they do not require a second C runtime. Their package status remains `building` until the isolated publisher succeeds. Native Nano, Dialog, htop and curl binaries are not falsely represented by these scripts: they require a separately validated build/runtime strategy for both CPU baselines and TLS support.
 
+## Native terminal tools
+
+Native packages are built in a separate workflow so their compiler and library dependencies do not affect kernel, ISO, Legacy, or general build workflows.
+
+The first native package is GNU nano 9.2. Its builder:
+- Uses pinned musl cross-toolchains for x86_64 and i486, each checked against a SHA-256 digest.
+- Builds ncurses 6.6 and nano from pinned source archives with verified SHA-256 digests.
+- Produces statically linked binaries, avoiding a second runtime C library on the target system.
+- Smoke-tests the x86_64 binary directly and the i486 binary under a 486 CPU emulator.
+- Publishes only after the build and binary checks succeed.
+
+The package is listed as `building` until both architecture jobs publish successfully. Dialog, htop, curl with TLS, and full Vim remain planned follow-up native builds; they are not represented as available packages yet.
+
 ## Installed package inspection
 
 Use `nyan installed` to inspect the package database for the current root. Use `nyan verify` after an installation or system repair to confirm that every file recorded for each package still exists. A named check (`nyan verify busybox`) limits verification to one package. This checks file presence and ownership records; it does not yet validate installed file contents against per-file hashes or repair packages automatically.
