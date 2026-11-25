@@ -34,3 +34,19 @@ nyan install-profile xfce4
 ```
 
 A graphical login manager and session selector will be offered only after both the X11 and Wayland session paths have passed boot and login tests.
+
+## Additional system components
+
+The Nyan catalog also tracks optional supporting components (currently marked `planned`):
+
+- **Login/display managers:** SDDM, GDM, LightDM, greetd. Choose one; do not enable several at once.
+- **Display and compatibility:** X.Org Server, Xwayland, Xinit, XRandR, XInput, XKB, X.Org input/video drivers.
+- **Window managers and utilities:** Openbox, XFWM, tint2, Picom, Rofi, dmenu, Plank, Feh, Nitrogen, LXAppearance.
+- **Networking:** NetworkManager, its tray applet, wpa_supplicant, iwd, iproute2, iputils, OpenSSH, Avahi and DHCP clients.
+- **Audio:** PipeWire, WirePlumber, PipeWire PulseAudio compatibility, ALSA tools, PulseAudio (legacy), and volume control.
+- **Hardware and desktop integration:** libinput, Mesa/DRM/Vulkan, D-Bus, elogind/seat compatibility, Polkit, AccountsService, UDisks, GVfs, portals, fonts, icon themes, GTK and Qt.
+- **Bluetooth, printing and scanning:** BlueZ, Blueman, CUPS, printer tools, SANE and Simple Scan.
+- **Applications:** Firefox, Chromium, Thunderbird, LibreOffice, PDF/document viewers, image viewers, VLC/mpv, archive managers and editors.
+- **System utilities:** GParted, disk usage tools, QEMU and virt-manager.
+
+The package catalog records component names and intent; it does not mean the binaries, dependency closures or Nyan archives have been built. NetworkManager and VANTOR's current network service also need an explicit ownership/transition design before both can manage interfaces simultaneously.
