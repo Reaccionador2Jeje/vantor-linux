@@ -5,6 +5,10 @@ on:
     paths:
       - "tools/prepare-rootfs.py"
       - "installer/**"
+      - "packages/nyan/**"
+      - "packages/catalog.tsv"
+      - "core/hardware/**"
+      - "assets/branding/**"
       - "build/scripts/build-busybox.sh"
       - "build/sources/sources.json"
       - "packages/profiles/minimal/**"
