@@ -12,6 +12,7 @@ help:
 	  '  make check-config  Validate build configuration' \
 	  '  make check-sources Validate source manifest structure' \
 	  '  make sources-ready Require verified source checksums' \
+	  '  make fetch-sources Download and verify pinned archives' \
 	  '  make clean         Remove generated build output'
 
 info:
@@ -40,6 +41,9 @@ check-sources:
 
 sources-ready:
 	@python3 tools/validate-sources.py --require-pinned
+
+fetch-sources: sources-ready
+	@python3 tools/fetch-sources.py
 
 clean:
 	rm -rf -- build/work build/distfiles output
