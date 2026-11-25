@@ -32,11 +32,20 @@ curl -fL --retry 3 "$RELEASE/$ARCHIVE" -o "$WORK/$ARCHIVE"
 curl -fL --retry 3 "$RELEASE/SHA256SUMS" -o "$WORK/SHA256SUMS"
 (
   cd "$WORK"
-  grep -E "^[0-9a-f]{64}[[:space:]]+$ARCHIVE$" SHA256SUMS | sha256sum -c -
+  checksum_line=$(awk -v name="$ARCHIVE" '$2 == name { print; exit }' SHA256SUMS)
+  [ -n "$checksum_line" ] || { echo "Missing checksum for $ARCHIVE" >&2; exit 1; }
+  printf '%s\n' "$checksum_line" | sha256sum -c -
 )
 
 echo "Installing VANTOR Linux $VERSION into PRoot-Distro..."
 proot-distro install "$WORK/$ARCHIVE" --name vantor
+curl -fL --retry 3 "https://raw.githubusercontent.com/Reaccionador2Jeje/vantor-linux/main/tools/termux/vantor" -o "$WORK/vantor"
+curl -fL --retry 3 "https://raw.githubusercontent.com/Reaccionador2Jeje/vantor-linux/main/tools/termux/vantor-pd" -o "$WORK/vantor-pd"
+mkdir -p "$PREFIX/bin"
+cp "$WORK/vantor" "$PREFIX/bin/vantor"
+cp "$WORK/vantor-pd" "$PREFIX/bin/vantor-pd"
+chmod 755 "$PREFIX/bin/vantor" "$PREFIX/bin/vantor-pd"
 echo
 echo "VANTOR is installed."
-echo "Enter with: proot-distro login vantor -- /usr/bin/vantor-termux-shell"
+echo "Enter with: vantor"
+echo "Run a command: vantor uname -a"
