@@ -56,71 +56,11 @@ jobs:
           grep -q '^CONFIG_BLK_DEV_INITRD=y$' kernel/configs/vantor-x86_64.config
           grep -q '^CONFIG_VIRTIO_BLK=y$' kernel/configs/vantor-x86_64.config
           grep -q '^CONFIG_VIRTIO_NET=y$' kernel/configs/vantor-x86_64.config
-          grep -q '^CONFIG_EXT4_FS=y          grep -q '^CONFIG_ISO9660_FS=y$' kernel/configs/vantor-x86_64.config
-          grep -q '^CONFIG_FRAMEBUFFER_CONSOLE=y$' kernel/configs/vantor-x86_64.config
-
-      - name: Upload kernel and build configuration
-        uses: actions/upload-artifact@v4
-        with:
-          name: vantor-x86_64-kernel-${{ github.sha }}
-          path: |
-            build/work/kernel/vantor-kernel
-            build/work/kernel/kernelrelease
-            build/work/modules/lib/modules/**
-            kernel/configs/vantor-x86_64.config
-            build/logs/kernel-build.log
-          if-no-files-found: error
-          retention-days: 14
- kernel/configs/vantor-x86_64.config
-          grep -q '^CONFIG_EXT2_FS=y          grep -q '^CONFIG_ISO9660_FS=y$' kernel/configs/vantor-x86_64.config
-          grep -q '^CONFIG_FRAMEBUFFER_CONSOLE=y$' kernel/configs/vantor-x86_64.config
-
-      - name: Upload kernel and build configuration
-        uses: actions/upload-artifact@v4
-        with:
-          name: vantor-x86_64-kernel-${{ github.sha }}
-          path: |
-            build/work/kernel/vantor-kernel
-            build/work/kernel/kernelrelease
-            build/work/modules/lib/modules/**
-            kernel/configs/vantor-x86_64.config
-            build/logs/kernel-build.log
-          if-no-files-found: error
-          retention-days: 14
- kernel/configs/vantor-x86_64.config
-          grep -q '^CONFIG_VFAT_FS=y          grep -q '^CONFIG_ISO9660_FS=y$' kernel/configs/vantor-x86_64.config
-          grep -q '^CONFIG_FRAMEBUFFER_CONSOLE=y$' kernel/configs/vantor-x86_64.config
-
-      - name: Upload kernel and build configuration
-        uses: actions/upload-artifact@v4
-        with:
-          name: vantor-x86_64-kernel-${{ github.sha }}
-          path: |
-            build/work/kernel/vantor-kernel
-            build/work/kernel/kernelrelease
-            build/work/modules/lib/modules/**
-            kernel/configs/vantor-x86_64.config
-            build/logs/kernel-build.log
-          if-no-files-found: error
-          retention-days: 14
- kernel/configs/vantor-x86_64.config
-          grep -q '^CONFIG_FAT_FS=y          grep -q '^CONFIG_ISO9660_FS=y$' kernel/configs/vantor-x86_64.config
-          grep -q '^CONFIG_FRAMEBUFFER_CONSOLE=y$' kernel/configs/vantor-x86_64.config
-
-      - name: Upload kernel and build configuration
-        uses: actions/upload-artifact@v4
-        with:
-          name: vantor-x86_64-kernel-${{ github.sha }}
-          path: |
-            build/work/kernel/vantor-kernel
-            build/work/kernel/kernelrelease
-            build/work/modules/lib/modules/**
-            kernel/configs/vantor-x86_64.config
-            build/logs/kernel-build.log
-          if-no-files-found: error
-          retention-days: 14
- kernel/configs/vantor-x86_64.config
+          grep -q '^CONFIG_EXT2_FS=y$' kernel/configs/vantor-x86_64.config
+          grep -q '^CONFIG_EXT4_FS=y$' kernel/configs/vantor-x86_64.config
           grep -q '^CONFIG_ISO9660_FS=y$' kernel/configs/vantor-x86_64.config
+          grep -q '^CONFIG_FAT_FS=y$' kernel/configs/vantor-x86_64.config
+          grep -q '^CONFIG_VFAT_FS=y$' kernel/configs/vantor-x86_64.config
           grep -q '^CONFIG_FRAMEBUFFER_CONSOLE=y$' kernel/configs/vantor-x86_64.config
 
       - name: Upload kernel and build configuration
