@@ -14,7 +14,7 @@ The Worker proxies indexes from this public repository and redirects package req
 
 First line: `# VANTOR-PACKAGES 1`. Each package row is tab-separated:
 
-`name<TAB>version<TAB>architecture<TAB>sha256<TAB>archive<TAB>description`
+`name<TAB>version<TAB>architecture<TAB>sha256<TAB>archive<TAB>description<TAB>dependencies`
 
 Architectures: `x86_64`, `aarch64`, or `all`. Archives are gzip-compressed tar files. SHA-256 is the lowercase digest of exact archive bytes. Archive filenames must be flat filenames without path separators.
 
@@ -22,7 +22,7 @@ Architectures: `x86_64`, `aarch64`, or `all`. Archives are gzip-compressed tar f
 
 Use GitHub Actions workflow **Publish Nyan package**. Supply a repository-relative archive path, package name, version, architecture and description. The workflow validates the archive, calculates SHA-256, uploads the asset to release `nyan-repository`, updates the index and pushes the index commit.
 
-The first published language package is Lua 5.4.9 for x86_64. See `packages/repository/x86_64/Packages` for its current digest and archive filename.
+The first published language package is Lua 5.4.9 for x86_64. The initial development profile is a meta-package depending on Lua; the optional seventh field records comma-separated dependencies. Profiles are only installable after their meta-package and all dependencies have been published. See `packages/repository/x86_64/Packages` for its current digest and archive filename.
 
 ## Limits and security
 
