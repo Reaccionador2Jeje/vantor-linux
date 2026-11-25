@@ -454,7 +454,8 @@ if [ -n "$rootdev" ]; then
         mount -o move /dev /newroot/dev 2>/dev/null || true
         mount -o move /proc /newroot/proc 2>/dev/null || true
         mount -o move /sys /newroot/sys 2>/dev/null || true
-        exec /bin/busybox switch_root /newroot /sbin/init
+        mount -o move /run /newroot/run 2>/dev/null || true
+        exec /bin/busybox switch_root /newroot /sbin/vantor-init
     fi
     echo "[VANTOR] Could not mount installed root $rootdev ($rootfstype)."
     exec /bin/sh
