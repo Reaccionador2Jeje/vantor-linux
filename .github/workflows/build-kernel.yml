@@ -69,6 +69,6 @@ jobs:
             build/work/kernel/kernelrelease
             build/work/modules/lib/modules/**
             kernel/configs/vantor-x86_64.config
-            build/logs/kernel-bzImage.log
+            build/logs/kernel-build.log
           if-no-files-found: error
           retention-days: 14
