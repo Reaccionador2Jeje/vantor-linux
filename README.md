@@ -78,6 +78,10 @@ The first x86_64 cross-toolchain plan is documented in [docs/toolchain.md](docs/
 
 Upstream candidates are recorded in \`build/sources/sources.json\`; each source must have a verified digest before download/build automation can use it. \`make sources-ready\` deliberately fails until all selected sources are pinned. \`make fetch-sources\` verifies digests before saving archives.
 
+## Community package contributions
+
+Anyone can propose packages through a fork and Pull Request; repository write access is not required. Add a validated `.tar.gz` archive and matching JSON metadata under `incoming/<architecture>/`. GitHub Actions validates submissions, and accepted changes are published to the Nyan GitHub Releases mirror. See [CONTRIBUTING.md](CONTRIBUTING.md) for the complete process and safety rules.
+
 ## Build status
 
 CI validates repository structure, configuration, source metadata, safe extraction, rootfs generation and rootfs identity files. The first-stage toolchain scripts, GRUB boot menu, kernel build script and initial rootfs generator are implemented. Binutils and GCC bootstrap sources are pinned; glibc, Linux and BusyBox remain unpinned. No completed compiler, kernel, initramfs or bootable image is claimed yet. The kernel source remains unpinned until its official checksum is verified.
