@@ -4,6 +4,23 @@
 
 VANTOR is an independent distribution assembled from upstream source projects. It is not a respin of Debian, Ubuntu, Arch, Fedora, or another distribution.
 
+## Primary edition: VANTOR Minimal
+
+VANTOR Minimal is the default product edition. Its design goal is a small, user-controlled base inspired by the minimal philosophy of Arch, Void, Gentoo and NixOS, without copying their package formats or release models.
+
+The initial account policy includes:
+- `root` (UID 0), administrative account.
+- `live` (UID 1000), standard Live-session account.
+- `wheel` group and a sudoers policy for its members.
+- Passwords locked in the initial image until explicitly configured.
+
+The Minimal payload starts with VANTOR Base Files and static BusyBox. BusyBox supplies the bootstrap shell, core utilities and its `vi` applet. `sudo`, standalone `nano`, full `vim`, and `fastfetch` are planned separate packages; a sudoers policy does not mean the sudo executable is already installed.
+
+The native `vantor-install` TUI uses `dialog` when present and a keyboard menu fallback otherwise. In this first stage it installs the published Minimal Nyan profile into an already-mounted empty filesystem and provisions accounts. Disk partitioning, formatting, fstab generation and bootloader installation are deliberately outside its current scope.
+
+The first x86_64 Minimal package is built by `.github/workflows/build-nyan-minimal.yml`. It assembles the generated rootfs and static BusyBox, removes archive symlinks, and supplies real BusyBox copies at `/bin/sh` and `/sbin/init` so the archive can pass Nyan's current no-links policy and bootstrap execution.
+
+
 ## First milestone
 
 The first milestone is a minimal x86_64 system that can boot in QEMU. A graphical desktop is deliberately out of scope until the base system is reproducible.
