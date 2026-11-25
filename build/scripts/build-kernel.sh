@@ -82,7 +82,7 @@ mkdir -p "$MODULES_DIR"
 make -C "$SOURCE_DIR" O="$BUILD_DIR" \
     INSTALL_MOD_PATH="$MODULES_DIR" INSTALL_MOD_STRIP=1 modules_install
 
-KERNEL_RELEASE="$(make -s -C "$SOURCE_DIR" O="$BUILD_DIR" kernelrelease)"
+KERNEL_RELEASE="$(make --no-print-directory -s -C "$SOURCE_DIR" O="$BUILD_DIR" kernelrelease | tail -n 1 | tr -d '\r')"
 [[ "$KERNEL_RELEASE" =~ ^[A-Za-z0-9._+-]+$ ]] || {
     echo "[ERROR] Invalid kernel release string: $KERNEL_RELEASE" >&2
     exit 1
