@@ -100,14 +100,14 @@ All six are POSIX-shell tools installed under `/usr/local/bin`; they do not requ
 
 Native packages are built in a separate workflow so their compiler and library dependencies do not affect kernel, ISO, Legacy, or general build workflows.
 
-The native package workflow builds multiple packages in a four-job architecture/package matrix. GNU nano 9.2 is published for both x86_64 and i486. Its builder:
+The native package workflow builds all selected tools in parallel across x86_64 and i486. Successful build artifacts are collected by one publishing job; failed architecture/package builds are skipped without blocking publication of the other successful artifacts. The publisher serializes index updates to avoid concurrent package-index pushes. GNU nano 9.2 is published for both x86_64 and i486. Its builder:
 - Uses pinned musl cross-toolchains for x86_64 and i486, each checked against a SHA-256 digest.
 - Builds ncurses 6.6 and nano from pinned source archives with verified SHA-256 digests.
 - Produces statically linked binaries, avoiding a second runtime C library on the target system.
 - Smoke-tests the x86_64 binary directly and the i486 binary under a 486 CPU emulator.
 - Publishes only after the build and binary checks succeed.
 
-GNU nano is available in both architecture indexes. The second native target is htop 3.4.1, built statically against the same pinned ncurses release with optional hwloc support disabled. Its two architecture jobs run independently alongside Nano; htop remains `building` until both package archives are published and verified in the indexes. Dialog, curl with TLS, and full Vim remain planned follow-up native builds; they are not represented as available packages yet.
+GNU nano is available in both architecture indexes. The htop 3.4.1 builder targets a static process monitor against pinned ncurses with optional hwloc support disabled. Dialog uses the maintainer-signed `t20260721` upstream snapshot and static ncurses. curl 8.23.0 is built with static OpenSSL 3.5.9 LTS; the package also carries the Mozilla CA bundle at `/etc/ssl/certs/ca-certificates.crt`, with the bundle checked against curl.se's published SHA-256 file. Dialog, curl and htop remain `building` until their respective architecture archives are successfully built, smoke-tested and published. Full Vim remains planned.
 
 ## Installed package inspection
 
