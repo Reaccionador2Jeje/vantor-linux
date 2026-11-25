@@ -23,10 +23,13 @@ done
 [[ -s "$GRUB_CFG" ]] || fail "GRUB configuration missing: $GRUB_CFG"
 
 rm -rf -- "$STAGING"
-mkdir -p "$STAGING/boot/grub" "$ROOT/output"
+mkdir -p "$STAGING/boot/grub/themes/vantor" "$ROOT/output"
 install -m 0644 "$KERNEL" "$STAGING/boot/vantor-kernel"
 install -m 0644 "$INITRAMFS" "$STAGING/boot/vantor-initramfs.cpio.gz"
 install -m 0644 "$GRUB_CFG" "$STAGING/boot/grub/grub.cfg"
+THEME="$ROOT/boot/grub/themes/vantor/theme.txt"
+[[ -s "$THEME" ]] || fail "VANTOR GRUB theme missing: $THEME"
+install -m 0644 "$THEME" "$STAGING/boot/grub/themes/vantor/theme.txt"
 
 printf '[INFO] Creating GRUB ISO using available BIOS/UEFI platform modules.\n'
 grub-mkrescue -o "$OUTPUT" "$STAGING"
