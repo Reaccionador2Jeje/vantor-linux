@@ -49,6 +49,8 @@ core-files:
 	@test -s installer/vantor-install
 	@test -s docs/installer.md
 	@test -s .github/workflows/build-nyan-minimal.yml
+	@test -s .github/workflows/build-legacy-minimal.yml
+	@test -s packages/repository/i486/Packages
 	@test -s packages/profiles/minimal/PROFILE.txt
 	@grep -q 'root:x:0:0:root' tools/prepare-rootfs.py
 	@grep -q 'live:x:1000:1000' tools/prepare-rootfs.py
@@ -68,6 +70,7 @@ kernel-files:
 	@test -s docs/kernel.md
 	@test -s build/scripts/build-kernel-legacy.sh
 	@test -s build/scripts/build-busybox-legacy.sh
+	@grep -q 'i486' build/scripts/build-busybox-legacy.sh
 	@grep -q 'M486SX' build/scripts/build-kernel-legacy.sh
 	@grep -q 'linux-legacy' build/sources/sources.json
 	@test -s docs/hardware-compatibility.md
