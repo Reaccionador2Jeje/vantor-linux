@@ -32,7 +32,11 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertTrue((output / "usr/bin/nyan").stat().st_mode & 0o111)
             self.assertTrue((output / "usr/bin/vantor-install").stat().st_mode & 0o111)
             self.assertTrue((output / "usr/bin/vantor-splash").stat().st_mode & 0o111)
+            if (output / "usr/bin/vantor-fb-splash").exists():
+                self.assertTrue((output / "usr/bin/vantor-fb-splash").stat().st_mode & 0o111)
             splash = (output / "usr/bin/vantor-splash").read_text()
+            self.assertIn("vantor-fb-splash", splash)
+            self.assertIn('[ -c /dev/fb0 ]', splash)
             self.assertIn("VANTOR LINUX", splash)
             self.assertIn("ONE SYSTEM. EVERY GENERATION.", splash)
             self.assertIn('case "${1:-start}" in', splash)
