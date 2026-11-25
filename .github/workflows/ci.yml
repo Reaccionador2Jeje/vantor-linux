@@ -34,12 +34,6 @@ jobs:
       - name: Validate configuration, shell scripts and source manifest
         run: make check
 
-      - name: Compile Python tools
-        run: python3 -m compileall -q tools tests
-
-      - name: Run source tooling tests
-        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
-
       - name: Check required repository paths
         run: |
           test -f README.md
@@ -55,4 +49,6 @@ jobs:
           test -f build/scripts/build-binutils.sh
           test -f build/scripts/build-gcc.sh
           test -f build/scripts/build-toolchain.sh
+          test -f .github/workflows/toolchain.yml
+          test -f tests/test_source_tools.py
           echo "Repository layout is valid."
