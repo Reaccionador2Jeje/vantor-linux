@@ -50,6 +50,7 @@ core-files:
 	@test -s docs/installer.md
 	@test -s .github/workflows/build-nyan-minimal.yml
 	@test -s .github/workflows/build-legacy-minimal.yml
+	@test -s .github/workflows/build-legacy-minimal.yml
 	@test -s packages/repository/i486/Packages
 	@test -s packages/profiles/minimal/PROFILE.txt
 	@grep -q 'root:x:0:0:root' tools/prepare-rootfs.py
@@ -80,6 +81,7 @@ kernel-files:
 check-nyan:
 	@sh -n packages/nyan/nyan
 	@grep -q 'VANTOR-PACKAGES 1' packages/repository/x86_64/Packages
+	@grep -q 'VANTOR-PACKAGES 1' packages/repository/i486/Packages
 	@grep -q 'languages)' packages/nyan/nyan
 	@grep -q 'install-profile)' packages/nyan/nyan
 	@grep -q 'dependency cycle detected' packages/nyan/nyan
