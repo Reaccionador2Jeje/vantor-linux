@@ -21,9 +21,12 @@ fetch() {
 safe_archive() {
   archive=$1
   tar -tzf "$archive" >/dev/null 2>&1 || die "invalid package archive"
-  tar -tzf "$archive" | while IFS= read -r item; do
-    case "$item" in /*|../*|*/../*|*/..) die "unsafe archive path: $item";; esac
-  done
+  list="$NYAN_CACHE/archive-list-$"
+  tar -tzf "$archive" > "$list" || die "invalid package archive"
+  while IFS= read -r item; do
+    case "$item" in /*|../*|*/../*|*/..) rm -f "$list"; die "unsafe archive path: $item";; esac
+  done < "$list"
+  rm -f "$list"
 }
 usage() {
   cat <<'EOF'
