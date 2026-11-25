@@ -1,0 +1,102 @@
+name: Test VANTOR Genesis ISO in QEMU
+
+on:
+  workflow_dispatch:
+    inputs:
+      artifact_run_id:
+        description: "Build VANTOR Genesis ISO workflow run ID"
+        required: true
+        type: string
+  workflow_run:
+    workflows: ["Build VANTOR Genesis x86_64 ISO"]
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  boot-test:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Select source build
+        id: source
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "run_id=${{ inputs.artifact_run_id }}" >> "$GITHUB_OUTPUT"
+            echo "sha=manual" >> "$GITHUB_OUTPUT"
+          else
+            echo "run_id=${{ github.event.workflow_run.id }}" >> "$GITHUB_OUTPUT"
+            echo "sha=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download ISO artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: vantor-genesis-x86_64-iso-${{ steps.source.outputs.sha }}
+          run-id: ${{ steps.source.outputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: artifacts
+
+      - name: Install QEMU and OCR
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends qemu-system-x86 tesseract-ocr
+
+      - name: Boot ISO and inspect the virtual display
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ISO="artifacts/output/vantor-genesis-0.1.0-x86_64.iso"
+          test -s "$ISO"
+          QEMU_LOG="$RUNNER_TEMP/qemu.log"
+          MONITOR="$RUNNER_TEMP/qemu-monitor.sock"
+          SCREEN="$RUNNER_TEMP/vantor-screen.ppm"
+          OCR="$RUNNER_TEMP/vantor-screen.txt"
+
+          qemu-system-x86_64 \
+            -machine pc,accel=tcg -cpu qemu64 -m 1024 -smp 2 \
+            -cdrom "$ISO" -boot d -display none -serial none \
+            -monitor "unix:$MONITOR,server,nowait" \
+            -no-reboot -no-shutdown >"$QEMU_LOG" 2>&1 &
+          QEMU_PID=$!
+          cleanup() { kill "$QEMU_PID" 2>/dev/null || true; wait "$QEMU_PID" 2>/dev/null || true; }
+          trap cleanup EXIT
+
+          python3 - "$MONITOR" "$SCREEN" <<'PY'
+          import os, socket, sys, time
+          monitor, screen = sys.argv[1:]
+          deadline = time.time() + 90
+          connection = None
+          while time.time() < deadline:
+              try:
+                  connection = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+                  connection.connect(monitor)
+                  break
+              except OSError:
+                  if connection:
+                      connection.close()
+                  connection = None
+                  time.sleep(1)
+          if connection is None:
+              raise SystemExit("QEMU monitor did not become available")
+          connection.settimeout(2)
+          time.sleep(65)
+          connection.sendall(f"screendump {screen}\\n".encode())
+          time.sleep(2)
+          connection.close()
+          if not os.path.isfile(screen) or os.path.getsize(screen) < 1024:
+              raise SystemExit("QEMU did not produce a usable guest screenshot")
+          PY
+
+          tesseract "$SCREEN" "$RUNNER_TEMP/vantor-screen" 2>/dev/null
+          cat "$OCR"
+          if ! grep -Eiq 'VANTOR|ONE SYSTEM|Welcome to' "$OCR"; then
+            echo "::error::VANTOR branding or Live console was not detected in the guest display."
+            cat "$QEMU_LOG"
+            exit 1
+          fi
+          echo "[OK] QEMU reached a VANTOR-branded guest screen."
