@@ -30,6 +30,9 @@ class InitramfsBuildTests(unittest.TestCase):
         for name in ("build-busybox.sh", "build-busybox-legacy.sh"):
             script = (ROOT / "build/scripts" / name).read_text()
             self.assertIn("CONFIG_SWITCH_ROOT y", script)
+        if name == "build-busybox.sh":
+            self.assertIn("CONFIG_MODPROBE", script)
+            self.assertIn("modprobe", script)
             self.assertIn("switch_root", script)
 
     def test_iso_and_initramfs_output_contract_match(self):
