@@ -76,7 +76,7 @@ mount_virtual_fs() {
     fi
 }
 
-if [ "\${1:-}" = "--version" ]; then
+if [ "${1:-}" = "--version" ]; then
     echo "VANTOR Init $VERSION"
     exit 0
 fi
@@ -110,7 +110,7 @@ usage() {
     echo "VANTOR Control $VERSION"
     echo "Usage: vantorctl {help|version|info|hardware|network|status}"
 }
-case "\${1:-help}" in
+case "${1:-help}" in
     help|-h|--help) usage ;;
     version|--version) echo "VANTOR Control $VERSION" ;;
     info) [ -r /etc/os-release ] && cat /etc/os-release ;;
@@ -120,7 +120,7 @@ case "\${1:-help}" in
         if [ -d /sys/class/net ]; then
             for iface in /sys/class/net/*; do
                 [ -e "$iface" ] || continue
-                name="\${iface##*/}"; state="unknown"
+                name="${iface##*/}"; state="unknown"
                 [ -r "$iface/operstate" ] && state="$(cat "$iface/operstate")"
                 echo "$name: $state"
             done
