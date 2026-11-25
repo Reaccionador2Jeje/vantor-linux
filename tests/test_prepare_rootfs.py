@@ -25,7 +25,7 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertTrue((output / "usr/bin/vantorctl").stat().st_mode & 0o111)
             self.assertTrue((output / "usr/bin/vantor-hw").stat().st_mode & 0o111)
             self.assertTrue((output / "usr/bin/nyan").stat().st_mode & 0o111)
-            self.assertIn("NYAN_REPO=", (output / "etc/nyan.conf").read_text())
+            self.assertIn("NYAN_REPO:=", (output / "etc/nyan.conf").read_text())
             self.assertTrue((output / "usr/share/vantor/branding/vantor-mark.svg").is_file())
             brand = json.loads((output / "etc/vantor-brand.json").read_text())
             self.assertEqual(brand["brand"], "VANTOR Linux")
