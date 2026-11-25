@@ -38,6 +38,7 @@ set_config CONFIG_STATIC y
 set_config CONFIG_VI y
 set_config CONFIG_ASH y
 set_config CONFIG_SH_IS_ASH y
+set_config CONFIG_SH_IS_ASH y
 set_config CONFIG_FEATURE_PREFER_APPLETS y
 set_config CONFIG_MDEV y
 set_config CONFIG_UDHCPC y
@@ -54,6 +55,7 @@ make -C "$SOURCE_DIR" O="$BUILD_DIR" -j"${VANTOR_BUILD_JOBS:-$(nproc)}"
 make -C "$SOURCE_DIR" O="$BUILD_DIR" CONFIG_PREFIX="$ROOTFS" install
 
 test -x "$ROOTFS/bin/busybox"
+test -x "$ROOTFS/bin/sh"
 "$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
 for applet in sh ash vi mdev udhcpc ip mount umount df free ps; do
   grep -qx "$applet" "$BUILD_DIR/applets.txt" || { echo "[ERROR] Missing BusyBox applet: $applet" >&2; exit 1; }
