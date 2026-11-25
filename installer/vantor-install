@@ -2,7 +2,7 @@
 # VANTOR Installer — Minimal edition, TUI front end.
 set -eu
 
-VERSION="0.2.2"
+VERSION="0.3.0"
 TARGET=""
 HOSTNAME="vantor"
 USERNAME="live"
@@ -48,6 +48,7 @@ menu() {
             prefs "Language, timezone and hostname" \
             storage "Inspect disks and partitions" \
             mountroot "Mount existing Linux partition" \
+            check "Check installation readiness" \
             bootloader "Install GRUB bootloader" \
             exit "Exit" 3>&1 1>&2 2>&3
     else
@@ -55,9 +56,9 @@ menu() {
         printf ' VANTOR LINUX — MINIMAL INSTALLER %s\n' "$VERSION" >/dev/tty
         printf ' ONE SYSTEM. EVERY GENERATION.\n' >/dev/tty
         printf '==============================================\n' >/dev/tty
-        printf '1) Install VANTOR Minimal\n2) Configure installed system\n3) Prepare installed boot files\n4) Configure network\n5) Nyan mirror\n6) Additional packages\n7) System preferences\n8) About\n9) Inspect disks\n10) Mount existing Linux partition\n11) Install GRUB bootloader\n12) Exit\nSelect: ' >/dev/tty
+        printf '1) Install VANTOR Minimal\n2) Configure installed system\n3) Prepare installed boot files\n4) Configure network\n5) Nyan mirror\n6) Additional packages\n7) System preferences\n8) About\n9) Inspect disks\n10) Mount existing Linux partition\n11) Check installation readiness\n12) Install GRUB bootloader\n13) Exit\nSelect: ' >/dev/tty
         IFS= read -r choice </dev/tty || return 1
-        case "$choice" in 1) printf install;; 2) printf configure;; 3) printf boot;; 4) printf network;; 5) printf mirror;; 6) printf packages;; 7) printf prefs;; 8) printf about;; 9) printf storage;; 10) printf mountroot;; 11) printf bootloader;; *) printf exit;; esac
+        case "$choice" in 1) printf install;; 2) printf configure;; 3) printf boot;; 4) printf network;; 5) printf mirror;; 6) printf packages;; 7) printf prefs;; 8) printf about;; 9) printf storage;; 10) printf mountroot;; 11) printf check;; 12) printf bootloader;; *) printf exit;; esac
     fi
 }
 
@@ -341,6 +342,25 @@ mount_existing_partition() {
     info "Mounted $device at $target. Select Install VANTOR Minimal and use this exact mount point."
 }
 
+installation_check() {
+    target=$(ask "Installation readiness" "Installed system root to inspect:" "/mnt") || return 0
+    [ -d "$target" ] && [ ! -L "$target" ] || die "invalid target directory"
+    target=$(cd "$target" && pwd -P)
+    [ "$target" != "/" ] || die "refusing to inspect the Live root as an installation target"
+    printf '\nVANTOR INSTALLATION READINESS\nTarget: %s\n' "$target"
+    if awk -v path="$target" '$2 == path { found=1 } END { exit !found }' "${VANTOR_PROC_MOUNTS:-/proc/mounts}"; then echo "[OK] Target mounted"; else echo "[FAIL] Target not mounted"; fi
+    [ -x "$target/sbin/init" ] && [ -x "$target/bin/busybox" ] && echo "[OK] Init and BusyBox present" || echo "[WARN] Init or BusyBox missing"
+    [ -s "$target/etc/nyan.conf" ] && echo "[OK] Nyan configuration present" || echo "[WARN] Nyan configuration missing"
+    [ -s "$target/boot/vantor-kernel" ] && [ -s "$target/boot/vantor-initramfs.cpio.gz" ] && echo "[OK] Kernel and initramfs present" || echo "[WARN] Kernel/initramfs missing"
+    [ -s "$target/boot/grub/grub.cfg" ] && echo "[OK] GRUB menu present" || echo "[WARN] GRUB menu missing"
+    command -v grub-install >/dev/null 2>&1 && echo "[OK] grub-install available" || echo "[BLOCKED] grub-install missing from Live image"
+    command -v ip >/dev/null 2>&1 && echo "[OK] ip command available" || echo "[WARN] ip command unavailable"
+    command -v udhcpc >/dev/null 2>&1 && echo "[OK] DHCP client available" || echo "[WARN] DHCP client unavailable"
+    [ -x "$NYAN_BIN" ] && echo "[OK] Nyan client available" || echo "[WARN] Nyan client unavailable"
+    echo "Read-only check complete; no disks or files were modified."
+    message "Readiness report completed. Review WARN and BLOCKED entries before rebooting."
+}
+
 install_bootloader() {
     target=$(ask "GRUB bootloader" "Mounted installed system directory:" "/mnt") || return 0
     [ -d "$target" ] && [ ! -L "$target" ] || die "invalid target directory"
@@ -407,7 +427,7 @@ while :; do
         packages) packages_setup ;;
         prefs) preferences_setup ;;
         storage) storage_inspect ;;
-        mountroot) mount_existing_partition ;;
+        mountroot) mount_existing_partition ;;\n        check) installation_check ;;
         bootloader) install_bootloader ;;
         about) about ;;
         exit) clear 2>/dev/null || true; exit 0 ;;
