@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
-.PHONY: help info check image desktop-files check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel kernel-legacy busybox busybox-legacy initramfs initramfs-legacy rootfs rootfs-legacy boot-files iso iso-legacy image-legacy clean kernel-files initramfs-files
+.PHONY: help info check image desktop-files check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel kernel-legacy busybox busybox-legacy initramfs initramfs-legacy rootfs rootfs-legacy termux-rootfs boot-files iso iso-legacy image-legacy clean kernel-files initramfs-files
 
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
@@ -14,7 +14,7 @@ help:
 	  '  make rootfs         Assemble the x86_64 VANTOR rootfs skeleton' '  make rootfs-legacy  Assemble the i486 VANTOR rootfs skeleton' \
 	  '  make boot-files     Check bootloader configuration and builder' \
 	  '  make iso            Build the x86_64 GRUB ISO from existing artifacts' '  make image          Build kernel, userspace, initramfs and x86_64 ISO' '  make iso-legacy     Build the 486 BIOS GRUB ISO' '  make image-legacy   Build the complete i486 ISO pipeline' \
-	  '  make clean         Remove generated build output'
+	  '  make termux-rootfs Build ARM64 Termux/PRoot userspace' '  make clean         Remove generated build output'
 
 info:
 	@set -a; source build/config/vantor.conf; set +a; \
