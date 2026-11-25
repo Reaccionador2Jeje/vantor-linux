@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openbox_config xmlns="http://openbox.org/3.4/rc">
+  <resistance><strength>10</strength></resistance>
+  <focus>
+    <focusNew>yes</focusNew>
+    <followMouse>no</followMouse>
+    <focusLast>yes</focusLast>
+    <underMouse>no</underMouse>
+    < focusDelay>200</ focusDelay>
+    <raiseOnFocus>no</raiseOnFocus>
+  </focus>
+  <placement>
+    <policy>Smart</policy>
+    <center>yes</center>
+    <monitor>Primary</monitor>
+    <primaryMonitor>1</primaryMonitor>
+  </placement>
+  <theme>
+    <name>Clearlooks</name>
+    <titleLayout>NLIMC</titleLayout>
+    <keepBorder>yes</keepBorder>
+    <animateIconify>no</animateIconify>
+  </theme>
+  <desktops>
+    <number>2</number>
+    <firstdesk>1</firstdesk>
+    <names><name>VANTOR</name><name>Workspace 2</name></names>
+    <popupTime>650</popupTime>
+  </desktops>
+  <keyboard>
+    <keybind key="W-Return">
+      <action name="Execute"><command>xterm</command></action>
+    </keybind>
+    <keybind key="W-e">
+      <action name="Execute"><command>pcmanfm</command></action>
+    </keybind>
+    <keybind key="W-d">
+      <action name="ToggleShowDesktop"/>
+    </keybind>
+    <keybind key="W-Tab">
+      <action name="NextWindow"/>
+    </keybind>
+    <keybind key="W-q">
+      <action name="Close"/>
+    </keybind>
+    <keybind key="C-A-Left"><action name="DesktopLeft"/></keybind>
+    <keybind key="C-A-Right"><action name="DesktopRight"/></keybind>
+  </keyboard>
+  <mouse>
+    <context name="Root">
+      <mousebind button="Right" action="Press">
+        <action name="ShowMenu"><menu>root-menu</menu></action>
+      </mousebind>
+    </context>
+    <context name="Titlebar">
+      <mousebind button="Left" action="Drag"><action name="Move"/></mousebind>
+      <mousebind button="Right" action="Press"><action name="ShowMenu"><menu>client-menu</menu></action></mousebind>
+    </context>
+  </mouse>
+  <applications>
+    <application class="xterm"><decor>yes</decor><focus>yes</focus></application>
+  </applications>
+</openbox_config>
