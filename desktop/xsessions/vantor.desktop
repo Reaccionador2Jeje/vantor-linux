@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=VANTOR Desktop
+Comment=VANTOR Linux Genesis graphical session
+Exec=/usr/bin/vantor-session
+TryExec=/usr/bin/vantor-session
+Type=Application
+DesktopNames=VANTOR
