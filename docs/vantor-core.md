@@ -7,7 +7,7 @@ VANTOR Core is the first project-owned userspace layer in Genesis. It is deliber
 - **VANTOR Init 0.1.0** (`/sbin/vantor-init`): mounts procfs, sysfs and devtmpfs when available, creates runtime directories, prints boot diagnostics, then hands off to `/sbin/init`. If no system init is installed, it opens an emergency shell.
 - **Early entry point** (`/init`): delegates to VANTOR Init and provides a minimal emergency fallback.
 - **VANTOR Control 0.1.0** (`/usr/bin/vantorctl`): dispatches system information and diagnostics commands.
-- **VANTOR Hardware 0.1.0** (`/usr/bin/vantor-hw`): read-only inventory of CPU, memory, block devices, PCI devices, VirtIO devices and network interfaces.
+- **VANTOR Hardware 0.1.0** (`/usr/bin/vantor-hw`): read-only inventory of CPU, memory, block devices, PCI devices, VirtIO devices and network interfaces.\n- **VANTOR Modules** (`/usr/sbin/vantor-modules`): loads optional drivers listed in `/etc/modules` through BusyBox `modprobe`; built-in kernel drivers are unaffected.
 
 ## Commands
 
