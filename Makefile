@@ -1,13 +1,13 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
-.PHONY: help info check check-shell check-config check-sources check-python sources-ready fetch-sources toolchain kernel rootfs boot-files iso clean
+.PHONY: help info check check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel rootfs boot-files iso clean
 
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
 	  'Targets:' '  make info          Show project configuration' \
 	  '  make check         Run all repository checks and tests' \
 	  '  make check-shell   Validate shell scripts' '  make check-config  Validate build configuration' \
-	  '  make check-sources Validate source manifest structure' '  make check-python  Compile and test Python tools' \
+	  '  make check-sources Validate source manifest structure' '  make check-python  Compile and test Python tools' '  make check-nyan    Validate Nyan package manager syntax' \
 	  '  make sources-ready Require verified source checksums' '  make fetch-sources Download and verify pinned archives' \
 	  '  make toolchain      Build Binutils and GCC pass 1' '  make kernel         Build VANTOR x86_64 Linux kernel' \
 	  '  make rootfs         Assemble the VANTOR rootfs skeleton' \
@@ -20,7 +20,7 @@ info:
 	printf '%s %s (%s)\nTarget: %s\nKernel: Linux %s (%s)\n' \
 	  "$$VANTOR_NAME" "$$VANTOR_VERSION" "$$VANTOR_CODENAME" "$$VANTOR_TARGET" "$$VANTOR_KERNEL_VERSION" "$$VANTOR_KERNEL_ARCH"
 
-check: check-config check-shell check-sources check-python kernel-files boot-files
+check: check-config check-shell check-sources check-python check-nyan kernel-files boot-files
 	@python3 -m json.tool assets/branding/theme.json > /dev/null
 	@echo "[OK] VANTOR repository checks passed."
 
@@ -47,6 +47,12 @@ kernel-files:
 	@test -s kernel/configs/README.md
 	@test -s docs/kernel.md
 	@echo "[OK] VANTOR kernel build files are present."
+
+
+check-nyan:
+	@sh -n packages/nyan/nyan
+	@grep -q '^# VANTOR-PACKAGES 1$' packages/repository/x86_64/Packages
+	@echo "[OK] Nyan client and repository index are valid."
 
 sources-ready:
 	@python3 tools/validate-sources.py --require-pinned
