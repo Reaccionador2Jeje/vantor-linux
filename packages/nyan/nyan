@@ -3,20 +3,30 @@
 set -eu
 
 NYAN_ROOT=${NYAN_ROOT:-/}
-# A root target must be a real directory for tar -C; parameter expansion
-# alone turns the default '/' into an empty string.
-NYAN_DEST=${NYAN_ROOT%/}
-[ -n "$NYAN_DEST" ] || NYAN_DEST=/
-NYAN_CONFIG="${NYAN_ROOT%/}/etc/nyan.conf"
+case "$NYAN_ROOT" in
+  /*) ;;
+  *) printf '%s\n' "nyan: error: NYAN_ROOT must be an absolute path" >&2; exit 1 ;;
+esac
+# Keep '/' intact and remove redundant trailing slashes from alternate roots.
+while [ "$NYAN_ROOT" != "/" ] && [ "${NYAN_ROOT%/}" != "$NYAN_ROOT" ]; do
+  NYAN_ROOT=${NYAN_ROOT%/}
+done
+# Join paths without turning the system root into an empty prefix.
+nyan_path() {
+  case "$NYAN_ROOT" in
+    /) printf '/ %s' "$1" | tr -d ' ' ;;
+    *) printf '%s/%s' "$NYAN_ROOT" "${1#/}" ;;
+  esac
+}
+NYAN_DEST=$NYAN_ROOT
+NYAN_CONFIG=$(nyan_path etc/nyan.conf)
 # Load the selected root's architecture before applying the host defaults.
 [ ! -r "$NYAN_CONFIG" ] || . "$NYAN_CONFIG"
 NYAN_REPO=${NYAN_REPO:-https://vantor-linux.cristopheriguaran-7.workers.dev}
 NYAN_ARCH=${NYAN_ARCH:-x86_64}
-NYAN_STATE="${NYAN_ROOT%/}/var/lib/nyan"
-NYAN_CACHE="${NYAN_ROOT%/}/var/cache/nyan"
-NYAN_CATALOG="${NYAN_ROOT%/}/usr/share/nyan/catalog.tsv"
-INDEX_URL="$NYAN_REPO/repo/$NYAN_ARCH/Packages"
-INSTALL_STACK=""
+NYAN_STATE=$(nyan_path var/lib/nyan)
+NYAN_CACHE=$(nyan_path var/cache/nyan)
+NYAN_CATALOG=$(nyan_path usr/share/nyan/catalog.tsv)
 
 die() { echo "nyan: error: $*" >&2; exit 1; }
 # Draw one independent progress bar for the package currently being installed.
@@ -163,13 +173,13 @@ install_one() {
     done < "$NYAN_STATE/installed/$name.files"
   done
   while IFS= read -r item; do
-    target="${NYAN_ROOT%/}/$item"
+    target=$(nyan_path "$item")
     [ ! -e "$target" ] && [ ! -L "$target" ] || die "refusing to overwrite existing system path: $item"
   done < "$NYAN_STATE/installed/$name.files"
   tar -xzf "$file" -C "$NYAN_DEST"
   # Never mark a package installed unless every owned payload file exists.
   while IFS= read -r item; do
-    target="${NYAN_ROOT%/}/$item"
+    target=$(nyan_path "$item")
     [ -e "$target" ] || [ -L "$target" ] || die "package extraction did not install: $item"
   done < "$NYAN_STATE/installed/$name.files"
   nyan_progress "$name" 95 "installing"
@@ -298,7 +308,7 @@ case "$cmd" in
       while IFS= read -r item; do
         [ -n "$item" ] || continue
         case "$item" in /*|../*|*/../*|*/..) printf "nyan: verify: unsafe file record: %s\n" "$item" >&2; missing=1; continue;; esac
-        target="${NYAN_ROOT%/}/$item"
+        target=$(nyan_path "$item")
         [ -e "$target" ] || [ -L "$target" ] || { printf "nyan: verify: missing %s\n" "$item" >&2; missing=1; }
       done < "$files"
       if [ "$missing" -eq 0 ]; then say "verified $name"; else failed=1; fi
@@ -312,7 +322,7 @@ case "$cmd" in
     [ -s "$record" ] && [ -s "$files" ] || die "package is not recorded as installed"
     while IFS= read -r item; do
       case "$item" in /*|../*|*/../*|*/..) die "unsafe installed-file record";; esac
-      rm -f "${NYAN_ROOT%/}/$item"
+      rm -f "$(nyan_path "$item")"
     done < "$files"
     rm -f "$record" "$files"
     say "removed $name (dependency cleanup is manual)"
