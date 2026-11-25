@@ -7,6 +7,8 @@ on:
       - "build/scripts/build-kernel-legacy.sh"
       - "build/config/vantor.conf"
       - "build/sources/sources.json"
+      - "tools/extract-source.py"
+      - "tests/test_source_tools.py"
       - "kernel/configs/**"
       - "tests/test_kernel_build.py"
       - "Makefile"
