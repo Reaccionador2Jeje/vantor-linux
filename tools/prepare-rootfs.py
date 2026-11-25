@@ -79,12 +79,50 @@ ttyS0::respawn:/bin/busybox getty -L -n -l /usr/bin/vantor-live-session 115200 t
 ::ctrlaltdel:/bin/busybox reboot
 ::shutdown:/bin/busybox umount -a -r
 """)
+    write(output / "usr/bin/vantor-splash", """#!/bin/sh
+# VANTOR Genesis text splash. Uses only ANSI sequences and BusyBox printf.
+set -u
+TTY=/dev/tty0
+[ -w "$TTY" ] || exit 0
+[ -r /proc/cmdline ] || exit 0
+case " $(cat /proc/cmdline) " in *" nosplash "*) exit 0;; esac
+emit() { printf '%b' "$1" > "$TTY"; }
+case "\${1:-start}" in
+    start)
+        emit '\033[?25l\033[2J\033[H\033[48;2;7;19;33m'
+        emit '\033[36m'
+        emit '                         .-=================-.\n'
+        emit '                    .-==   V A N T O R   ==-.\n'
+        emit '                   /       / V \\       \\\n'
+        emit '                  /_______/     \\_______\\\n'
+        emit '                  \\       \\     /       /\n'
+        emit '                   \\_______\\___/_______/\n'
+        emit '\033[0m\n'
+        emit '\033[1;97m                    VANTOR LINUX\033[0m\n'
+        emit '\033[36m          ONE SYSTEM. EVERY GENERATION.\033[0m\n\n'
+        emit '\033[90m                 INDEPENDENT • UNIVERSAL\033[0m\n\n'
+        emit '\033[38;2;0;207;255m                 Initializing Genesis...\033[0m\n'
+        ;;
+    step)
+        emit "\033[38;2;155;176;200m                 [VANTOR] $2\033[0m\n"
+        ;;
+    finish)
+        emit '\033[?25h\033[0m\033[2J\033[H'
+        ;;
+    *) exit 2;;
+esac
+""", 0o755)
+
     write(output / "etc/init.d/rcS", """#!/bin/sh
 # VANTOR early system setup; safe to run more than once.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+/usr/bin/vantor-splash start
 mkdir -p /proc /sys /dev /run /tmp /var/log /home/live
 mount -t proc proc /proc 2>/dev/null || true
+/usr/bin/vantor-splash step "Kernel interfaces ready"
 mount -t sysfs sysfs /sys 2>/dev/null || true
+mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
+/usr/bin/vantor-splash step "Detecting hardware"
 mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
 chmod 1777 /tmp 2>/dev/null || true
 if [ -r /etc/hostname ]; then hostname "$(cat /etc/hostname)" 2>/dev/null || true; else hostname vantor 2>/dev/null || true; fi
@@ -102,6 +140,7 @@ for media_dev in /dev/sr0 /dev/cdrom; do
     fi
 done
 # Apply persistent installer network configuration, or fall back to DHCP.
+/usr/bin/vantor-splash step "Starting network services"
 network_cfg=/etc/vantor/network.conf
 if [ -r "$network_cfg" ]; then
     . "$network_cfg"
@@ -121,6 +160,9 @@ elif command -v udhcpc >/dev/null 2>&1 && [ -d /sys/class/net ]; then
         /bin/busybox udhcpc -s /usr/share/udhcpc/default.script -i "$iface" -b -q -t 3 -T 2 >/dev/null 2>&1 || true
     done
 fi
+    /usr/bin/vantor-splash step "VANTOR userspace is ready"
+    sleep 1
+    /usr/bin/vantor-splash finish
     echo "[VANTOR] Minimal userspace is ready."
 """, 0o755)
     write(output / "usr/share/udhcpc/default.script", """#!/bin/sh
