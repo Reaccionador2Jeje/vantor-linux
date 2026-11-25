@@ -18,5 +18,5 @@ watch	0.1.0	i486	31ffe73f07926fccbc27760c5a4de2f6439400adb6eab0821139f1999f3fe95
 which	0.1.0	i486	a6af5a1c6b43d1531f5d23a058a577b8c76a99fb7d587dd67ee78c29d7ab58e1	which-0.1.0-all.tar.gz	VANTOR terminal utility: which	
 filetype	0.1.0	i486	4392e89bcd40ac84a189439f50ec9b6735551204ce906c8aef6bdc95e466ede6	filetype-0.1.0-all.tar.gz	VANTOR terminal utility: filetype	
 vtop	0.1.0	i486	9a446dd88e382f518c293abbf6b3f5e36a3690c353d3c61dccf1a3328b689941	vtop-0.1.0-all.tar.gz	VANTOR terminal utility: vtop	
-vantor-base-files	0.1.0	i486	a430f1ad8b9da2ab61f97388133e9f8af4c074c4d9fbc7f7874170da216c33e2	vantor-base-files-0.1.0-i486.tar.gz	VANTOR Minimal i486 base files and static 486-compatible BusyBox	
 vantor-profile-minimal	0.1.0	i486	c435cc3fcf8084b016291c762ad183b91fde0f8624cd27480783d8322afd983e	vantor-profile-minimal-0.1.0-i486.tar.gz	VANTOR Minimal profile for 486SX/486DX and later 32-bit PCs	vantor-base-files
+vantor-base-files	0.1.0	i486	4001e7d6fc2c40aad0b41ba87801ecd6e7be6c038f5e837f36a911a487e67a25	vantor-base-files-0.1.0-i486.tar.gz	VANTOR Minimal i486 base files and static 486-compatible BusyBox	
