@@ -22,11 +22,11 @@ The script:
 4. Starts from upstream x86_64_defconfig.
 5. Enables early userspace, console, VirtIO, storage, network and common virtual-PC drivers.
 6. Runs olddefconfig and builds bzImage.
-7. Stores the resolved config and kernel build log.
+7. Builds the kernel image and loadable modules.\n8. Installs modules into an isolated staging tree and generates dependency metadata when `depmod` is available.\n9. Stores the resolved config, kernel release and build log.
 
-Expected output: build/work/kernel/vantor-kernel
+Expected outputs:\n\n- `build/work/kernel/vantor-kernel`\n- `build/work/kernel/kernelrelease`\n- `build/work/modules/lib/modules/<kernel-release>/`
 
-The dedicated GitHub Actions workflow compiles this target and uploads the kernel image and resolved configuration as a temporary workflow artifact. This artifact is not yet a signed installation release.
+The dedicated GitHub Actions workflow compiles this target and uploads the kernel image, module tree and resolved configuration as a temporary workflow artifact. This artifact is not yet a signed installation release.
 
 The canonical kernel build output remains at build/work/kernel/arch/x86/boot/bzImage for ISO assembly.
 
