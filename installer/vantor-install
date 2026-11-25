@@ -72,7 +72,7 @@ configure_target() {
     fi
     grep -q '^root:' "$target/etc/group" || printf 'root:x:0:\n' >> "$target/etc/group"
     grep -q '^wheel:' "$target/etc/group" || printf 'wheel:x:10:%s\n' "$username" >> "$target/etc/group"
-    if grep -q '^wheel:' "$target/etc/group" && ! grep '^wheel:' "$target/etc/group" | grep -q ",$username\\$"; then
+    if grep -q '^wheel:' "$target/etc/group" && ! awk -F: -v user="$username" '$1 == "wheel" { n=split($4, members, ","); for (i=1; i<=n; i++) if (members[i] == user) found=1 } END { exit !found }' "$target/etc/group"; then
         awk -F: -v user="$username" 'BEGIN { OFS=":" } $1 == "wheel" { if ($4 == "") $4=user; else $4=$4 "," user } { print }' "$target/etc/group" > "$target/etc/group.tmp"
         mv "$target/etc/group.tmp" "$target/etc/group"
     fi
