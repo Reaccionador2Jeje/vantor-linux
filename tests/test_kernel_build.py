@@ -29,6 +29,8 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("DRM_FBDEV_EMULATION", script)
         self.assertIn("DRM_BOCHS", script)
         self.assertIn("bzImage modules", script)
+        self.assertIn('CC="ccache gcc"', script)
+        self.assertIn("ccache --show-stats", script)
         self.assertIn("modules_install", script)
         self.assertIn("INSTALL_MOD_PATH", script)
         self.assertIn("depmod", script)
@@ -40,6 +42,8 @@ class KernelBuildContractTests(unittest.TestCase):
     def test_x86_64_kernel_workflow_builds_and_uploads_kernel(self) -> None:
         workflow = (ROOT / ".github/workflows/build-kernel.yml").read_text()
         self.assertIn("make kernel", workflow)
+        self.assertIn("actions/cache@v4", workflow)
+        self.assertIn("VANTOR_BUILD_JOBS: 4", workflow)
         self.assertIn("build/work/kernel/vantor-kernel", workflow)
         self.assertIn("actions/upload-artifact@v4", workflow)
         self.assertIn("CONFIG_FRAMEBUFFER_CONSOLE=y", workflow)
@@ -49,6 +53,9 @@ class KernelBuildContractTests(unittest.TestCase):
     def test_complete_x86_64_image_workflow_assembles_and_uploads_iso(self) -> None:
         workflow = (ROOT / ".github/workflows/build-image.yml").read_text()
         self.assertIn("make image", workflow)
+        self.assertIn("actions/cache@v4", workflow)
+        self.assertIn("VANTOR_BUILD_JOBS: 4", workflow)
+        self.assertIn("CCACHE_MAXSIZE: 3G", workflow)
         self.assertIn("grub-efi-amd64-bin", workflow)
         self.assertIn("xorriso -indev", workflow)
         self.assertIn("actions/upload-artifact@v4", workflow)
