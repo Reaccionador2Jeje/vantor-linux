@@ -24,7 +24,7 @@ The rootfs generator installs the official VANTOR identity, root and Live accoun
 
 ## Hardware generations
 
-VANTOR Minimal is being designed for modern x86_64 computers and a separate 32-bit i486 Legacy profile. Linux 6.1.193 is pinned for the legacy kernel because the current 6.18 kernel line no longer supports 486 CPUs. 386/286/8086 systems are not supported by this Linux build. See [hardware compatibility](docs/hardware-compatibility.md).
+VANTOR Minimal is being designed for modern x86_64 computers and a separate 32-bit i486 Legacy profile. Linux 6.1.193 is pinned for the legacy kernel because the current 6.18 kernel line no longer supports 486 CPUs. 386/286/8086 systems are not supported by this Linux build. The i486 path now has a separate static BusyBox build and Nyan package publication workflow. Build it with `make rootfs-legacy` and `make busybox-legacy`. See [hardware compatibility](docs/hardware-compatibility.md).
 
 ## Initial technical direction
 
