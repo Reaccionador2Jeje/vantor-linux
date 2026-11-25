@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
-.PHONY: help info check check-shell check-config clean
+.PHONY: help info check check-shell check-config check-sources sources-ready clean
 
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
@@ -17,7 +17,7 @@ info:
 	printf '%s %s (%s)\nTarget: %s\n' \
 	  "$$VANTOR_NAME" "$$VANTOR_VERSION" "$$VANTOR_CODENAME" "$$VANTOR_TARGET"
 
-check: check-config check-shell
+check: check-config check-shell check-sources
 	@echo "[OK] VANTOR repository checks passed."
 
 check-config:
