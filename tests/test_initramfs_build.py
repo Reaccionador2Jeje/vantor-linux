@@ -22,7 +22,7 @@ class InitramfsBuildTests(unittest.TestCase):
         initramfs = (ROOT / "build/scripts/build-initramfs.sh").read_text()
         iso = (ROOT / "build/scripts/build-iso.sh").read_text()
         self.assertIn("build/work/initramfs/vantor-initramfs.cpio.gz", initramfs)
-        self.assertIn("build/work/initramfs/vantor-initramfs.cpio.gz", iso)
+        self.assertIn('INITRAMFS="$WORK/initramfs/vantor-initramfs.cpio.gz"', iso)
 
 
 if __name__ == "__main__":
