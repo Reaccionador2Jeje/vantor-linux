@@ -83,3 +83,15 @@ Use `nyan installed` to inspect the package database for the current root. Use `
 - The percentage represents progress through the package installation stages, not a byte-exact download meter.
 
 The catalog is architecture-specific. Only packages present in the selected repository index are installable; planned packages are not treated as published packages.
+
+
+## Extra package set (0.1.0)
+
+The isolated workflow `.github/workflows/build-nyan-extras.yml` builds and publishes four additional packages for both x86_64 and i486:
+
+- `vantor-hardware` — read-only CPU, memory, PCI, VirtIO, USB, storage and network inventory command (`vantor-hw`).
+- `vantor-installer` — VANTOR text-mode installer (`/usr/sbin/vantor-install`); depends on `vantor-base-files`.
+- `vantor-branding` — official VANTOR SVG marks and theme assets.
+- `vantor-docs` — system overview, license and Nyan documentation.
+
+Run the workflow manually from GitHub Actions, or let its path-filtered push trigger it. It publishes eight architecture-specific archives and updates only the corresponding Nyan repository indexes. The ISO, kernel, legacy-image and general CI workflows are not edited by this package expansion.
