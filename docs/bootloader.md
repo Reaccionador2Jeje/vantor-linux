@@ -24,6 +24,28 @@ The x86_64 menu loads the native theme from `boot/grub/themes/vantor/theme.txt`.
 
 The i486 Legacy menu intentionally stays in BIOS text mode, with the VANTOR palette and slogan, to avoid making older hardware depend on graphical GRUB support. When the installer prepares an x86_64 installed system, it copies the theme from the Live media if available. Legacy installed systems retain the text-mode menu.
 
+## VANTOR Genesis splash
+
+The kernel handoff now keeps the GRUB graphics payload where supported and uses
+a quiet normal boot command line. Once BusyBox init starts the root filesystem,
+`/usr/bin/vantor-splash` draws the VANTOR mark in a native ANSI text splash:
+Deep Space background, cyan orbital/V emblem, VANTOR LINUX name and the official
+slogan. The early init script reports hardware, network and userspace startup
+steps, then restores the cursor and clears the splash before the Live console.
+
+This first implementation is deliberately framebuffer-independent: it uses
+the Linux virtual terminal and BusyBox shell only, so it also works on the
+i486 text-console profile without shipping Plymouth, a GPU stack or external
+assets. It is a text-mode branded splash, not a pixel-perfect graphical
+framebuffer animation. Add `nosplash` to the kernel command line to disable it;
+the diagnostic GRUB entries do this automatically. Normal boot uses
+`quiet loglevel=3` to reduce kernel-message overlap, while diagnostic mode
+keeps verbose kernel output.
+
+The GRUB-to-kernel visual handoff depends on the firmware/GRUB video mode and
+kernel console driver. It must still be visually verified in Limbo after the
+first complete ISO is available.
+
 ## ISO layout
 
 The ISO builder stages:
