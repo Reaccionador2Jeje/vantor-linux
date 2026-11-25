@@ -22,8 +22,8 @@ Architectures: `x86_64`, `aarch64`, or `all`. Archives are gzip-compressed tar f
 
 Use GitHub Actions workflow **Publish Nyan package**. Supply a repository-relative archive path, package name, version, architecture and description. The workflow validates the archive, calculates SHA-256, uploads the asset to release `nyan-repository`, updates the index and pushes the index commit.
 
-No package has been published yet; initial indexes are intentionally empty.
+The first published language package is Lua 5.4.9 for x86_64. See `packages/repository/x86_64/Packages` for its current digest and archive filename.
 
 ## Limits and security
 
-GitHub Releases is suitable for an initial community repository, not an unlimited CDN or high-availability mirror. SHA-256 detects corruption but does not authenticate the publisher. Signed repository metadata, dependency resolution, transactional installation, file ownership tracking and rollback remain future work. The current Nyan prototype is not production-safe.
+GitHub Releases is suitable for an initial community repository, not an unlimited CDN or high-availability mirror. SHA-256 detects corruption but does not authenticate the publisher. Signed repository metadata, dependency resolution, transactional installation, shared-file ownership and rollback remain future work. The Nyan Genesis client currently rejects links/special archive entries and refuses to overwrite existing files. The current Nyan prototype is not production-safe.
