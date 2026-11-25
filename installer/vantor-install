@@ -138,8 +138,8 @@ prepare_boot_files() {
     mounts_file="${VANTOR_PROC_MOUNTS:-/proc/mounts}"
     mount_record=$(awk -v path="$target" '$2 == path { print $1 " " $3; exit }' "$mounts_file")
     [ -n "$mount_record" ] || die "could not determine target filesystem from $mounts_file"
-    root_device=$(printf '%s\\n' "$mount_record" | awk '{print $1}')
-    root_fstype=$(printf '%s\\n' "$mount_record" | awk '{print $2}')
+    root_device=$(printf '%s\n' "$mount_record" | awk '{print $1}')
+    root_fstype=$(printf '%s\n' "$mount_record" | awk '{print $2}')
     case "$root_device" in /dev/*) ;; *) die "target mount source is not a /dev block device: $root_device";; esac
     case "$root_fstype" in ext2|ext3|ext4) ;; *) die "unsupported root filesystem type: $root_fstype";; esac
     case "$arch" in x86_64|i486) ;; *) die "unsupported boot architecture: $arch";; esac
