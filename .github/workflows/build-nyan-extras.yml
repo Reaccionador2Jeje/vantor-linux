@@ -47,6 +47,7 @@ jobs:
             publish "build/nyan-extras/vantor-installer-0.1.0-$arch.tar.gz" vantor-installer "$arch" "VANTOR text-mode system installer" vantor-base-files
             publish "build/nyan-extras/vantor-branding-0.1.0-$arch.tar.gz" vantor-branding "$arch" "Official VANTOR identity assets"
             publish "build/nyan-extras/vantor-docs-0.1.0-$arch.tar.gz" vantor-docs "$arch" "VANTOR system and Nyan documentation"
+          done
       - name: Upload package archives
         uses: actions/upload-artifact@v4
         with:
