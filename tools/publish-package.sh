@@ -26,12 +26,25 @@ tag=nyan-repository
 if ! gh release view "$tag" >/dev/null 2>&1; then
   gh release create "$tag" --title "VANTOR Nyan Package Repository" --notes "Official package assets for the VANTOR Linux Nyan repository."
 fi
+# Asset uploads are idempotent; index publication below is retried independently.
 gh release upload "$tag" "$archive" --clobber
-export VANTOR_PKG_NAME="$name" VANTOR_PKG_VERSION="$version" VANTOR_PKG_ARCH="$arch"
-export VANTOR_PKG_SHA256="$digest" VANTOR_PKG_FILE="$filename" VANTOR_PKG_DESCRIPTION="$description" VANTOR_PKG_DEPENDENCIES="$dependencies"
-python3 - <<'PY'
+
+branch=$(git branch --show-current)
+[[ -n "$branch" ]] || { echo "Cannot determine publishing branch" >&2; exit 1; }
+git config user.name "github-actions[bot]"
+git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+for attempt in 1 2 3 4 5; do
+  echo "[Nyan] Refreshing $branch before index update (attempt $attempt/5)."
+  git fetch origin "$branch"
+  git reset --hard FETCH_HEAD
+
+  export VANTOR_PKG_NAME="$name" VANTOR_PKG_VERSION="$version" VANTOR_PKG_ARCH="$arch"
+  export VANTOR_PKG_SHA256="$digest" VANTOR_PKG_FILE="$filename" VANTOR_PKG_DESCRIPTION="$description" VANTOR_PKG_DEPENDENCIES="$dependencies"
+  python3 - <<'PY'
 import os
 from pathlib import Path
+
 path = Path("packages/repository") / os.environ["VANTOR_PKG_ARCH"] / "Packages"
 path.parent.mkdir(parents=True, exist_ok=True)
 header = "# VANTOR-PACKAGES 1"
@@ -52,18 +65,18 @@ lines = [line for line in lines if not line.startswith(name + "\t")]
 lines.append(row)
 path.write_text("\n".join(lines) + "\n")
 PY
-git config user.name "github-actions[bot]"
-git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-git add "packages/repository/$arch/Packages"
-git commit -m "Publish Nyan package $name $version ($arch)"
-branch=$(git branch --show-current)
-for attempt in 1 2 3; do
-  if git push origin "$branch"; then
+  git add "packages/repository/$arch/Packages"
+  if git diff --cached --quiet; then
+    echo "Nyan index already contains $name $version ($arch), SHA-256: $digest"
+    exit 0
+  fi
+  git commit -m "Publish Nyan package $name $version ($arch)"
+  if git push origin "HEAD:$branch"; then
     echo "Published $name $version ($arch), SHA-256: $digest"
     exit 0
   fi
-  echo "[WARN] Repository changed during publish; rebasing and retrying ($attempt/3)." >&2
-  git pull --rebase origin "$branch"
+  echo "[WARN] Push raced with another main update; next attempt rebuilds from the fresh remote index." >&2
 done
-echo "[ERROR] Could not publish after three attempts." >&2
+
+echo "[ERROR] Could not publish after five fresh-index attempts." >&2
 exit 1
