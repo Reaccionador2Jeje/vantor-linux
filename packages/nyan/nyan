@@ -57,7 +57,7 @@ case "$cmd" in
   list)
     index="$NYAN_STATE/Packages"
     [ -s "$index" ] || die "run 'nyan update' first"
-    awk -F '\t' '!/^#/ && NF >= 5 { printf "%-22s %-12s %s\n", $1, $2, $5 }' "$index"
+    awk -F '\t' '!/^#/ && NF >= 6 { printf "%-22s %-12s %s\n", $1, $2, $6 }' "$index"
     ;;
   languages)
     index="$NYAN_STATE/Packages"
