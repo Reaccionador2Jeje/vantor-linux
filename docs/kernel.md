@@ -38,3 +38,18 @@ The first profile prioritizes Limbo/QEMU's virtual PC: PCI, VirtIO block/network
 - The generated kernel has not been compiled or boot-tested yet.
 - The initramfs is still a skeleton; BusyBox and the final /init environment must be assembled before the kernel can reach a usable VANTOR shell.
 - A successful kernel build alone does not prove GRUB, BIOS, UEFI or Limbo compatibility.
+
+
+## Legacy 32-bit kernel
+
+VANTOR Minimal has a separate i486 Legacy kernel profile. It uses Linux **6.1.193**, whose archive is pinned using the SHA-256 published in kernel.org's signed checksum list. This older LTS line retains the 486SX configuration choice and supports math emulation for 486SX systems without an FPU.
+
+Run:
+
+    make kernel-legacy
+
+The builder uses i386_defconfig, selects the 486SX CPU profile, enables math emulation and adds conservative ISA, floppy, IDE, VGA, serial and legacy network drivers. It writes:
+- build/work/kernel-legacy/vantor-legacy-kernel
+- kernel/configs/vantor-i486.config
+
+This is a separate kernel artifact, not yet a complete 32-bit install image. The legacy BusyBox, package ABI, boot ISO and physical hardware validation remain follow-up work. The modern 6.18.65 kernel is not used for 486 systems.
