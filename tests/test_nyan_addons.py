@@ -13,6 +13,12 @@ ADDONS = (
     "vantor-logview",
     "vantor-config-backup",
     "vantor-mountinfo",
+    "fastfetch",
+    "tree",
+    "watch",
+    "which",
+    "filetype",
+    "vtop",
 )
 
 
