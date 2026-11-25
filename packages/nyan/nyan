@@ -15,18 +15,37 @@ INDEX_URL="$NYAN_REPO/repo/$NYAN_ARCH/Packages"
 INSTALL_STACK=""
 
 die() { echo "nyan: error: $*" >&2; exit 1; }
-nyan_cat() {
-  label=$1 phase=$2
+# Draw one independent progress bar for the package currently being installed.
+# The tiny cat advances along the filled portion as the package moves through stages.
+nyan_progress() {
+  label=$1 percent=$2 phase=$3
   [ -t 1 ] || return 0
+  case "$percent" in *[!0-9]*|'') return 0;; esac
+  [ "$percent" -le 100 ] || percent=100
+  width=28
+  cat_width=5
+  travel=$((width - cat_width))
+  position=$((percent * travel / 100))
+  before=''
+  after=''
+  i=0
+  while [ "$i" -lt "$position" ]; do before="\${before}="; i=$((i + 1)); done
+  i=$((position + cat_width))
+  while [ "$i" -lt "$width" ]; do after="\${after}-"; i=$((i + 1)); done
   case "$phase" in
-    0) catface='[=^.^=]'; trail='';;
-    1) catface='[=^o^=]'; trail='~~~~';;
-    2) catface='[=^.^=]'; trail='~~~~~~~';;
-    3) catface='[=^w^=]'; trail='~~~~~~~~~~';;
-    *) catface='[=^.^=]'; trail='~~~~~~~~~~~~';;
+    done) catface='=^.^='; color='1;32';;
+    failed) catface='x_x'; color='1;31';;
+    *) catface='=^.^='; color='1;36';;
   esac
-  printf '\r\033[1;36m%s\033[0m \033[1;35m%s\033[0m  %s\033[K' "$trail" "$catface" "$label"
-  [ "$phase" -eq 4 ] && printf '\n'
+  printf '\r\033[2K\033[%sm%-18.18s [%s\033[1;35m%s\033[0m%s] %3s%%' \
+    "$color" "$label" "$before" "$catface" "$after" "$percent"
+  [ "$percent" -eq 100 ] && printf '  \033[1;32m%s\033[0m' "$phase"
+  printf '\n'
+}
+nyan_progress_fail() {
+  label=$1
+  [ -t 1 ] || return 0
+  printf '\r\033[2K\033[1;31m%-18.18s [package failed]\033[0m\n' "$label"
 }
 say() { printf 'nyan: %s\n' "$*"; }
 valid_name() { case "$1" in ''|*[!A-Za-z0-9+_.-]*) return 1;; esac; }
@@ -80,7 +99,7 @@ install_one() {
   local name record row oldifs pkg version arch digest archive description dependencies dependency file actual temp owned_file item target
   name=$1
   valid_name "$name" || die "invalid package name: $name"
-  nyan_cat "Resolving $name" 0
+  nyan_progress "$name" 5 "resolving"
   record="$NYAN_STATE/installed/$name"
   [ ! -s "$record" ] || return 0
   case " $INSTALL_STACK " in *" $name "*) die "dependency cycle detected at $name";; esac
@@ -117,16 +136,19 @@ install_one() {
   case "$archive" in *[!A-Za-z0-9._+-]*|*..*) die "invalid archive filename";; esac
   mkdir -p "$NYAN_CACHE" "$NYAN_STATE/installed"
   file="$NYAN_CACHE/$archive"
-  nyan_cat "Downloading $name" 1
-  fetch "$NYAN_REPO/packages/$NYAN_ARCH/$archive" "$file"
-  nyan_cat "Verifying $name" 2
+  nyan_progress "$name" 20 "downloading"
+  if ! fetch "$NYAN_REPO/packages/$NYAN_ARCH/$archive" "$file"; then nyan_progress_fail "$name"; die "download failed for $name"; fi
+  nyan_progress "$name" 45 "downloaded"
+  nyan_progress "$name" 55 "verifying"
   actual=$(sha256sum "$file" | awk '{print $1}')
   [ "$actual" = "$digest" ] || die "SHA-256 verification failed for $name"
   safe_archive "$file"
+  nyan_progress "$name" 65 "verified"
   temp="$NYAN_CACHE/unpack-$name-$$"
   rm -rf "$temp"; mkdir -p "$temp"
-  nyan_cat "Unpacking $name" 3
+  nyan_progress "$name" 75 "unpacking"
   tar -xzf "$file" -C "$temp"
+  nyan_progress "$name" 85 "prepared"
   (cd "$temp" && find . -type f -o -type l) | sed 's#^./##' > "$NYAN_STATE/installed/$name.files"
   for owned_file in "$NYAN_STATE"/installed/*.files; do
     [ -f "$owned_file" ] || continue
@@ -140,9 +162,10 @@ install_one() {
     [ ! -e "$target" ] && [ ! -L "$target" ] || die "refusing to overwrite existing system path: $item"
   done < "$NYAN_STATE/installed/$name.files"
   tar -xzf "$file" -C "${NYAN_ROOT%/}"
+  nyan_progress "$name" 95 "installing"
   printf '%s\t%s\t%s\n' "$name" "$version" "$digest" > "$record"
   rm -rf "$temp"
-  nyan_cat "Installed $name $version" 4
+  nyan_progress "$name" 100 "done"
   say "installed $name $version"
 }
 [ "$#" -ge 1 ] || { usage; exit 2; }
