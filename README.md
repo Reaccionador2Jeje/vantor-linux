@@ -12,7 +12,7 @@ VANTOR is an independent Linux distribution project for universal computing. It 
 
 The official identity uses a metallic V emblem and cyan orbital ring, with a deep-space navy interface palette. The source of truth is [assets/branding/theme.json](assets/branding/theme.json), with reusable CSS tokens in [assets/branding/theme.css](assets/branding/theme.css). Read the [visual identity guide](docs/branding.md).
 
-The identity is intended to be consistent across the bootloader, boot splash, installer, login screen, desktop, terminal, icons, notifications, and system settings. These shared assets are ready; runtime integration will happen as those system components are implemented.
+The rootfs generator now installs these assets into \`/usr/share/vantor/branding\` and sets the distribution identity, console greeting, hostname and initial shell prompt. Bootloader, graphical login, installer and desktop integration will follow when those components exist.
 
 ## Project goals
 
@@ -39,38 +39,48 @@ These are project decisions, not claims that the components have already been in
 
 ## Repository layout
 
-- `assets/branding/` — official logo and shared visual design tokens
-- `boot/branding/` — boot identity integration contract
-- `build/config/` — versioned build configuration
-- `build/scripts/` — build and validation scripts
-- `docs/` — architecture, branding, and development notes
-- `kernel/` — kernel configuration and integration
-- `packages/` — package metadata and recipes
-- `rootfs/` — root filesystem skeleton
-- `tests/` — automated tests
-- `tools/` — developer utilities
+- \`assets/branding/\` — official logo and shared visual design tokens
+- \`boot/branding/\` — boot identity integration contract
+- \`build/config/\` — versioned build configuration
+- \`build/scripts/\` — build and validation scripts
+- \`docs/\` — architecture, branding, and development notes
+- \`kernel/\` — kernel configuration and integration
+- \`packages/\` — package metadata and recipes
+- \`rootfs/\` — root filesystem skeleton documentation
+- \`tests/\` — automated tests
+- \`tools/\` — developer utilities
 
 ## Getting started
 
 The host-check script reports the tools available on your build machine:
 
-```bash
+\`\`\`bash
 bash tools/check-host.sh
-```
+\`\`\`
 
-Run repository checks locally:
+Run repository checks and unit tests:
 
-```bash
+\`\`\`bash
 make check
-```
+\`\`\`
 
-## Toolchain development
+Assemble the initial root filesystem skeleton:
 
-The first x86_64 cross-toolchain plan is documented in [docs/toolchain.md](docs/toolchain.md), and Android VM testing is documented in [docs/testing-limbo.md](docs/testing-limbo.md). Limbo PC Emulator is the selected manual test target. Initial build scripts now exist for Binutils pass 1 and GCC pass 1, with a manual [GitHub Actions toolchain workflow](.github/workflows/toolchain.yml). Upstream candidates are recorded in `build/sources/sources.json`; they are not build-approved until their SHA-256 digests are verified. `make check` runs repository checks and source-extraction tests. `make sources-ready` deliberately fails until every source is pinned. `make fetch-sources` downloads only pinned archives and verifies each digest before saving it.
+\`\`\`bash
+make rootfs
+\`\`\`
+
+The generated tree is placed in \`build/work/rootfs\`. It is not bootable yet because BusyBox, the kernel, and the final initramfs image have not been integrated.
+
+## Toolchain and emulator development
+
+The first x86_64 cross-toolchain plan is documented in [docs/toolchain.md](docs/toolchain.md). Android VM testing is documented in [docs/testing-limbo.md](docs/testing-limbo.md); Limbo PC Emulator is the selected manual test target. Initial build scripts exist for Binutils pass 1 and GCC pass 1, with a manual [GitHub Actions toolchain workflow](.github/workflows/toolchain.yml).
+
+Upstream candidates are recorded in \`build/sources/sources.json\`; each source must have a verified digest before download/build automation can use it. \`make sources-ready\` deliberately fails until all selected sources are pinned. \`make fetch-sources\` verifies digests before saving archives.
 
 ## Build status
 
-The current CI validates repository structure, configuration, source metadata, and safe extraction tests. The first-stage build scripts are implemented. Binutils and GCC bootstrap archives have upstream-published integrity pins; glibc, Linux, and BusyBox remain unpinned and are excluded from the bootstrap build. No compiler, kernel, or bootable image is claimed as built yet.
+CI validates repository structure, configuration, source metadata, safe extraction, rootfs generation and rootfs identity files. The first-stage toolchain scripts and initial rootfs generator are implemented. Binutils and GCC bootstrap sources are pinned; glibc, Linux and BusyBox remain unpinned. No completed compiler, kernel, initramfs or bootable image is claimed yet.
 
 ## Licensing
 
@@ -78,4 +88,4 @@ The repository's top-level license applies to original project files where appli
 
 ## Contributing
 
-See [docs/architecture.md](docs/architecture.md), [docs/toolchain.md](docs/toolchain.md), and [docs/branding.md](docs/branding.md) for the project's design.
+See [docs/architecture.md](docs/architecture.md), [docs/toolchain.md](docs/toolchain.md), [docs/rootfs-genesis.md](docs/rootfs-genesis.md), [docs/testing-limbo.md](docs/testing-limbo.md), and [docs/branding.md](docs/branding.md).
