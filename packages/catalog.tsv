@@ -103,3 +103,119 @@ xdg-desktop-portal-gtk	desktop	planned	GTK portal backend
 xdg-desktop-portal-kde	desktop	planned	KDE portal backend
 greetd	desktop	planned	Lightweight graphical login manager
 lightdm	desktop	planned	Display manager for X11 desktop sessions
+sddm	desktop	planned	Simple Desktop Display Manager; KDE-friendly graphical login
+gdm	desktop	planned	GNOME Display Manager and GNOME login screen
+xorg-xwayland	desktop	planned	X11 application compatibility server for Wayland
+xorg-xserver-common	desktop	planned	Shared X.Org server configuration and data
+xorg-xinit	desktop	planned	X.Org session startup utilities
+xorg-xrandr	desktop	planned	Configure display resolution and layout
+xorg-xinput	desktop	planned	Configure X11 input devices
+xorg-xset	desktop	planned	X11 user preference utility
+xorg-xauth	desktop	planned	X11 authorization utility
+xorg-xkbcomp	desktop	planned	Compile X keyboard descriptions
+xorg-xkeyboard-config	desktop	planned	Keyboard layouts and rules
+xorg-fonts	desktop	planned	Core X.Org fonts
+xorg-drivers	desktop	planned	VANTOR X.Org driver selection metapackage
+xf86-video-vesa	drivers	planned	Legacy VESA display driver
+xf86-video-fbdev	drivers	planned	Framebuffer display driver
+xf86-video-amdgpu	drivers	planned	AMD Radeon X.Org display driver
+xf86-video-intel	drivers	planned	Intel integrated graphics X.Org driver
+xf86-video-nouveau	drivers	planned	NVIDIA open-source Nouveau X.Org driver
+xf86-input-libinput	drivers	planned	Libinput X.Org input driver
+libinput	drivers	planned	Unified keyboard, mouse and touch input library
+networkmanager	network	planned	NetworkManager network connection service
+nm-applet	network	planned	NetworkManager desktop tray applet
+network-manager-applet	network	planned	NetworkManager GTK connection editor and applet
+wpa-supplicant	network	planned	WPA/WPA2 wireless authentication service
+iwd	network	planned	Wireless daemon for Wi-Fi management
+wireless-tools	network	planned	Legacy wireless interface utilities
+iproute2	network	planned	IP addresses, routes, links and network diagnostics
+iputils	network	planned	Ping and basic IP diagnostic utilities
+openssh	network	planned	OpenSSH client and optional server
+ntp	system	planned	Network time synchronization service
+avahi	network	planned	Local network service discovery
+bluez	network	planned	Bluetooth protocol stack and daemon
+blueman	desktop	planned	GTK Bluetooth manager
+pipewire	audio	planned	Modern audio and multimedia server
+wireplumber	audio	planned	PipeWire session and policy manager
+pipewire-pulse	audio	planned	PulseAudio-compatible PipeWire service
+alsa-lib	audio	planned	ALSA userspace audio library
+alsa-utils	audio	planned	ALSA sound card utilities
+pavucontrol	audio	planned	Graphical audio volume and device control
+pulseaudio	audio	planned	Legacy PulseAudio sound server
+fontconfig	fonts	planned	Font discovery and configuration
+freetype	fonts	planned	Font rasterization library
+noto-fonts	fonts	planned	Noto multilingual font family
+noto-fonts-emoji	fonts	planned	Color and monochrome emoji fonts
+dejavu-fonts	fonts	planned	DejaVu font family
+adwaita-icon-theme	desktop	planned	GNOME-compatible icon theme
+hicolor-icon-theme	desktop	planned	Freedesktop base icon theme
+gtk2	desktop	planned	GTK 2 toolkit compatibility runtime
+qt5-base	desktop	planned	Qt 5 base toolkit runtime
+xdg-utils	desktop	planned	Freedesktop desktop integration utilities
+xdg-user-dirs	desktop	planned	Standard user directory setup
+udisks2	storage	planned	D-Bus storage and removable-media management
+udiskie	desktop	planned	Tray automounter for removable storage
+gvfs	storage	planned	Virtual filesystem integration for desktop apps
+polkit	security	planned	Desktop authorization framework
+polkit-gnome	desktop	planned	GTK authentication agent for PolicyKit
+accountsservice	accounts	planned	User account information service for desktop sessions
+dbus-broker	system	planned	D-Bus message broker alternative
+elogind	system	planned	Login, seat and session tracking service
+systemd-logind-compat	system	planned	VANTOR seat/session compatibility layer
+gsettings-desktop-schemas	desktop	planned	Common desktop settings schemas
+glib2	desktop	planned	GLib core runtime
+gdk-pixbuf	desktop	planned	Image loading library for GTK
+cairo	desktop	planned	2D graphics rendering library
+pango	desktop	planned	Text layout and rendering library
+libdrm	drivers	planned	Direct Rendering Manager userspace library
+mesa-dri	drivers	planned	Mesa OpenGL software and hardware drivers
+vulkan-loader	drivers	planned	Vulkan loader runtime
+vulkan-icd-loader	drivers	planned	Vulkan Installable Client Driver loader
+llvm	development	planned	LLVM compiler infrastructure runtime
+cups	printing	planned	Common Unix Printing System
+cups-filters	printing	planned	Print format conversion filters
+system-config-printer	desktop	planned	Graphical printer configuration
+sane	hardware	planned	Scanner access library and utilities
+simple-scan	desktop	planned	Simple graphical document scanner
+firefox	applications	planned	Firefox web browser
+chromium	applications	planned	Chromium web browser
+thunderbird	applications	planned	Thunderbird email and calendar client
+libreoffice	applications	planned	LibreOffice productivity suite
+evince	applications	planned	GNOME document and PDF viewer
+atril	applications	planned	MATE document and PDF viewer
+ristretto	applications	planned	Lightweight image viewer
+eog	applications	planned	GNOME image viewer
+vlc	applications	planned	VLC multimedia player
+mpv	applications	planned	Lightweight multimedia player
+file-roller	applications	planned	GNOME archive manager
+engrampa	applications	planned	MATE archive manager
+ark	applications	planned	KDE archive manager
+mousepad	applications	planned	Xfce text editor
+gedit	applications	planned	GNOME text editor
+kate	applications	planned	KDE advanced text editor
+pluma	applications	planned	MATE text editor
+xfce4-power-manager	desktop	planned	Xfce power management
+xfce4-notifyd	desktop	planned	Xfce notification daemon
+xfce4-screenshooter	desktop	planned	Xfce screenshot utility
+xfce4-taskmanager	desktop	planned	Xfce task manager
+xfce4-clipman	desktop	planned	Xfce clipboard manager
+xfce4-whiskermenu-plugin	desktop	planned	Xfce application menu plugin
+xfce4-pulseaudio-plugin	desktop	planned	Xfce audio panel plugin
+plank	desktop	planned	Lightweight dock
+picom	desktop	planned	Optional X11 compositor
+rofi	desktop	planned	Keyboard-driven application launcher
+dmenu	desktop	planned	Minimal X11 application launcher
+feh	desktop	planned	Lightweight image viewer and wallpaper setter
+nitrogen	desktop	planned	X11 wallpaper manager
+obconf	desktop	planned	Openbox configuration utility
+lxappearance	desktop	planned	GTK theme and appearance configuration
+arandr	desktop	planned	Graphical XRandR display layout editor
+xarchiver	applications	planned	Lightweight archive manager
+gparted	storage	planned	Graphical partition editor
+baobab	storage	planned	GNOME disk usage analyzer
+gnome-disk-utility	storage	planned	GNOME disk and volume utility
+filelight	storage	planned	KDE graphical disk usage analyzer
+virt-manager	applications	planned	Graphical virtual machine manager
+qemu-system-x86	virtualization	planned	QEMU x86 system emulator
+qemu-system-aarch64	virtualization	planned	QEMU ARM64 system emulator
