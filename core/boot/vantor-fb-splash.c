@@ -95,23 +95,27 @@ static void background(void) {
         pixel(x,y,35,81,116);
     }
 }
-static void draw_orbit(int cx,int cy,int rx,int ry,double angle) {
+static void draw_orbit(int cx,int cy,int rx,int ry) {
     for(int d=0;d<360;d++) {
         double a=d*3.141592653589793/180.0;
         int x=cx+(int)(rx*cos(a)), y=cy+(int)(ry*sin(a));
         pixel(x,y,0,92,142);
         if(d%2==0) pixel(x,y,0,160,205);
     }
-    int dx=cx+(int)(rx*cos(angle)), dy=cy+(int)(ry*sin(angle));
-    for(int oy=-4;oy<=4;oy++) for(int ox=-4;ox<=4;ox++)
-        if(ox*ox+oy*oy<=16) pixel(dx+ox,dy+oy,0,220,255);
 }
-static void render(unsigned pct,const char *status,double angle) {
+static void draw_progress(unsigned pct) {
+    if(pct>100) pct=100;
+    int unit=(int)(var.yres/180); if(unit<1) unit=1;
+    int barw=(int)var.xres*58/100, barh=8*unit;
+    int bx=(int)var.xres/2-barw/2, by=(int)var.yres*82/100;
+    rect(bx,by,(barw*(int)pct)/100,barh,0,207,255);
+}
+static void render_static(const char *status) {
     background();
     int cx=(int)var.xres/2, cy=(int)var.yres*34/100;
     int unit=(int)(var.yres/180); if(unit<1) unit=1;
     int rx=(int)var.xres/5, ry=(int)var.yres/12;
-    draw_orbit(cx,cy,rx,ry,angle);
+    draw_orbit(cx,cy,rx,ry);
     /* Metallic V emblem, with a cyan inner edge. */
     line(cx-42*unit,cy-36*unit,cx,cy+45*unit,8*unit,188,211,232);
     line(cx,cy+45*unit,cx+42*unit,cy-36*unit,8*unit,188,211,232);
@@ -122,9 +126,9 @@ static void render(unsigned pct,const char *status,double angle) {
     text(title,cx-(int)strlen(title)*3*title_scale,cy+ry+18*unit,title_scale,244,248,255);
     const char *slogan="ONE SYSTEM EVERY GENERATION";
     text(slogan,cx-(int)strlen(slogan)*3,cy+ry+45*unit,1,0,207,255);
-    int barw=(int)var.xres*58/100, barh=8*unit, bx=cx-barw/2, by=(int)var.yres*82/100;
+    int barw=(int)var.xres*58/100, barh=8*unit;
+    int bx=cx-barw/2, by=(int)var.yres*82/100;
     rect(bx,by,barw,barh,28,54,77);
-    rect(bx,by,(barw*(int)pct)/100,barh,0,207,255);
     text(status,cx-(int)strlen(status)*3,by+18*unit,1,155,176,200);
 }
 static int open_fb(void) {
@@ -152,11 +156,19 @@ int main(int argc,char **argv) {
     const char *cmd=argc>1?argv[1]:"start";
     if(open_fb()<0) { close_fb(); return 1; }
     if(!strcmp(cmd,"start")) {
-        for(int i=0;i<18;i++) { render(8+(unsigned)i/3,"INITIALIZING VANTOR",i*0.34); delay_ms(55); }
-        progress=18;
+        /* Draw the splash scene once; animation only updates the progress bar. */
+        render_static("INITIALIZING VANTOR");
+        progress=8;
+        for(int i=0;i<18;i++) {
+            progress=8+(unsigned)i;
+            draw_progress(progress);
+            delay_ms(55);
+        }
+        progress=25;
     } else if(!strcmp(cmd,"step")) {
         progress+=22; if(progress>94) progress=94;
-        render(progress,argc>2?argv[2]:"STARTING SYSTEM",1.2);
+        render_static(argc>2?argv[2]:"STARTING SYSTEM");
+        draw_progress(progress);
     } else if(!strcmp(cmd,"finish")) {
         rect(0,0,(int)var.xres,(int)var.yres,0,0,0);
     } else { close_fb(); return 2; }
