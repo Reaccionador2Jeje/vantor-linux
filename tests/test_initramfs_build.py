@@ -41,6 +41,13 @@ class InitramfsBuildTests(unittest.TestCase):
         self.assertIn("set_config CONFIG_FEATURE_USE_INITTAB y", script)
         self.assertIn("for applet in init vi", script)
 
+    def test_legacy_busybox_has_init_and_service_control(self):
+        script = (ROOT / "build/scripts/build-busybox-legacy.sh").read_text()
+        self.assertIn("set_config CONFIG_INIT y", script)
+        self.assertIn("set_config CONFIG_FEATURE_USE_INITTAB y", script)
+        self.assertIn("set_config CONFIG_START_STOP_DAEMON y", script)
+        self.assertIn("for applet in init start-stop-daemon", script)
+
     def test_busybox_service_manager_applet_is_enabled(self):
         script = (ROOT / "build/scripts/build-busybox.sh").read_text()
         self.assertIn("CONFIG_START_STOP_DAEMON", script)
