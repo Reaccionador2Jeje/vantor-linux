@@ -39,13 +39,13 @@ lines = path.read_text().splitlines() if path.exists() else [header]
 if not lines or lines[0] != header:
     raise SystemExit(f"Invalid repository index: {path}")
 name = os.environ["VANTOR_PKG_NAME"]
-row = "\\t".join([
+row = "\t".join([
     name,
     os.environ["VANTOR_PKG_VERSION"],
     os.environ["VANTOR_PKG_ARCH"],
     os.environ["VANTOR_PKG_SHA256"],
     os.environ["VANTOR_PKG_FILE"],
-    os.environ["VANTOR_PKG_DESCRIPTION"].replace("\\t", " ").replace("\\n", " "),
+    os.environ["VANTOR_PKG_DESCRIPTION"].replace("\t", " ").replace("\n", " "),
     os.environ["VANTOR_PKG_DEPENDENCIES"],
 ])
 lines = [line for line in lines if not line.startswith(name + "\t")]
