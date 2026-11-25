@@ -35,19 +35,20 @@ message() {
 
 menu() {
     if command -v dialog >/dev/null 2>&1; then
-        dialog --clear --title "VANTOR Linux — Minimal" --menu "ONE SYSTEM. EVERY GENERATION.\n\nChoose an action:" 16 72 5 \
-            install "Install VANTOR Minimal" \
-            configure "Configure installed system" \
-            about "About this installer" \
+        dialog --clear --title "VANTOR Linux — Minimal" --menu "ONE SYSTEM. EVERY GENERATION.\\n\\nChoose an action:" 18 72 6 \\
+            install "Install VANTOR Minimal" \\
+            configure "Configure installed system" \\
+            boot "Prepare installed boot files" \\
+            about "About this installer" \\
             exit "Exit" 3>&1 1>&2 2>&3
     else
         printf '\n==============================================\n' >/dev/tty
         printf ' VANTOR LINUX — MINIMAL INSTALLER %s\n' "$VERSION" >/dev/tty
         printf ' ONE SYSTEM. EVERY GENERATION.\n' >/dev/tty
         printf '==============================================\n' >/dev/tty
-        printf '1) Install VANTOR Minimal\n2) Configure installed system\n3) About\n4) Exit\nSelect: ' >/dev/tty
+        printf '1) Install VANTOR Minimal\n2) Configure installed system\n3) Prepare installed boot files\n4) About\n5) Exit\nSelect: ' >/dev/tty
         IFS= read -r choice </dev/tty || return 1
-        case "$choice" in 1) printf install;; 2) printf configure;; 3) printf about;; *) printf exit;; esac
+        case "$choice" in 1) printf install;; 2) printf configure;; 3) printf boot;; 4) printf about;; *) printf exit;; esac
     fi
 }
 
@@ -191,6 +192,15 @@ EOF
     info "GRUB itself is not installed; bootloader installation remains a separate explicit step."
 }
 
+prepare_boot_interactive() {
+    target=$(ask "Boot files" "Mounted installed system directory:" "/mnt") || return 0
+    kernel=$(ask "Kernel" "Path to the VANTOR kernel file:" "/boot/vantor-kernel") || return 0
+    initramfs=$(ask "Initramfs" "Path to the VANTOR initramfs archive:" "/boot/vantor-initramfs.cpio.gz") || return 0
+    arch=$(ask "Architecture" "Installed system architecture (x86_64 or i486):" "${NYAN_ARCH:-x86_64}") || return 0
+    prepare_boot_files "$target" "$kernel" "$initramfs" "$arch"
+    message "Boot files, GRUB menu and fstab prepared. GRUB still needs to be installed to the selected disk using a dedicated bootloader step."
+}
+
 about() {
     message "VANTOR Linux Minimal Installer $VERSION\n\nA modular text interface. It never partitions or formats disks. The target filesystem must already be mounted."
 }
@@ -218,7 +228,7 @@ while :; do
             configure_target "$target" "$hostname" "$username"
             message "System account configuration completed."
             ;;
-        about) about ;;
+        boot) prepare_boot_interactive ;;\n        about) about ;;
         exit) clear 2>/dev/null || true; exit 0 ;;
         *) exit 0 ;;
     esac
