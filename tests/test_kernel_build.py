@@ -53,7 +53,7 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("xorriso -indev", workflow)
         self.assertIn("actions/upload-artifact@v4", workflow)
         makefile = (ROOT / "Makefile").read_text()
-        self.assertIn("Build kernel, rootfs, BusyBox, initramfs and ISO", makefile)
+        self.assertIn("# Complete, ordered x86_64 pipeline", makefile)
 
     def test_framebuffer_splash_renderer_is_valid_c(self) -> None:
         source = ROOT / "core/boot/vantor-fb-splash.c"
