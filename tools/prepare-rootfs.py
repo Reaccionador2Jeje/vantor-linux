@@ -83,6 +83,7 @@ ttyS0::respawn:/bin/busybox getty -L -n -l /usr/bin/vantor-live-session 115200 t
     if args.arch == "x86_64":
         splash_source = ROOT / "core/boot/vantor-fb-splash.c"
         splash_binary = output / "usr/bin/vantor-fb-splash"
+        splash_binary.parent.mkdir(parents=True, exist_ok=True)
         compiler = shutil.which("cc")
         if compiler and splash_source.is_file():
             try:
@@ -94,7 +95,8 @@ ttyS0::respawn:/bin/busybox getty -L -n -l /usr/bin/vantor-live-session 115200 t
                 splash_binary.chmod(0o755)
             except (subprocess.CalledProcessError, OSError) as exc:
                 splash_binary.unlink(missing_ok=True)
-                print(f"[WARN] Static framebuffer splash unavailable; using text splash: {exc}\\n{exc.stderr or exc.stdout or 'no compiler diagnostics'}")
+                print(f"[WARN] Static framebuffer splash unavailable; using text splash: {exc}")
+                print(exc.stderr or exc.stdout or "no compiler diagnostics")
         else:
             print("[WARN] C compiler unavailable; using VANTOR text splash.")
 
