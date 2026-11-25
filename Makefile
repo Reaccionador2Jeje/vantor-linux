@@ -61,6 +61,7 @@ core-files:
 	@grep -q 'vantor-live-session' tools/prepare-rootfs.py
 	@grep -q 'udhcpc' tools/prepare-rootfs.py
 	@test -s core/hardware/vantor-hw
+	@test -s core/boot/vantor-fb-splash.c
 	@grep -q 'VANTOR Hardware' core/hardware/vantor-hw
 	@sh -n core/hardware/vantor-hw
 	@echo "[OK] VANTOR Core bootstrap components are present."
