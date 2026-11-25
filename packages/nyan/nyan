@@ -23,7 +23,7 @@ fetch() {
 safe_archive() {
   archive=$1
   tar -tzf "$archive" >/dev/null 2>&1 || die "invalid package archive"
-  list="$NYAN_CACHE/archive-list-$"
+  list="$NYAN_CACHE/archive-list-$$"
   tar -tzf "$archive" > "$list" || die "invalid package archive"
   while IFS= read -r item; do
     case "$item" in
@@ -32,7 +32,7 @@ safe_archive() {
   done < "$list"
   rm -f "$list"
   # Reject links and special files: they can escape the install root.
-  tar -tvzf "$archive" > "$NYAN_CACHE/archive-types-$" || die "cannot inspect package entries"
+  tar -tvzf "$archive" > "$NYAN_CACHE/archive-types-$$" || die "cannot inspect package entries"
   while IFS= read -r entry; do
     kind=$(printf '%s' "$entry" | cut -c1)
     case "$kind" in
