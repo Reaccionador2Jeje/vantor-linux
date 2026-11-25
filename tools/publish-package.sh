@@ -12,7 +12,7 @@ archive=$1 name=$2 version=$3 arch=$4 description=$5
 [[ -f "$archive" ]] || { echo "Package archive not found: $archive" >&2; exit 1; }
 [[ "$name" =~ ^[A-Za-z0-9][A-Za-z0-9+_.-]*$ ]] || { echo "Invalid package name" >&2; exit 1; }
 [[ "$version" =~ ^[A-Za-z0-9][A-Za-z0-9+_.+-]*$ ]] || { echo "Invalid version" >&2; exit 1; }
-[[ "$arch" == x86_64 || "$arch" == aarch64 || "$arch" == all ]] || { echo "Unsupported architecture" >&2; exit 1; }
+[[ "$arch" == x86_64 || "$arch" == i486 || "$arch" == aarch64 || "$arch" == all ]] || { echo "Unsupported architecture" >&2; exit 1; }
 [[ "$archive" == *.tar.gz ]] || { echo "Packages must be .tar.gz archives" >&2; exit 1; }
 command -v gh >/dev/null || { echo "GitHub CLI (gh) is required" >&2; exit 1; }
 command -v sha256sum >/dev/null || { echo "sha256sum is required" >&2; exit 1; }
