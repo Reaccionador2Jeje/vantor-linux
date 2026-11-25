@@ -13,7 +13,7 @@ mkdir -p "$WORK/src" "$WORK/downloads" "$WORK/openssl" "$WORK/stage" "$OUT"
 case "$ARCH" in
   x86_64)
     TOOLCHAIN="x86_64-linux-musl-cross"
-    TOOLCHAIN_SHA="c5d410d9f82a4f24c549fe5d24f988f85b2679b452a4f5e7f5f2fe7ea"
+    TOOLCHAIN_SHA="c5d410d9f82a4f24c549fe5d24f988f85b2679b452f2fe7ea"
     OPENSSL_TARGET="linux-x86_64"
     ARCH_FLAGS=""
     ;;
@@ -24,8 +24,6 @@ case "$ARCH" in
     ARCH_FLAGS="-march=i486 -mno-mmx -mno-sse"
     ;;
 esac
-# Keep the known x86_64 toolchain checksum identical to the shared VANTOR toolchain pin.
-if [ "$ARCH" = x86_64 ]; then TOOLCHAIN_SHA="c5d410d9f82a4f24c549fe5d24f988f85b2679b452bcf5e7f5f2fe7ea"; fi
 TARGET="$ARCH-linux-musl"
 curl -fL --retry 3 "https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/$TOOLCHAIN.tgz" -o "$WORK/downloads/$TOOLCHAIN.tgz"
 echo "$TOOLCHAIN_SHA  $WORK/downloads/$TOOLCHAIN.tgz" | sha256sum -c -
@@ -44,7 +42,7 @@ tar -xzf "$OPENSSL" -C "$WORK/src"
 (
   cd "$WORK/src/openssl-3.5.9"
   ./Configure "$OPENSSL_TARGET" --cross-compile-prefix="$TARGET-" no-shared no-tests no-apps no-docs no-dso no-engine no-async no-comp no-legacy no-module no-asm \
-    --prefix=/usr/local --openssldir=/etc/ssl $ARCH_FLAGS
+    --prefix=/usr/local --openssldir=/etc/ssl
   make -j2
   make install_sw DESTDIR="$WORK/openssl"
 )
