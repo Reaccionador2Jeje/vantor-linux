@@ -24,6 +24,21 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("VIRTIO_BLK", script)
         self.assertIn("VIRTIO_NET", script)
 
+    def test_legacy_linux_source_is_pinned_to_upstream_checksum(self) -> None:
+        manifest = json.loads((ROOT / "build/sources/sources.json").read_text())
+        legacy = next(item for item in manifest["sources"] if item["name"] == "linux-legacy")
+        self.assertEqual(legacy["version"], "6.1.193")
+        self.assertEqual(legacy["status"], "pinned")
+        self.assertEqual(legacy["sha256"], "e47276bbbc8aa191c5421ff2f6e0da87e25073042bc242e4afb1e53ab4ddcd80")
+
+    def test_legacy_builder_targets_486sx(self) -> None:
+        script = (ROOT / "build/scripts/build-kernel-legacy.sh").read_text()
+        self.assertIn("--only \"$SOURCE_NAME\"", script)
+        self.assertIn("i386_defconfig", script)
+        self.assertIn("--enable M486SX", script)
+        self.assertIn("--enable MATH_EMULATION", script)
+        self.assertIn("bzImage", script)
+
 
 if __name__ == "__main__":
     unittest.main()
