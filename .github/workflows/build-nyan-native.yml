@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "tools/build-nyan-native.sh"
+      - "tools/build-nyan-htop.sh"
       - "tools/publish-package.sh"
       - ".github/workflows/build-nyan-native.yml"
       - "packages/catalog.tsv"
@@ -19,7 +20,31 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [x86_64, i486]
+        include:
+          - arch: x86_64
+            package: nano
+            version: "9.2"
+            script: tools/build-nyan-native.sh
+            archive: nano-9.2
+            description: "GNU nano 9.2 tiny static editor (musl + ncurses)"
+          - arch: i486
+            package: nano
+            version: "9.2"
+            script: tools/build-nyan-native.sh
+            archive: nano-9.2
+            description: "GNU nano 9.2 tiny static editor (musl + ncurses)"
+          - arch: x86_64
+            package: htop
+            version: "3.4.1"
+            script: tools/build-nyan-htop.sh
+            archive: htop-3.4.1
+            description: "htop 3.4.1 static process monitor (musl + ncurses)"
+          - arch: i486
+            package: htop
+            version: "3.4.1"
+            script: tools/build-nyan-htop.sh
+            archive: htop-3.4.1
+            description: "htop 3.4.1 static process monitor (musl + ncurses)"
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
@@ -32,20 +57,20 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y qemu-user
-      - name: Build and verify static GNU nano
-        run: bash tools/build-nyan-native.sh "${{ matrix.arch }}"
-      - name: Publish verified nano package
+      - name: Build and verify native package
+        run: bash "${{ matrix.script }}" "${{ matrix.arch }}"
+      - name: Publish verified package
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           bash tools/publish-package.sh \
-            "build/nyan-native/nano-9.2-${{ matrix.arch }}.tar.gz" \
-            nano 9.2 "${{ matrix.arch }}" \
-            "GNU nano 9.2 tiny static editor (musl + ncurses)"
+            "build/nyan-native/${{ matrix.archive }}-${{ matrix.arch }}.tar.gz" \
+            "${{ matrix.package }}" "${{ matrix.version }}" "${{ matrix.arch }}" \
+            "${{ matrix.description }}"
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vantor-nano-9.2-${{ matrix.arch }}
-          path: build/nyan-native/nano-9.2-${{ matrix.arch }}.tar.gz
+          name: vantor-${{ matrix.package }}-${{ matrix.version }}-${{ matrix.arch }}
+          path: build/nyan-native/${{ matrix.archive }}-${{ matrix.arch }}.tar.gz
           if-no-files-found: error
           retention-days: 30
