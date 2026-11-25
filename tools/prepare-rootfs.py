@@ -251,6 +251,8 @@ fi
 exit 0
 """, 0o755)
 
+    write(output / "usr/sbin/vantor-service-supervisor", (ROOT / "core/services/vantor-service-supervisor").read_text(), 0o755)
+
     write(output / "usr/sbin/vantor-service", """#!/bin/sh
 # VANTOR Service Control: manage foreground daemons with BusyBox start-stop-daemon.
 set -u
