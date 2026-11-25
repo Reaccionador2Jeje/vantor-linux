@@ -25,16 +25,42 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertTrue((output / "usr/bin/vantorctl").stat().st_mode & 0o111)
             self.assertTrue((output / "usr/bin/vantor-hw").stat().st_mode & 0o111)
             self.assertTrue((output / "usr/bin/nyan").stat().st_mode & 0o111)
+            self.assertTrue((output / "usr/bin/vantor-install").stat().st_mode & 0o111)
+            self.assertIn("root:x:0:0:", (output / "etc/passwd").read_text())
+            self.assertIn("live:x:1000:1000:", (output / "etc/passwd").read_text())
+            self.assertIn("wheel:x:10:live", (output / "etc/group").read_text())
+            self.assertIn("%wheel ALL=(ALL:ALL) ALL", (output / "etc/sudoers.d/10-wheel").read_text())
+            self.assertIn("root:!", (output / "etc/shadow").read_text())
+            self.assertEqual((output / "etc/shadow").stat().st_mode & 0o777, 0o600)
+            self.assertEqual((output / "etc/sudoers.d/10-wheel").stat().st_mode & 0o777, 0o440)
             self.assertIn("NYAN_REPO:=", (output / "etc/nyan.conf").read_text())
             self.assertTrue((output / "usr/share/vantor/branding/vantor-mark.svg").is_file())
             brand = json.loads((output / "etc/vantor-brand.json").read_text())
             self.assertEqual(brand["brand"], "VANTOR Linux")
             self.assertEqual(brand["core"]["init"], "VANTOR Init 0.1.0")
             self.assertEqual(brand["core"]["hardware"], "VANTOR Hardware 0.1.0")
-            for script in ("init", "sbin/vantor-init", "usr/bin/vantorctl", "usr/bin/vantor-hw", "usr/bin/nyan"):
+            for script in ("init", "sbin/vantor-init", "usr/bin/vantorctl", "usr/bin/vantor-hw", "usr/bin/nyan", "usr/bin/vantor-install"):
                 check = subprocess.run(["sh", "-n", str(output / script)], capture_output=True, text=True, check=False)
                 self.assertEqual(check.returncode, 0, f"{script}: {check.stderr}")
 
+
+    def test_installer_configures_root_live_and_wheel_without_touching_host(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            target = Path(temporary) / "target"
+            target.mkdir()
+            result = subprocess.run(
+                ["sh", str(ROOT / "installer/vantor-install"), "--configure", str(target), "test-vantor", "tester"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            passwd = (target / "etc/passwd").read_text()
+            self.assertIn("root:x:0:0:", passwd)
+            self.assertIn("tester:x:1000:1000:", passwd)
+            self.assertIn("wheel:x:10:tester", (target / "etc/group").read_text())
+            self.assertIn("%wheel ALL=(ALL:ALL) ALL", (target / "etc/sudoers.d/10-wheel").read_text())
+            self.assertEqual((target / "etc/hostname").read_text(), "test-vantor\n")
+            self.assertTrue((target / "home/tester").is_dir())
+            self.assertIn("tester:!", (target / "etc/shadow").read_text())
 
     def test_hardware_inventory_reads_proc_and_sys_fixtures(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
