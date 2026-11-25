@@ -1,0 +1,79 @@
+name: Build and publish Lua for Nyan
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "core/languages/lua/**"
+      - ".github/workflows/build-lua.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: vantor-lua-package
+  cancel-in-progress: false
+
+jobs:
+  build-and-publish:
+    name: Build Lua 5.4.9 (static x86_64) and publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out VANTOR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install static compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends musl-tools
+
+      - name: Download and verify official Lua source
+        env:
+          LUA_VERSION: "5.4.9"
+          LUA_SHA256: "2335b6c582a52654f94612bf10d2f4672805d05329aa6568b1d8cd9e5c6fb8e6"
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 "https://www.lua.org/ftp/lua-${LUA_VERSION}.tar.gz" -o "/tmp/lua-${LUA_VERSION}.tar.gz"
+          echo "${LUA_SHA256}  /tmp/lua-${LUA_VERSION}.tar.gz" | sha256sum --check
+          tar -xzf "/tmp/lua-${LUA_VERSION}.tar.gz" -C /tmp
+
+      - name: Build and test static Lua
+        env:
+          LUA_VERSION: "5.4.9"
+        run: |
+          set -euo pipefail
+          make -C "/tmp/lua-${LUA_VERSION}" clean
+          make -C "/tmp/lua-${LUA_VERSION}" linux CC=musl-gcc MYCFLAGS="-O2" MYLDFLAGS="-static" -j2
+          "/tmp/lua-${LUA_VERSION}/src/lua" -e 'assert(_VERSION == "Lua 5.4"); print(_VERSION .. " runtime OK")'
+          file "/tmp/lua-${LUA_VERSION}/src/lua"
+          if ldd "/tmp/lua-${LUA_VERSION}/src/lua" 2>&1 | grep -q "not a dynamic executable"; then
+            echo "Lua interpreter is statically linked."
+          else
+            echo "Lua interpreter is not static; refusing to publish." >&2
+            exit 1
+          fi
+
+      - name: Assemble package filesystem
+        env:
+          LUA_VERSION: "5.4.9"
+        run: |
+          set -euo pipefail
+          package_root="$PWD/build/package-lua"
+          mkdir -p "$package_root"
+          make -C "/tmp/lua-${LUA_VERSION}" install INSTALL_TOP="$package_root/usr"
+          mkdir -p "$package_root/usr/share/doc/vantor-lua"
+          printf '%s\\n' "Lua ${LUA_VERSION}" "VANTOR Nyan package: lua" "Static x86_64 interpreter built with musl." "Upstream: https://www.lua.org/" > "$package_root/usr/share/doc/vantor-lua/BUILD-INFO"
+          test -x "$package_root/usr/bin/lua"
+          "$package_root/usr/bin/lua" -e 'print("Nyan package smoke test: OK")'
+          mkdir -p dist
+          tar -czf "dist/lua-${LUA_VERSION}-x86_64.tar.gz" -C "$package_root" .
+          tar -tzf "dist/lua-${LUA_VERSION}-x86_64.tar.gz" | grep -q 'usr/bin/lua$'
+
+      - name: Publish Lua into the official Nyan repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bash tools/publish-package.sh "dist/lua-5.4.9-x86_64.tar.gz" "lua" "5.4.9" "x86_64" "Language: Lua 5.4.9 interpreter, compiler and static development library"
