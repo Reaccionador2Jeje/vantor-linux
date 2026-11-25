@@ -1,0 +1,135 @@
+#!/bin/sh
+# VANTOR Installer — Minimal edition, TUI front end.
+set -eu
+
+VERSION="0.1.0"
+TARGET=""
+HOSTNAME="vantor"
+USERNAME="live"
+NYAN_BIN="/usr/bin/nyan"
+
+die() { printf '[VANTOR Installer] ERROR: %s\n' "$*" >&2; exit 1; }
+info() { printf '[VANTOR Installer] %s\n' "$*"; }
+valid_name() { case "$1" in ''|[!a-z]*|*[!a-z0-9-]*) return 1;; esac; [ "${#1}" -le 32 ]; }
+
+ask() {
+    title=$1 prompt=$2 default=$3
+    if command -v dialog >/dev/null 2>&1; then
+        answer=$(dialog --stdout --title "$title" --inputbox "$prompt" 9 64 "$default") || return 1
+    else
+        printf '%s [%s]: ' "$prompt" "$default" >/dev/tty
+        IFS= read -r answer </dev/tty || return 1
+        answer=${answer:-$default}
+    fi
+    printf '%s' "$answer"
+}
+
+message() {
+    if command -v dialog >/dev/null 2>&1; then
+        dialog --title "VANTOR Installer" --msgbox "$1" 10 68
+    else
+        printf '\n%s\n\nPress Enter to continue...' "$1" >/dev/tty
+        IFS= read -r _ </dev/tty || true
+    fi
+}
+
+menu() {
+    if command -v dialog >/dev/null 2>&1; then
+        dialog --clear --title "VANTOR Linux — Minimal" --menu "ONE SYSTEM. EVERY GENERATION.\n\nChoose an action:" 16 72 5 \
+            install "Install VANTOR Minimal" \
+            configure "Configure installed system" \
+            about "About this installer" \
+            exit "Exit" 3>&1 1>&2 2>&3
+    else
+        printf '\n==============================================\n' >/dev/tty
+        printf ' VANTOR LINUX — MINIMAL INSTALLER %s\n' "$VERSION" >/dev/tty
+        printf ' ONE SYSTEM. EVERY GENERATION.\n' >/dev/tty
+        printf '==============================================\n' >/dev/tty
+        printf '1) Install VANTOR Minimal\n2) Configure installed system\n3) About\n4) Exit\nSelect: ' >/dev/tty
+        IFS= read -r choice </dev/tty || return 1
+        case "$choice" in 1) printf install;; 2) printf configure;; 3) printf about;; *) printf exit;; esac
+    fi
+}
+
+configure_target() {
+    target=$1 hostname=$2 username=$3
+    [ -d "$target" ] || die "target directory does not exist: $target"
+    [ "$target" != "/" ] || die "refusing to configure the live root filesystem"
+    [ ! -L "$target" ] || die "target must not be a symbolic link"
+    target=$(cd "$target" && pwd -P)
+    [ "$target" != "/" ] || die "invalid target"
+    valid_name "$hostname" || die "invalid hostname"
+    valid_name "$username" || die "invalid username"
+    mkdir -p "$target/etc" "$target/home/$username" "$target/root" "$target/etc/sudoers.d"
+    touch "$target/etc/passwd" "$target/etc/group" "$target/etc/shadow" "$target/etc/gshadow"
+    grep -q '^root:' "$target/etc/passwd" || printf 'root:x:0:0:root:/root:/bin/sh\n' >> "$target/etc/passwd"
+    grep -q "^$username:" "$target/etc/passwd" || printf '%s:x:1000:1000:%s User:/home/%s:/bin/sh\n' "$username" "$username" "$username" >> "$target/etc/passwd"
+    grep -q '^root:' "$target/etc/group" || printf 'root:x:0:\n' >> "$target/etc/group"
+    grep -q '^wheel:' "$target/etc/group" || printf 'wheel:x:10:%s\n' "$username" >> "$target/etc/group"
+    grep -q '^users:' "$target/etc/group" || printf 'users:x:100:\n' >> "$target/etc/group"
+    grep -q '^root:' "$target/etc/shadow" || printf 'root:!:19000:0:99999:7:::\n' >> "$target/etc/shadow"
+    grep -q "^$username:" "$target/etc/shadow" || printf '%s:!:19000:0:99999:7:::\n' "$username" >> "$target/etc/shadow"
+    grep -q '^root:' "$target/etc/gshadow" || printf 'root:!::\n' >> "$target/etc/gshadow"
+    grep -q '^wheel:' "$target/etc/gshadow" || printf 'wheel:!::%s\n' "$username" >> "$target/etc/gshadow"
+    grep -q '^users:' "$target/etc/gshadow" || printf 'users:!::\n' >> "$target/etc/gshadow"
+    if ! grep -q '^#includedir /etc/sudoers.d' "$target/etc/sudoers" 2>/dev/null; then
+        printf '\n# VANTOR additional sudo policies\n#includedir /etc/sudoers.d\n' >> "$target/etc/sudoers"
+    fi
+    printf '%%wheel ALL=(ALL:ALL) ALL\n' > "$target/etc/sudoers.d/10-wheel"
+    chmod 0440 "$target/etc/sudoers.d/10-wheel" 2>/dev/null || true
+    chmod 0700 "$target/root" "$target/home/$username" 2>/dev/null || true
+    printf '%s\n' "$hostname" > "$target/etc/hostname"
+    printf '[VANTOR] %s — ONE SYSTEM. EVERY GENERATION.\n' "$hostname" > "$target/etc/issue"
+    printf 'root and %s accounts created with locked passwords. Set passwords before enabling remote access.\n' "$username" > "$target/etc/vantor-accounts"
+    info "Configured root and $username accounts, wheel policy, hostname and home directories."
+}
+
+install_minimal() {
+    target=$(ask "Target" "Mounted target directory (must be empty):" "/mnt") || return 0
+    hostname=$(ask "Hostname" "System hostname:" "vantor") || return 0
+    username=$(ask "User" "Create standard user:" "live") || return 0
+    [ -d "$target" ] || die "target directory does not exist. Mount your target filesystem first."
+    [ "$target" != "/" ] || die "refusing to install over the running Live system"
+    [ ! -L "$target" ] || die "target must not be a symbolic link"
+    target=$(cd "$target" && pwd -P)
+    [ "$target" != "/" ] || die "invalid target"
+    if find "$target" -mindepth 1 -maxdepth 1 ! -name lost+found -print -quit | grep -q .; then
+        die "target is not empty (only lost+found is allowed); choose an empty mounted filesystem"
+    fi
+    valid_name "$hostname" || die "invalid hostname"
+    valid_name "$username" || die "invalid username"
+    [ -x "$NYAN_BIN" ] || die "Nyan is not installed in this Live environment"
+    message "The installer will install the published Minimal profile into $target. It will not partition or format disks."
+    NYAN_ROOT="$target" "$NYAN_BIN" update
+    NYAN_ROOT="$target" "$NYAN_BIN" install-profile minimal
+    configure_target "$target" "$hostname" "$username"
+    message "VANTOR Minimal has been installed. Passwords are locked; set secure passwords before normal use. Bootloader and filesystem configuration are separate steps in this early installer."
+}
+
+about() {
+    message "VANTOR Linux Minimal Installer $VERSION\n\nA modular text interface. It never partitions or formats disks. The target filesystem must already be mounted."
+}
+
+if [ "${1:-}" = "--version" ]; then echo "VANTOR Installer $VERSION"; exit 0; fi
+if [ "${1:-}" = "--configure" ]; then
+    [ "$#" -eq 4 ] || die "usage: vantor-install --configure TARGET HOSTNAME USERNAME"
+    configure_target "$2" "$3" "$4"
+    exit 0
+fi
+if [ "$(id -u)" -ne 0 ]; then die "run the installer as root"; fi
+while :; do
+    action=$(menu) || exit 0
+    case "$action" in
+        install) install_minimal ;;
+        configure)
+            target=$(ask "Target" "Installed system directory:" "/mnt") || continue
+            hostname=$(ask "Hostname" "System hostname:" "vantor") || continue
+            username=$(ask "User" "Standard user:" "live") || continue
+            configure_target "$target" "$hostname" "$username"
+            message "System account configuration completed."
+            ;;
+        about) about ;;
+        exit) clear 2>/dev/null || true; exit 0 ;;
+        *) exit 0 ;;
+    esac
+done
