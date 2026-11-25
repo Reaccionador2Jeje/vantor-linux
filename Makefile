@@ -32,8 +32,7 @@ check-config:
 	@echo "[OK] Build configuration is valid."
 
 check-shell:
-	@find build/scripts tools tests -type f -name '*.sh' -print0 | \
-	  while IFS= read -r -d '' file; do bash -n "$$file"; done
+	@find build/scripts tools tests -type f -name '*.sh' -exec bash -n {} +
 	@echo "[OK] Shell syntax is valid."
 
 check-sources:
