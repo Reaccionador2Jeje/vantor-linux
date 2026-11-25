@@ -9,7 +9,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: vantor-nyan-profiles
+  group: vantor-nyan-publish
   cancel-in-progress: false
 jobs:
   development-profile:
