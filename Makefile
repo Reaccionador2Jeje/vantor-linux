@@ -30,6 +30,7 @@ desktop-files:
 	@test -s desktop/openbox/rc.xml
 	@test -s desktop/openbox/menu.xml
 	@test -s desktop/tint2/tint2rc
+	@test -s desktop/themes/VANTOR/openbox-3/themerc
 	@test -s desktop/README.md
 	@test -s desktop/xsessions/vantor.desktop
 	@test -s tests/test_desktop.py
