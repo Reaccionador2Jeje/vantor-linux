@@ -1,0 +1,39 @@
+name: Build VANTOR Nyan profiles
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "packages/profiles/development/**"
+      - ".github/workflows/build-nyan-profiles.yml"
+      - "tools/publish-package.sh"
+permissions:
+  contents: write
+concurrency:
+  group: vantor-nyan-profiles
+  cancel-in-progress: false
+jobs:
+  development-profile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out VANTOR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Assemble development profile meta-package
+        run: |
+          set -euo pipefail
+          root="$PWD/build/package-vantor-profile-development"
+          mkdir -p "$root/usr/share/vantor/profiles"
+          cp packages/profiles/development/PROFILE.txt "$root/usr/share/vantor/profiles/development.txt"
+          tar -czf build/vantor-profile-development-0.1.0-x86_64.tar.gz -C "$root" .
+          tar -tzf build/vantor-profile-development-0.1.0-x86_64.tar.gz
+      - name: Publish profile and dependency metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bash tools/publish-package.sh \
+            build/vantor-profile-development-0.1.0-x86_64.tar.gz \
+            vantor-profile-development 0.1.0 x86_64 \
+            "Profile: VANTOR development tools and programming languages" \
+            lua
