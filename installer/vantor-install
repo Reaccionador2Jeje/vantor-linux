@@ -2,7 +2,7 @@
 # VANTOR Installer — Minimal edition, TUI front end.
 set -eu
 
-VERSION="0.2.0"
+VERSION="0.2.1"
 TARGET=""
 HOSTNAME="vantor"
 USERNAME="live"
@@ -352,7 +352,7 @@ install_bootloader() {
 }
 
 about() {
-    message "VANTOR Linux Minimal Installer $VERSION\n\nA modular text interface. It never partitions or formats disks. The target filesystem must already be mounted."
+    message "VANTOR Linux Minimal Installer $VERSION\n\nA modular text interface. Disk inspection is read-only. It never partitions or formats disks. GRUB installation is available only when grub-install and its BIOS modules are present. The target filesystem must already be mounted."
 }
 
 if [ "${1:-}" = "--version" ]; then echo "VANTOR Installer $VERSION"; exit 0; fi
@@ -383,6 +383,8 @@ while :; do
         mirror) mirror_setup ;;
         packages) packages_setup ;;
         prefs) preferences_setup ;;
+        storage) storage_inspect ;;
+        bootloader) install_bootloader ;;
         about) about ;;
         exit) clear 2>/dev/null || true; exit 0 ;;
         *) exit 0 ;;
