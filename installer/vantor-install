@@ -407,6 +407,7 @@ while :; do
         packages) packages_setup ;;
         prefs) preferences_setup ;;
         storage) storage_inspect ;;
+        mountroot) mount_existing_partition ;;
         bootloader) install_bootloader ;;
         about) about ;;
         exit) clear 2>/dev/null || true; exit 0 ;;
