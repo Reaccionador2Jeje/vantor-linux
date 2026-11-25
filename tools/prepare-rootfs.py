@@ -168,6 +168,10 @@ esac
     shutil.copy2(installer, output / "usr/bin/vantor-install")
     (output / "usr/bin/vantor-install").chmod(0o755)
 
+    nyan_catalog = ROOT / "packages/catalog.tsv"
+    shutil.copy2(nyan_catalog, output / "usr/share/nyan/catalog.tsv")
+    (output / "usr/share/nyan").mkdir(parents=True, exist_ok=True)
+
     # Nyan is the native package manager and is available in the first boot image.
     nyan_client = ROOT / "packages/nyan/nyan"
     shutil.copy2(nyan_client, output / "usr/bin/nyan")
