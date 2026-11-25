@@ -156,6 +156,8 @@ export PAGER=more
 : "${TERM:=vt100}"
 export TERM
 umask 022
+if [ -r /etc/locale.conf ]; then . /etc/locale.conf; export LANG LC_ALL; fi
+if [ -r /etc/timezone ]; then TZ=$(cat /etc/timezone); export TZ; fi
 if [ -r /etc/motd ]; then cat /etc/motd; fi
 if [ -d /etc/profile.d ]; then
     for profile_script in /etc/profile.d/*.sh; do
