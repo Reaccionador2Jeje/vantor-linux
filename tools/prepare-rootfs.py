@@ -140,6 +140,40 @@ case "${1:-start}" in
 esac
 """, 0o755)
 
+    write(output / "etc/modules", """# VANTOR preferred optional modules; built-in drivers are harmlessly skipped.
+virtio_pci
+virtio_blk
+virtio_net
+e1000
+e1000e
+ata_piix
+sd_mod
+sr_mod
+usb_storage
+xhci_pci
+ehci_pci
+ohci_pci
+ext4
+isofs
+vfat
+""")
+    write(output / "usr/sbin/vantor-modules", """#!/bin/sh
+# Load optional kernel modules listed in /etc/modules.
+set -u
+[ -r /etc/modules ] || exit 0
+if ! command -v modprobe >/dev/null 2>&1; then
+    echo "[VANTOR] modprobe unavailable; using built-in kernel drivers."
+    exit 0
+fi
+while IFS= read -r module || [ -n "$module" ]; do
+    case "$module" in ""|\\#*) continue ;; esac
+    if modprobe "$module" 2>/dev/null; then
+        echo "[VANTOR] Loaded module: $module"
+    fi
+done < /etc/modules
+exit 0
+""", 0o755)
+
     write(output / "etc/init.d/rcS", """#!/bin/sh
 # VANTOR early system setup; safe to run more than once.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -155,6 +189,7 @@ if command -v mdev >/dev/null 2>&1; then
     echo /bin/mdev > /proc/sys/kernel/hotplug 2>/dev/null || true
     /bin/busybox mdev -s 2>/dev/null || true
 fi
+/usr/sbin/vantor-modules
 # Expose the booted VANTOR ISO read-only so the installer can copy its kernel/initramfs.
 mkdir -p /run/vantor-media
 for media_dev in /dev/sr0 /dev/cdrom; do
