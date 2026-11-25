@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+[ "$#" -eq 1 ] || { echo "Usage: varchive ARCHIVE" >&2; exit 2; }
+file=$1
+case "$file" in *.tar|*.tar.gz|*.tgz|*.tar.xz|*.txz) exec tar -tf "$file";; *.zip) command -v unzip >/dev/null 2>&1 && exec unzip -l "$file";; esac
+echo "varchive: unsupported format or required tool missing: $file" >&2
+exit 1

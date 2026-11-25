@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+[ "$#" -le 1 ] || { echo "Usage: vps [FILTER]" >&2; exit 2; }
+if [ "$#" -eq 1 ]; then ps w | awk -v q="$1" 'NR==1 || index(tolower($0),tolower(q))'; else exec ps w; fi

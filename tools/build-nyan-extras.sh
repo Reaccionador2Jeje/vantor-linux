@@ -59,7 +59,7 @@ done
 
 # More lightweight terminal tools, shipped as POSIX shell scripts. Each archive
 # is architecture-independent and is indexed for both VANTOR CPU targets.
-for tool in fastfetch tree watch which filetype vtop; do
+for tool in fastfetch tree watch which filetype vtop vram vpath vusers vtime vchecksum varchive vps vdf vdu vports vman; do
   stage="$OUT/stage-all-$tool"
   rm -rf "$stage"
   mkdir -p "$stage/usr/local/bin" "$stage/usr/local/share/doc/$tool"

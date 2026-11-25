@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+[ "$#" -eq 1 ] || { echo "Usage: vman TOPIC" >&2; exit 2; }
+topic=$1
+for page in "/usr/share/man/man1/$topic.1" "/usr/share/man/man1/$topic.1.gz" "/usr/local/share/man/man1/$topic.1"; do
+  [ -r "$page" ] || continue
+  case "$page" in *.gz) zcat "$page" | ${PAGER:-more};; *) ${PAGER:-more} "$page";; esac
+  exit 0
+done
+if command -v "$topic" >/dev/null 2>&1; then "$topic" --help 2>&1 | ${PAGER:-more}; exit 0; fi
+echo "vman: no local manual or command found for $topic" >&2
+exit 1

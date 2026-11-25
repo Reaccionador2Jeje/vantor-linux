@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+printf 'Local: %s\n' "$(date '+%Y-%m-%d %H:%M:%S %Z')"
+printf 'UTC:   %s\n' "$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+printf 'Epoch: %s\n' "$(date +%s)"

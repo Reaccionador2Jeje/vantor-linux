@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+printf '%-6s %-8s %s\n' PROTO STATE LOCAL_ADDRESS
+for table in /proc/net/tcp /proc/net/tcp6 /proc/net/udp /proc/net/udp6; do
+  [ -r "$table" ] || continue
+  case "$table" in *tcp*) proto=TCP;; *) proto=UDP;; esac
+  awk -v p="$proto" 'NR>1 {state=$4; if (p=="UDP" || state=="0A") printf "%-6s %-8s %s\n",p,(p=="UDP"?"BOUND":"LISTEN"),$2}' "$table"
+done

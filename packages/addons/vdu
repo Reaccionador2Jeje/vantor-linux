@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+[ "$#" -gt 0 ] || set -- .
+command -v du >/dev/null 2>&1 || { echo "vdu: du is not available" >&2; exit 127; }
+exec du -sh "$@"

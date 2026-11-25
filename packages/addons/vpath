@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+oldifs=$IFS; IFS=:
+for entry in ${PATH:-}; do
+  [ -n "$entry" ] || entry=.
+  if [ -d "$entry" ]; then printf '  [ok]   %s\n' "$entry"; else printf '  [gone] %s\n' "$entry"; fi
+done
+IFS=$oldifs

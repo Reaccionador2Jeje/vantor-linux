@@ -56,7 +56,7 @@ jobs:
               publish "build/nyan-extras/$tool-0.1.0-all.tar.gz" "$tool" "$arch" "VANTOR utility: $tool (architecture-independent)"
             done
           done
-          for tool in fastfetch tree watch which filetype vtop; do
+          for tool in fastfetch tree watch which filetype vtop vram vpath vusers vtime vchecksum varchive vps vdf vdu vports vman; do
             for arch in x86_64 i486 aarch64; do
               publish "build/nyan-extras/$tool-0.1.0-all.tar.gz" "$tool" "$arch" "VANTOR terminal utility: $tool"
             done

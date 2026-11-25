@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+[ "$#" -gt 0 ] || { echo "Usage: vchecksum FILE..." >&2; exit 2; }
+if command -v sha256sum >/dev/null 2>&1; then exec sha256sum "$@"; fi
+if command -v busybox >/dev/null 2>&1; then exec busybox sha256sum "$@"; fi
+echo "vchecksum: sha256sum is not installed" >&2
+exit 127

@@ -43,3 +43,14 @@ watch	system	building	Repeat a command at a configurable interval
 which	system	building	Locate executable commands in PATH
 filetype	files	building	Identify common file formats from magic bytes
 vtop	diagnostics	building	Compact process overview using procfs or ps
+vram	diagnostics	building	Readable memory and swap report from procfs
+vpath	system	building	Inspect PATH entries and report missing directories
+vusers	accounts	building	List regular local user accounts
+vtime	system	building	Show local time, UTC and Unix epoch
+vchecksum	security	building	Calculate SHA-256 checksums for files
+varchive	files	building	List supported archive contents without extracting
+vps	system	building	Process listing with optional case-insensitive filter
+vdf	storage	building	Human-readable filesystem capacity report
+vdu	storage	building	Compact directory and file usage report
+vports	network	building	Read-only TCP listening and UDP socket overview
+vman	documentation	building	View local manual pages or command help

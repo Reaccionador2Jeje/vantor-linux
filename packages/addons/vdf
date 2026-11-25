@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+command -v df >/dev/null 2>&1 || { echo "vdf: df is not available" >&2; exit 127; }
+exec df -h "$@"
