@@ -31,6 +31,7 @@ desktop-files:
 	@test -s desktop/openbox/menu.xml
 	@test -s desktop/tint2/tint2rc
 	@test -s desktop/README.md
+	@test -s desktop/xsessions/vantor.desktop
 	@test -s tests/test_desktop.py
 	@sh -n desktop/bin/vantor-session
 	@echo "[OK] VANTOR Desktop Genesis files are present."
