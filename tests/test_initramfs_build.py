@@ -12,6 +12,13 @@ class InitramfsBuildTests(unittest.TestCase):
         self.assertIn("cpio", script)
         self.assertIn("gzip -t", script)
 
+    def test_initramfs_includes_matching_kernel_modules_when_available(self):
+        script = (ROOT / "build/scripts/build-initramfs.sh").read_text()
+        self.assertIn('KERNEL_RELEASE_FILE="$ROOT/build/work/kernel/kernelrelease"', script)
+        self.assertIn('MODULES_ROOT="$ROOT/build/work/modules/lib/modules"', script)
+        self.assertIn('cp -a "$MODULES_SOURCE" "$MODULES_DEST"', script)
+        self.assertIn('depmod -b "$ROOTFS" "$KERNEL_RELEASE"', script)
+
     def test_busybox_builder_fails_closed_on_unpinned_source(self):
         script = (ROOT / "build/scripts/build-busybox.sh").read_text()
         self.assertIn("--require-pinned --only busybox", script)
