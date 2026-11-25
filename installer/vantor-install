@@ -85,6 +85,7 @@ configure_target() {
     if ! grep -q '^#includedir /etc/sudoers.d' "$target/etc/sudoers" 2>/dev/null; then
         printf '\n# VANTOR additional sudo policies\n#includedir /etc/sudoers.d\n' >> "$target/etc/sudoers"
     fi
+    chmod 0644 "$target/etc/sudoers.d/10-wheel" 2>/dev/null || true
     printf '%%wheel ALL=(ALL:ALL) ALL\n' > "$target/etc/sudoers.d/10-wheel"
     chmod 0440 "$target/etc/sudoers.d/10-wheel" 2>/dev/null || true
     chmod 0700 "$target/root" "$target/home/$username" 2>/dev/null || true
