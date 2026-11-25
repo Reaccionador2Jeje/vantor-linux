@@ -21,6 +21,10 @@ The native `vantor-install` TUI uses `dialog` when present and a keyboard menu f
 The first x86_64 Minimal package is built by `.github/workflows/build-nyan-minimal.yml`. It assembles the generated rootfs and static BusyBox, removes archive symlinks, and supplies real BusyBox copies at `/bin/sh` and `/sbin/init` so the archive can pass Nyan's current no-links policy and bootstrap execution.
 
 
+## VANTOR Desktop direction
+
+The first graphical desktop milestone is an x86_64 X11 session composed from Openbox (window manager), tint2 (panel), xterm (terminal) and optional PCManFM desktop integration. VANTOR owns the session launcher, menu, keyboard map, panel configuration and visual identity under `desktop/`. This keeps the initial stack light and avoids requiring a compositor or accelerated GPU. The graphical packages remain planned/building in the Nyan catalog; the current Minimal rootfs does not include them. i486 Legacy remains console-first. See [VANTOR Desktop Genesis](../desktop/README.md).
+
 ## First milestone
 
 The first milestone is a minimal x86_64 system that can boot in QEMU. A graphical desktop is deliberately out of scope until the base system is reproducible.
