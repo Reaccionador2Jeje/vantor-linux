@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: vantor-lua-package
+  group: vantor-nyan-publish
   cancel-in-progress: false
 
 jobs:
