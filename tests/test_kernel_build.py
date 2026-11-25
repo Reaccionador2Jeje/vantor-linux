@@ -34,7 +34,7 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("depmod", script)
         for filesystem in ("EXT2_FS", "EXT3_FS", "EXT4_FS", "ISO9660_FS", "VFAT_FS", "FAT_FS"):
             self.assertIn(filesystem, script)
-        for storage_driver in ("VIRTIO_BLK", "VIRTIO_SCSI", "SATA_AHCI", "BLK_DEV_SR"):
+        for storage_driver in ("VIRTIO_BLK", "SCSI_VIRTIO", "SATA_AHCI", "BLK_DEV_SR"):
             self.assertIn(storage_driver, script)
 
     def test_x86_64_kernel_workflow_builds_and_uploads_kernel(self) -> None:
