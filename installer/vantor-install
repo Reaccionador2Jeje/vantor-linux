@@ -106,7 +106,7 @@ mirror_setup() {
  message "Nyan mirror saved."
 }
 packages_setup() {
- target=$(ask "Nyan packages" "Installed system root:" "/mnt") || return 0
+ if [ "$#" -gt 0 ]; then target=$1; else target=$(ask "Nyan packages" "Installed system root:" "/mnt") || return 0; fi
  [ -x "$NYAN_BIN" ] || die "Nyan not found"
  repo=$(awk -F= '$1=="NYAN_REPO"{print $2}' "$target/etc/nyan.conf" 2>/dev/null || true)
  arch=$(awk -F= '$1=="NYAN_ARCH"{print $2}' "$target/etc/nyan.conf" 2>/dev/null || true)
@@ -118,7 +118,7 @@ packages_setup() {
  message "Package selection complete."
 }
 preferences_setup() {
- target=$(ask "System preferences" "Installed system root:" "/mnt") || return 0
+ if [ "$#" -gt 0 ]; then target=$1; else target=$(ask "System preferences" "Installed system root:" "/mnt") || return 0; fi
  current_hostname=$(cat "$target/etc/hostname" 2>/dev/null || echo vantor)
  hostname=$(ask "Hostname" "Computer name:" "$current_hostname") || return 0
  timezone=$(ask "Timezone" "Timezone (e.g. America/Santiago):" "America/Santiago") || return 0
@@ -207,8 +207,8 @@ install_minimal() {
     NYAN_ROOT="$target" NYAN_REPO="$repo" "$NYAN_BIN" update
     NYAN_ROOT="$target" "$NYAN_BIN" install-profile minimal
     configure_target "$target" "$hostname" "$username"
-    preferences_setup
-    packages_setup
+    preferences_setup "$target"
+    packages_setup "$target"
     message "VANTOR Minimal has been installed. Passwords are locked; set secure passwords before normal use. Bootloader and filesystem configuration are separate steps in this early installer."
 }
 
