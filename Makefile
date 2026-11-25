@@ -65,6 +65,10 @@ check-nyan:
 	@grep -q 'languages)' packages/nyan/nyan
 	@grep -q 'install-profile)' packages/nyan/nyan
 	@grep -q 'dependency cycle detected' packages/nyan/nyan
+	@grep -q 'install-profile' packages/nyan/nyan
+	@test -s packages/profiles/development/PROFILE.txt
+	@test -s .github/workflows/build-nyan-profiles.yml
+	@bash -n tools/publish-package.sh
 	@grep -q 'install dependencies' docs/nyan.md
 	@grep -q 'Language:' docs/nyan.md
 	@test -s tests/test_nyan.py
