@@ -83,6 +83,19 @@ The commands are installed under `/usr/local/bin`. They use POSIX shell and the 
 
 These packages are marked `building` in `packages/catalog.tsv` until the isolated workflow successfully publishes their archives and updates the `all` repository index. They do not change kernel, ISO, legacy or general CI workflows.
 
+## More terminal and file utilities
+
+The Nyan extras workflow also builds six additional architecture-independent tools and publishes each into both the x86_64 and i486 indexes:
+
+- `fastfetch` — a compact VANTOR-branded system summary (a lightweight shell implementation, not the upstream Fastfetch binary).
+- `tree` — recursive directory listing.
+- `watch` — repeat a command at a configurable interval.
+- `which` — locate executable commands through `PATH`.
+- `filetype` — identify common file formats using file signatures.
+- `vtop` — compact process overview using `ps` or `/proc`.
+
+All six are POSIX-shell tools installed under `/usr/local/bin`; they do not require a second C runtime. Their package status remains `building` until the isolated publisher succeeds. Native Nano, Dialog, htop and curl binaries are not falsely represented by these scripts: they require a separately validated build/runtime strategy for both CPU baselines and TLS support.
+
 ## Installed package inspection
 
 Use `nyan installed` to inspect the package database for the current root. Use `nyan verify` after an installation or system repair to confirm that every file recorded for each package still exists. A named check (`nyan verify busybox`) limits verification to one package. This checks file presence and ownership records; it does not yet validate installed file contents against per-file hashes or repair packages automatically.
