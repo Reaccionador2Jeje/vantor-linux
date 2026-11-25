@@ -123,6 +123,20 @@ class NyanIntegrationTests(unittest.TestCase):
         self.assertEqual(removed.returncode, 0, removed.stderr)
         self.assertFalse(target.exists())
 
+    def test_installs_usr_local_bin_with_normalized_root_path(self) -> None:
+        self.env["NYAN_ROOT"] = str(self.root) + "///"
+        self.add_package("local-command", "usr/local/bin/local-command", b"#!/bin/sh\\necho VANTOR\\n")
+        self.assertEqual(self.run_nyan("update").returncode, 0)
+        installed = self.run_nyan("install", "local-command")
+        self.assertEqual(installed.returncode, 0, installed.stderr)
+        target = self.root / "usr/local/bin/local-command"
+        self.assertTrue(target.is_file())
+        self.assertEqual(target.read_bytes(), b"#!/bin/sh\\necho VANTOR\\n")
+        verified = self.run_nyan("verify", "local-command")
+        self.assertEqual(verified.returncode, 0, verified.stderr)
+        removed = self.run_nyan("remove", "local-command")
+        self.assertEqual(removed.returncode, 0, removed.stderr)
+        self.assertFalse(target.exists())
     def test_installs_dependencies_before_requested_package(self) -> None:
         self.add_package("runtime", "usr/lib/runtime.txt", b"runtime\\n")
         self.add_package("application", "usr/bin/application", b"app\\n", "runtime")
