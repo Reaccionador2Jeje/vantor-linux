@@ -1,0 +1,15 @@
+#!/bin/sh
+set -eu
+[ "$#" -gt 0 ] || { echo "Usage: which command ..." >&2; exit 2; }
+status=0
+for name do
+  case "$name" in */*)
+    if [ -x "$name" ]; then printf '%s\n' "$name"; else status=1; fi
+    ;;
+  *)
+    path=$(command -v "$name" 2>/dev/null || true)
+    case "$path" in /*) printf '%s\n' "$path";; *) status=1;; esac
+    ;;
+  esac
+done
+exit "$status"
