@@ -47,6 +47,8 @@ core-files:
 	@test -s docs/vantor-core.md
 	@grep -q 'VANTOR Init' tools/prepare-rootfs.py
 	@grep -q 'VANTOR Control' tools/prepare-rootfs.py
+	@test -s core/hardware/vantor-hw
+	@grep -q 'VANTOR Hardware' core/hardware/vantor-hw
 	@echo "[OK] VANTOR Core bootstrap components are present."
 
 kernel-files:
