@@ -56,3 +56,50 @@ vports	network	building	Read-only TCP listening and UDP socket overview
 vman	documentation	building	View local manual pages or command help
 jq	development	building	jq 1.8.1 JSON processor with bundled Oniguruma
 less	editors	building	less 710 terminal pager
+wayland-protocols	desktop	planned	Wayland protocol definitions
+wayland	desktop	planned	Wayland client and server libraries
+wlroots	desktop	planned	Wayland compositor library for lightweight sessions
+weston	desktop	planned	Reference Wayland compositor and test session
+xfce4	desktop	planned	Xfce desktop environment meta-package
+xfce4-session	desktop	planned	Xfce session manager
+xfce4-panel	desktop	planned	Xfce panel
+xfwm4	desktop	planned	Xfce window manager
+xfce4-settings	desktop	planned	Xfce settings tools
+xfce4-terminal	desktop	planned	Xfce terminal emulator
+thunar	desktop	planned	Xfce file manager
+gnome	desktop	planned	GNOME desktop environment meta-package
+gnome-shell	desktop	planned	GNOME Shell desktop and compositor
+mutter	desktop	planned	GNOME Wayland and X11 compositor
+gnome-session	desktop	planned	GNOME session manager
+gnome-control-center	desktop	planned	GNOME settings center
+gnome-terminal	desktop	planned	GNOME terminal emulator
+nautilus	desktop	planned	GNOME file manager
+kde-plasma	desktop	planned	KDE Plasma desktop environment meta-package
+plasma-workspace	desktop	planned	KDE Plasma workspace and session
+kwin	desktop	planned	KDE window manager and Wayland compositor
+plasma-desktop	desktop	planned	KDE Plasma desktop shell
+konsole	desktop	planned	KDE terminal emulator
+dolphin	desktop	planned	KDE file manager
+lxqt	desktop	planned	LXQt desktop environment meta-package
+lxqt-session	desktop	planned	LXQt session manager
+labwc	desktop	planned	Lightweight Wayland compositor for LXQt
+qterminal	desktop	planned	LXQt terminal emulator
+pcmanfm-qt	desktop	planned	LXQt file manager
+lxde	desktop	planned	LXDE desktop environment meta-package
+lxsession	desktop	planned	LXDE session manager
+lxpanel	desktop	planned	LXDE panel
+openbox	desktop	planned	Lightweight X11 window manager
+lxterminal	desktop	planned	LXDE terminal emulator
+pcmanfm	desktop	planned	LXDE file manager
+dbus	desktop	planned	Desktop message bus required by graphical sessions
+seatd	desktop	planned	Seat and device access service for compositor sessions
+mesa	desktop	planned	OpenGL and EGL graphics libraries
+gtk3	desktop	planned	GTK 3 toolkit runtime
+gtk4	desktop	planned	GTK 4 toolkit runtime
+qt6-base	desktop	planned	Qt 6 base toolkit runtime
+qt6-wayland	desktop	planned	Qt 6 Wayland platform integration
+xdg-desktop-portal	desktop	planned	Desktop portal interfaces
+xdg-desktop-portal-gtk	desktop	planned	GTK portal backend
+xdg-desktop-portal-kde	desktop	planned	KDE portal backend
+greetd	desktop	planned	Lightweight graphical login manager
+lightdm	desktop	planned	Display manager for X11 desktop sessions
