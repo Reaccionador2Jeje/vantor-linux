@@ -17,7 +17,16 @@ stopping=0
 child=
 stop_child() {
     stopping=1
-    if [ -n "$child" ]; then kill -TERM "$child" 2>/dev/null || true; fi
+    if [ -n "$child" ]; then
+        kill -TERM "$child" 2>/dev/null || true
+        count=0
+        while kill -0 "$child" 2>/dev/null && [ "$count" -lt 3 ]; do
+            sleep 1
+            count=$((count + 1))
+        done
+        kill -KILL "$child" 2>/dev/null || true
+        wait "$child" 2>/dev/null || true
+    fi
 }
 trap stop_child TERM INT
 attempts=0
