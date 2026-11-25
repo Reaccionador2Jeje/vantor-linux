@@ -76,6 +76,10 @@ make rootfs
 
 The generated tree is placed in \`build/work/rootfs\`. It is not bootable yet because BusyBox, the kernel, and the final initramfs image have not been integrated.
 
+## Android / Termux testing
+
+VANTOR has an ARM64 userspace target for Termux + PRoot. Android supplies the kernel; this target packages VANTOR identity and static BusyBox for shell and userspace testing. It does not boot the VANTOR kernel or replace Limbo for ISO/GRUB/initramfs validation. See [VANTOR on Termux](docs/termux.md). The ARM64 rootfs is built by `.github/workflows/build-termux.yml`; Docker Hub publishing is optional and requires repository secrets.
+
 ## VANTOR Desktop
 
 The first VANTOR Desktop Genesis shell is under `desktop/`. It uses an intentionally light X11 stack (Openbox, tint2 and xterm) with VANTOR's own session launcher, keyboard shortcuts, menu and navy/cyan panel configuration. The graphical packages are tracked as planned Nyan packages and are not yet included in the Minimal ISO. See [VANTOR Desktop](desktop/README.md).
