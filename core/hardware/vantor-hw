@@ -1,0 +1,78 @@
+#!/bin/sh
+# VANTOR Hardware 0.1.0 - read-only Linux hardware inventory.
+set -u
+VERSION="0.1.0"
+PROC_ROOT="\${VANTOR_PROC_ROOT:-/proc}"
+SYS_ROOT="\${VANTOR_SYS_ROOT:-/sys}"
+read_value() {
+    file="$1"
+    if [ -r "$file" ]; then IFS= read -r value < "$file" || true; printf '%s' "\${value:-unknown}"
+    else printf '%s' unknown; fi
+}
+section() { printf '\n== %s ==\n' "$1"; }
+case "\${1:-}" in
+    --version|-V) echo "VANTOR Hardware $VERSION"; exit 0 ;;
+    --help|-h) echo "VANTOR Hardware $VERSION"; echo "Usage: vantor-hw [--help|--version]"; echo "Reports CPU, memory, storage, PCI, VirtIO and network devices."; exit 0 ;;
+    "") ;;
+    *) echo "vantor-hw: unknown option: $1" >&2; exit 2 ;;
+esac
+echo "VANTOR HARDWARE INVENTORY"
+echo "Collector: $VERSION"
+echo "Mode: read-only"
+section "CPU"
+if [ -r "$PROC_ROOT/cpuinfo" ]; then
+    awk -F: '
+        /^[[:space:]]*(model name|Hardware|Processor|vendor_id|CPU architecture|CPU implementer|CPU part)[[:space:]]*:/ {
+            key=$1; value=$2
+            gsub(/^[ \t]+|[ \t]+$/, "", key)
+            gsub(/^[ \t]+|[ \t]+$/, "", value)
+            if (!seen[key]++) print key ": " value
+        }
+        /^processor[[:space:]]*:/ { count++ }
+        END { if (count > 0) print "Logical processors: " count }
+    ' "$PROC_ROOT/cpuinfo"
+else echo "CPU details unavailable (procfs not mounted)."; fi
+echo "Architecture: $(uname -m 2>/dev/null || echo unknown)"
+section "MEMORY"
+if [ -r "$PROC_ROOT/meminfo" ]; then awk '/^(MemTotal|MemAvailable|MemFree|SwapTotal|SwapFree):/ { print }' "$PROC_ROOT/meminfo"
+else echo "Memory details unavailable (procfs not mounted)."; fi
+section "STORAGE"
+found=0
+for dev in "$SYS_ROOT"/block/*; do
+    [ -e "$dev" ] || continue
+    found=1; name="\${dev##*/}"
+    sectors="$(read_value "$dev/size")"
+    model="$(read_value "$dev/device/model")"
+    vendor="$(read_value "$dev/device/vendor")"
+    printf '%s: sectors=%s vendor=%s model=%s\n' "$name" "$sectors" "$vendor" "$model"
+done
+[ "$found" -eq 1 ] || echo "No block devices found or sysfs unavailable."
+section "PCI DEVICES"
+found=0
+for dev in "$SYS_ROOT"/bus/pci/devices/*; do
+    [ -e "$dev" ] || continue
+    found=1; name="\${dev##*/}"
+    vendor="$(read_value "$dev/vendor")"; device="$(read_value "$dev/device")"; class="$(read_value "$dev/class")"
+    driver=unbound
+    [ -L "$dev/driver" ] && driver="$(readlink "$dev/driver" 2>/dev/null || echo bound)"
+    printf '%s vendor=%s device=%s class=%s driver=%s\n' "$name" "$vendor" "$device" "$class" "$driver"
+done
+[ "$found" -eq 1 ] || echo "No PCI devices found or PCI sysfs unavailable."
+section "VIRTIO DEVICES"
+found=0
+for dev in "$SYS_ROOT"/bus/virtio/devices/*; do
+    [ -e "$dev" ] || continue
+    found=1; name="\${dev##*/}"
+    printf '%s vendor=%s device=%s\n' "$name" "$(read_value "$dev/vendor")" "$(read_value "$dev/device")"
+done
+[ "$found" -eq 1 ] || echo "No VirtIO devices found."
+section "NETWORK INTERFACES"
+found=0
+for iface in "$SYS_ROOT"/class/net/*; do
+    [ -e "$iface" ] || continue
+    found=1; name="\${iface##*/}"
+    printf '%s state=%s mac=%s\n' "$name" "$(read_value "$iface/operstate")" "$(read_value "$iface/address")"
+done
+[ "$found" -eq 1 ] || echo "No network interfaces found or network sysfs unavailable."
+echo
+echo "Inventory complete. No hardware settings were changed."
