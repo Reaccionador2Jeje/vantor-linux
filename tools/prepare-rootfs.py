@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Assemble a deterministic VANTOR rootfs skeleton with its official identity."""
 from __future__ import annotations
-import argparse, json, shutil
+import argparse, json, shutil, subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -79,9 +79,31 @@ ttyS0::respawn:/bin/busybox getty -L -n -l /usr/bin/vantor-live-session 115200 t
 ::ctrlaltdel:/bin/busybox reboot
 ::shutdown:/bin/busybox umount -a -r
 """)
+    # The x86_64 image gets a tiny static fbdev renderer. Legacy remains text-only.
+    if args.arch == "x86_64":
+        splash_source = ROOT / "core/boot/vantor-fb-splash.c"
+        splash_binary = output / "usr/bin/vantor-fb-splash"
+        compiler = shutil.which("cc")
+        if compiler and splash_source.is_file():
+            try:
+                subprocess.run(
+                    [compiler, "-static", "-Os", "-s", "-Wl,--build-id=none",
+                     "-o", str(splash_binary), str(splash_source), "-lm"],
+                    check=True, capture_output=True, text=True,
+                )
+                splash_binary.chmod(0o755)
+            except (subprocess.CalledProcessError, OSError) as exc:
+                splash_binary.unlink(missing_ok=True)
+                print(f"[WARN] Static framebuffer splash unavailable; using text splash: {exc}")
+        else:
+            print("[WARN] C compiler unavailable; using VANTOR text splash.")
+
     write(output / "usr/bin/vantor-splash", """#!/bin/sh
-# VANTOR Genesis text splash. Uses only ANSI sequences and BusyBox printf.
+# VANTOR Genesis splash: framebuffer renderer first, ANSI console fallback.
 set -u
+if [ -x /usr/bin/vantor-fb-splash ] && [ -c /dev/fb0 ]; then
+    /usr/bin/vantor-fb-splash "$@" && exit 0
+fi
 TTY=/dev/tty0
 [ -w "$TTY" ] || exit 0
 [ -r /proc/cmdline ] || exit 0
@@ -116,14 +138,12 @@ esac
     write(output / "etc/init.d/rcS", """#!/bin/sh
 # VANTOR early system setup; safe to run more than once.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
-/usr/bin/vantor-splash start
 mkdir -p /proc /sys /dev /run /tmp /var/log /home/live
 mount -t proc proc /proc 2>/dev/null || true
-/usr/bin/vantor-splash step "Kernel interfaces ready"
 mount -t sysfs sysfs /sys 2>/dev/null || true
 mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
+/usr/bin/vantor-splash start
 /usr/bin/vantor-splash step "Detecting hardware"
-mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
 chmod 1777 /tmp 2>/dev/null || true
 if [ -r /etc/hostname ]; then hostname "$(cat /etc/hostname)" 2>/dev/null || true; else hostname vantor 2>/dev/null || true; fi
 if command -v mdev >/dev/null 2>&1; then
