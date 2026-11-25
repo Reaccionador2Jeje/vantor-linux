@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
-.PHONY: help info check check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel kernel-legacy busybox initramfs rootfs boot-files iso clean kernel-files initramfs-files
+.PHONY: help info check check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel kernel-legacy busybox busybox-legacy initramfs rootfs rootfs-legacy boot-files iso clean kernel-files initramfs-files
 
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
@@ -10,8 +10,8 @@ help:
 	  '  make check-sources Validate source manifest structure' '  make check-python  Compile and test Python tools' '  make check-nyan    Validate Nyan package manager syntax' \
 	  '  make sources-ready Require verified source checksums' '  make fetch-sources Download and verify pinned archives' \
 	  '  make toolchain      Build Binutils and GCC pass 1' '  make kernel         Build VANTOR x86_64 Linux kernel' '  make kernel-legacy  Build 486SX-compatible 32-bit legacy kernel' \
-	  '  make busybox        Build static BusyBox userspace' '  make initramfs      Assemble VANTOR early userspace' \
-	  '  make rootfs         Assemble the VANTOR rootfs skeleton' \
+	  '  make busybox        Build static x86_64 BusyBox userspace' '  make busybox-legacy Build static i486 BusyBox userspace' '  make initramfs      Assemble VANTOR early userspace' \
+	  '  make rootfs         Assemble the x86_64 VANTOR rootfs skeleton' '  make rootfs-legacy  Assemble the i486 VANTOR rootfs skeleton' \
 	  '  make boot-files     Check bootloader configuration and builder' \
 	  '  make iso            Build a GRUB ISO after kernel and initramfs exist' \
 	  '  make clean         Remove generated build output'
@@ -67,6 +67,7 @@ kernel-files:
 	@test -s kernel/configs/README.md
 	@test -s docs/kernel.md
 	@test -s build/scripts/build-kernel-legacy.sh
+	@test -s build/scripts/build-busybox-legacy.sh
 	@grep -q 'M486SX' build/scripts/build-kernel-legacy.sh
 	@grep -q 'linux-legacy' build/sources/sources.json
 	@test -s docs/hardware-compatibility.md
@@ -112,6 +113,9 @@ kernel-legacy:
 busybox:
 	@bash build/scripts/build-busybox.sh
 
+busybox-legacy:
+	@bash build/scripts/build-busybox-legacy.sh
+
 initramfs:
 	@bash build/scripts/build-initramfs.sh
 
@@ -123,7 +127,10 @@ initramfs-files:
 	@echo "[OK] BusyBox and initramfs build files are present."
 
 rootfs:
-	@python3 tools/prepare-rootfs.py --output build/work/rootfs
+	@python3 tools/prepare-rootfs.py --output build/work/rootfs --arch x86_64
+
+rootfs-legacy:
+	@python3 tools/prepare-rootfs.py --output build/work/rootfs-legacy --arch i486
 
 boot-files:
 	@test -s boot/grub/grub.cfg
