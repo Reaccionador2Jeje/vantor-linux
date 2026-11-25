@@ -108,6 +108,8 @@ Environment: NYAN_ROOT, NYAN_REPO, NYAN_ARCH
 EOF
 }
 index_file() { printf '%s/Packages' "$NYAN_STATE"; }
+# Dependency traversal stack (empty for each top-level install request).
+INSTALL_STACK=""
 package_row() {
   awk -F '\t' -v n="$1" '$1==n {print; exit}' "$(index_file)"
 }
