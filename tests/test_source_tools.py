@@ -54,6 +54,7 @@ class ExtractSourceTests(unittest.TestCase):
             with tarfile.open(archive, "w:gz") as bundle:
                 directory = tarfile.TarInfo("source/arch/arm/boot/dts")
                 directory.type = tarfile.DIRTYPE
+                directory.mode = 0o755
                 bundle.addfile(directory)
                 payload = b"shared device tree include"
                 regular = tarfile.TarInfo("source/arch/arm/boot/dts/shared.dtsi")
