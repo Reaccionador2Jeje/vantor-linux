@@ -74,13 +74,13 @@ The generated tree is placed in \`build/work/rootfs\`. It is not bootable yet be
 
 ## Toolchain and emulator development
 
-The first x86_64 cross-toolchain plan is documented in [docs/toolchain.md](docs/toolchain.md). Android VM testing is documented in [docs/testing-limbo.md](docs/testing-limbo.md); Limbo PC Emulator is the selected manual test target. Initial build scripts exist for Binutils pass 1 and GCC pass 1, with a manual [GitHub Actions toolchain workflow](.github/workflows/toolchain.yml).
+The first x86_64 cross-toolchain plan is documented in [docs/toolchain.md](docs/toolchain.md). The initial Linux kernel baseline is 6.18.65, with its build contract and QEMU driver profile documented in [docs/kernel.md](docs/kernel.md). Android VM testing is documented in [docs/testing-limbo.md](docs/testing-limbo.md); Limbo PC Emulator is the selected manual test target. Initial build scripts exist for Binutils pass 1 and GCC pass 1, with a manual [GitHub Actions toolchain workflow](.github/workflows/toolchain.yml).
 
 Upstream candidates are recorded in \`build/sources/sources.json\`; each source must have a verified digest before download/build automation can use it. \`make sources-ready\` deliberately fails until all selected sources are pinned. \`make fetch-sources\` verifies digests before saving archives.
 
 ## Build status
 
-CI validates repository structure, configuration, source metadata, safe extraction, rootfs generation and rootfs identity files. The first-stage toolchain scripts and initial rootfs generator are implemented. Binutils and GCC bootstrap sources are pinned; glibc, Linux and BusyBox remain unpinned. No completed compiler, kernel, initramfs or bootable image is claimed yet.
+CI validates repository structure, configuration, source metadata, safe extraction, rootfs generation and rootfs identity files. The first-stage toolchain scripts, GRUB boot menu, kernel build script and initial rootfs generator are implemented. Binutils and GCC bootstrap sources are pinned; glibc, Linux and BusyBox remain unpinned. No completed compiler, kernel, initramfs or bootable image is claimed yet. The kernel source remains unpinned until its official checksum is verified.
 
 ## Licensing
 
