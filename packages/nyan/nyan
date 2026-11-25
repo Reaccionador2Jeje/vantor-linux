@@ -211,7 +211,7 @@ case "$cmd" in
   browse)
     index=$(index_file); [ -s "$index" ] || die "run 'nyan update' first"
     printf "Available Nyan packages for %s:\n" "$NYAN_ARCH"
-    awk -F '\\t' '!/^#/ && NF >= 6 {printf "  %-24s %-12s %s\\n",$1,$2,$6}' "$index"
+    awk -F '\t' '!/^#/ && NF >= 6 {printf "  %-24s %-12s %s\n",$1,$2,$6}' "$index"
     ;;
   install)
     [ "$#" -ge 2 ] || die "usage: nyan install PACKAGE [PACKAGE ...]"
