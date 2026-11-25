@@ -7,6 +7,8 @@ TARGET=""
 HOSTNAME="vantor"
 USERNAME="live"
 NYAN_BIN="/usr/bin/nyan"
+[ ! -r /etc/nyan.conf ] || . /etc/nyan.conf
+NYAN_ARCH=${NYAN_ARCH:-x86_64}
 
 die() { printf '[VANTOR Installer] ERROR: %s\n' "$*" >&2; exit 1; }
 info() { printf '[VANTOR Installer] %s\n' "$*"; }
@@ -88,7 +90,9 @@ mirror_setup() {
  case "$repo" in https://*) ;; *) die "mirror must use HTTPS";; esac
  case "$repo" in *[!A-Za-z0-9:/._+-]*) die "invalid URL";; esac
  mkdir -p "$target/etc"
- printf '# Nyan repository\nNYAN_REPO=%s\nNYAN_ARCH=%s\n' "$repo" "${NYAN_ARCH:-x86_64}" > "$target/etc/nyan.conf"
+ arch=$(awk -F= '$1=="NYAN_ARCH"{print $2}' "$target/etc/nyan.conf" 2>/dev/null || true)
+ [ -n "$arch" ] || arch=${NYAN_ARCH:-x86_64}
+ printf '# Nyan repository\nNYAN_REPO=%s\nNYAN_ARCH=%s\n' "$repo" "$arch" > "$target/etc/nyan.conf"
  message "Nyan mirror saved."
 }
 packages_setup() {
