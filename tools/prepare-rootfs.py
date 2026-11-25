@@ -450,8 +450,10 @@ exit 0
 """, 0o755)
 
     write(output / "usr/bin/vantor-live-session", """#!/bin/sh
-# Local Live console session; the root account remains locked.
-exec /bin/busybox su -s /bin/sh - live
+# The Live getty launches this program as root with -n (no password login).
+# Keep the Live console administrative so Nyan and the installer work out of
+# the box. The installed system is configured with an ordinary unprivileged user.
+exec /bin/sh -l
 """, 0o755)
     write(output / "etc/profile", """# VANTOR shell defaults
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
