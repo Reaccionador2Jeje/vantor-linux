@@ -33,7 +33,7 @@ Nyan exposes five profile names:
 - `development` — Lua 5.4.9 starter language environment.
 - `network` — DHCP, DNS, TLS and network diagnostic tools; not yet published.
 
-The local package catalog is maintained in `packages/catalog.tsv` and is installed at `/usr/share/nyan/catalog.tsv`. It distinguishes bundled tools from packages that are still planned; planned entries are not installable yet.\n\nThe Minimal package workflow is `.github/workflows/build-nyan-minimal.yml`. It builds the base payload from the rootfs generator and BusyBox, then publishes the base package and Minimal meta-package. It does not make sudo, nano, full Vim or Fastfetch available yet; those remain separate package targets.
+The local package catalog is maintained in `packages/catalog.tsv` and is installed at `/usr/share/nyan/catalog.tsv`. It distinguishes bundled tools from packages that are still planned; planned entries are not installable yet.\n\nThe Minimal package workflow is `.github/workflows/build-nyan-minimal.yml`. It builds the base payload from the rootfs generator and BusyBox, then publishes the base package and Minimal meta-package. It does not make sudo, nano, full Vim or Fastfetch available yet; those remain separate package targets. The i486 package workflow builds a separate 32-bit BusyBox and publishes to `packages/repository/i486/Packages`.
 
 
 ## VANTOR Community Mirror
