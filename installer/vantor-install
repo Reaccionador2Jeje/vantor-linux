@@ -184,9 +184,15 @@ install_minimal() {
     valid_name "$username" || die "invalid username"
     [ -x "$NYAN_BIN" ] || die "Nyan is not installed in this Live environment"
     message "The installer will install the published Minimal profile into $target. It will not partition or format disks."
-    NYAN_ROOT="$target" "$NYAN_BIN" update
+    repo=$(ask "Nyan mirror" "HTTPS repository base URL:" "https://vantor-linux.cristopheriguaran-7.workers.dev") || return 0
+    case "$repo" in https://*) ;; *) die "mirror must use HTTPS";; esac
+    printf '# Nyan repository\nNYAN_REPO=%s\nNYAN_ARCH=%s\n' "$repo" "\${NYAN_ARCH:-x86_64}" > "$target/etc/nyan.conf"
+    NYAN_ROOT="$target" NYAN_REPO="$repo" "$NYAN_BIN" update
     NYAN_ROOT="$target" "$NYAN_BIN" install-profile minimal
     configure_target "$target" "$hostname" "$username"
+    network_setup
+    preferences_setup
+    packages_setup
     message "VANTOR Minimal has been installed. Passwords are locked; set secure passwords before normal use. Bootloader and filesystem configuration are separate steps in this early installer."
 }
 
