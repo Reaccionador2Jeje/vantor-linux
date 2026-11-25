@@ -65,6 +65,61 @@ users:!::
     (output / "root").chmod(0o700)
     (output / "home/live").mkdir(parents=True, exist_ok=True)
     (output / "home/live").chmod(0o700)
+    write(output / "etc/fstab", """proc      /proc   proc      defaults          0 0
+sysfs     /sys    sysfs     defaults          0 0
+devtmpfs  /dev    devtmpfs  mode=0755         0 0
+tmpfs     /run    tmpfs     mode=0755,nosuid  0 0
+tmpfs     /tmp    tmpfs     mode=1777,nosuid  0 0
+""")
+    write(output / "etc/inittab", """# VANTOR Minimal BusyBox init configuration
+::sysinit:/etc/init.d/rcS
+tty1::respawn:/sbin/getty -L -n -l /usr/bin/vantor-live-session 0 tty1 vt100
+ttyS0::respawn:/sbin/getty -L -n -l /usr/bin/vantor-live-session 115200 ttyS0 vt100
+::ctrlaltdel:/sbin/reboot
+::shutdown:/bin/umount -a -r
+""")
+    write(output / "etc/init.d/rcS", """#!/bin/sh
+# VANTOR early system setup; safe to run more than once.
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+mkdir -p /proc /sys /dev /run /tmp /var/log /home/live
+mount -t proc proc /proc 2>/dev/null || true
+mount -t sysfs sysfs /sys 2>/dev/null || true
+mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
+chmod 1777 /tmp 2>/dev/null || true
+hostname vantor 2>/dev/null || true
+if command -v mdev >/dev/null 2>&1; then
+    echo /sbin/mdev > /proc/sys/kernel/hotplug 2>/dev/null || true
+    mdev -s 2>/dev/null || true
+fi
+# Start DHCP only on detected non-loopback interfaces.
+if command -v udhcpc >/dev/null 2>&1 && [ -d /sys/class/net ]; then
+    for iface_path in /sys/class/net/*; do
+        [ -e "$iface_path" ] || continue
+        iface="${iface_path##*/}"
+        [ "$iface" = lo ] && continue
+        udhcpc -i "$iface" -b -q -t 3 -T 2 >/dev/null 2>&1 || true
+    done
+fi
+echo "[VANTOR] Minimal userspace is ready."
+""", 0o755)
+    write(output / "usr/bin/vantor-live-session", """#!/bin/sh
+# Local Live console session; the root account remains locked.
+exec /bin/su -s /bin/sh - live
+""", 0o755)
+    write(output / "etc/profile", """# VANTOR shell defaults
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+export EDITOR=vi
+export PAGER=more
+: "${TERM:=vt100}"
+export TERM
+umask 022
+if [ -r /etc/motd ]; then cat /etc/motd; fi
+if [ -d /etc/profile.d ]; then
+    for profile_script in /etc/profile.d/*.sh; do
+        [ -r "$profile_script" ] && . "$profile_script"
+    done
+fi
+""")
     write(output / "etc/hostname", "vantor\n")
     write(output / "etc/issue", "\n\nVANTOR Linux \\r (\\l)\nONE SYSTEM. EVERY GENERATION.\n\n")
     write(output / "etc/motd", "Welcome to VANTOR Linux Genesis.\nONE SYSTEM. EVERY GENERATION.\n\nIndependent origin. Independent base. Universal goal.\n")
