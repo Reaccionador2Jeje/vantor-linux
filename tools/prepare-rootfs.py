@@ -606,6 +606,63 @@ esac
     shutil.copy2(installer, output / "usr/bin/vantor-install")
     (output / "usr/bin/vantor-install").chmod(0o755)
 
+    # VANTOR Doctor is part of the base system: diagnostics must work offline.
+    write(output / "usr/bin/vantor-doctor", """#!/bin/sh
+# VANTOR Doctor 0.2.0 — read-only base-system diagnostics.
+set -u
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+fail=0
+warn=0
+ok() { printf '[ OK ] %s\\n' "$1"; }
+check_file() {
+    label=$1 path=$2
+    if [ -e "$path" ]; then ok "$label"
+    else printf '[FAIL] %s (missing: %s)\\n' "$label" "$path"; fail=$((fail + 1)); fi
+}
+check_mount() {
+    label=$1 path=$2
+    if grep -q "[[:space:]]$path[[:space:]]" /proc/mounts 2>/dev/null; then ok "$label mounted"
+    else printf '[WARN] %s is not mounted\\n' "$label"; warn=$((warn + 1)); fi
+}
+echo "VANTOR Doctor 0.2.0 — read-only diagnostics"
+echo "== Core =="
+check_file "Kernel release" /proc/sys/kernel/osrelease
+check_file "Memory information" /proc/meminfo
+check_file "CPU information" /proc/cpuinfo
+check_file "VANTOR release" /etc/vantor-release
+check_file "VANTOR init" /sbin/vantor-init
+check_file "BusyBox" /bin/busybox
+check_file "VANTOR control" /usr/bin/vantorctl
+check_file "Nyan package manager" /usr/bin/nyan
+echo "== Virtual filesystems =="
+check_mount procfs /proc
+check_mount sysfs /sys
+check_mount devtmpfs /dev
+check_mount tmpfs /run
+echo "== User environment =="
+if [ -n "${USER:-}" ] && [ -d "${HOME:-/nonexistent}" ]; then ok "User environment ($USER)"
+else printf '[WARN] User or home environment is incomplete\\n'; warn=$((warn + 1)); fi
+if [ -r /etc/nyan.conf ]; then ok "Nyan repository configuration"
+else printf '[FAIL] Nyan repository configuration missing\\n'; fail=$((fail + 1)); fi
+if [ -d /sys/class/net ]; then
+    found=0
+    for iface in /sys/class/net/*; do
+        [ -e "$iface" ] || continue
+        [ "${iface##*/}" = lo ] && continue
+        found=1
+    done
+    if [ "$found" -eq 1 ]; then ok "Network interface detected"
+    else printf '[WARN] No network interface detected\\n'; warn=$((warn + 1)); fi
+fi
+echo "== Result =="
+if [ "$fail" -gt 0 ]; then
+    printf 'FAILED: %s critical issue(s), %s warning(s). No changes made.\\n' "$fail" "$warn"
+    exit 1
+fi
+printf 'PASSED: base system checks completed, %s warning(s). No changes made.\\n' "$warn"
+exit 0
+""", 0o755)
+
     nyan_catalog = ROOT / "packages/catalog.tsv"
     (output / "usr/share/nyan").mkdir(parents=True, exist_ok=True)
     shutil.copy2(nyan_catalog, output / "usr/share/nyan/catalog.tsv")
