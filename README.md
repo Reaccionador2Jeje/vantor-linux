@@ -97,7 +97,7 @@ nyan install lua
 lua -v
 ```
 
-Nyan has integration tests for installation/removal and rejects traversal, archive links and overwrites. It remains an experimental package manager; signatures, dependency resolution and transactional upgrades are future work. See [docs/nyan.md](docs/nyan.md).
+Nyan supports dependency-first installation, Minimal and Development profile meta-packages, SHA-256 checks and archive safety tests. It remains experimental: signed repository metadata, transactional upgrades, automatic dependency cleanup and shared-file ownership are not implemented. See [docs/nyan.md](docs/nyan.md) and [the installer guide](docs/installer.md).
 
 ## Licensing
 
