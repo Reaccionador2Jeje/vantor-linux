@@ -73,10 +73,10 @@ tmpfs     /tmp    tmpfs     mode=1777,nosuid  0 0
 """)
     write(output / "etc/inittab", """# VANTOR Minimal BusyBox init configuration
 ::sysinit:/etc/init.d/rcS
-tty1::respawn:/sbin/getty -L -n -l /usr/bin/vantor-live-session 0 tty1 vt100
+tty1::respawn:/bin/busybox getty -L -n -l /usr/bin/vantor-live-session 0 tty1 vt100
 ttyS0::respawn:/sbin/getty -L -n -l /usr/bin/vantor-live-session 115200 ttyS0 vt100
-::ctrlaltdel:/sbin/reboot
-::shutdown:/bin/umount -a -r
+::ctrlaltdel:/bin/busybox reboot
+::shutdown:/bin/busybox umount -a -r
 """)
     write(output / "etc/init.d/rcS", """#!/bin/sh
 # VANTOR early system setup; safe to run more than once.
@@ -88,8 +88,8 @@ mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
 chmod 1777 /tmp 2>/dev/null || true
 hostname vantor 2>/dev/null || true
 if command -v mdev >/dev/null 2>&1; then
-    echo /sbin/mdev > /proc/sys/kernel/hotplug 2>/dev/null || true
-    mdev -s 2>/dev/null || true
+    echo /bin/busybox > /proc/sys/kernel/hotplug 2>/dev/null || true
+    /bin/busybox mdev -s 2>/dev/null || true
 fi
 # Start DHCP only on detected non-loopback interfaces.
 if command -v udhcpc >/dev/null 2>&1 && [ -d /sys/class/net ]; then
@@ -97,14 +97,14 @@ if command -v udhcpc >/dev/null 2>&1 && [ -d /sys/class/net ]; then
         [ -e "$iface_path" ] || continue
         iface="${iface_path##*/}"
         [ "$iface" = lo ] && continue
-        udhcpc -i "$iface" -b -q -t 3 -T 2 >/dev/null 2>&1 || true
+        /bin/busybox udhcpc -i "$iface" -b -q -t 3 -T 2 >/dev/null 2>&1 || true
     done
 fi
 echo "[VANTOR] Minimal userspace is ready."
 """, 0o755)
     write(output / "usr/bin/vantor-live-session", """#!/bin/sh
 # Local Live console session; the root account remains locked.
-exec /bin/su -s /bin/sh - live
+exec /bin/busybox su -s /bin/sh - live
 """, 0o755)
     write(output / "etc/profile", """# VANTOR shell defaults
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
