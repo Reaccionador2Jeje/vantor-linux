@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 import sys
@@ -41,6 +40,7 @@ def main() -> int:
         fail("sources must be a non-empty array")
 
     names: set[str] = set()
+    archives: set[str] = set()
     unpinned: list[str] = []
     for item in sources:
         if not isinstance(item, dict):
@@ -55,6 +55,10 @@ def main() -> int:
         for field in ("version", "archive", "license", "role"):
             if not isinstance(item[field], str) or not item[field].strip():
                 fail(f"{name}: {field} must be a non-empty string")
+        archive = item["archive"]
+        if archive in archives or Path(archive).name != archive:
+            fail(f"{name}: archive filename must be unique and contain no path")
+        archives.add(archive)
         parsed = urlparse(item["url"])
         if parsed.scheme != "https" or not parsed.netloc:
             fail(f"{name}: source URL must use HTTPS")
