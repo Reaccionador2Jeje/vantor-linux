@@ -84,6 +84,7 @@ class PrepareRootfsTests(unittest.TestCase):
             )
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertIn('NYAN_ARCH:=i486', (output / "etc/nyan.conf").read_text())
+            self.assertFalse((output / "usr/bin/vantor-fb-splash").exists())
             brand = json.loads((output / "etc/vantor-brand.json").read_text())
             self.assertEqual(brand["architecture"], "i486")
 
