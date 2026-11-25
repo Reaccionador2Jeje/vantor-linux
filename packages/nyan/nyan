@@ -37,10 +37,10 @@ safe_archive() {
     kind=$(printf '%s' "$entry" | cut -c1)
     case "$kind" in
       -|d) ;;
-      *) rm -f "$NYAN_CACHE/archive-types-$"; die "unsupported archive entry type: $kind";;
+      *) rm -f "$NYAN_CACHE/archive-types-$$"; die "unsupported archive entry type: $kind";;
     esac
-  done < "$NYAN_CACHE/archive-types-$"
-  rm -f "$NYAN_CACHE/archive-types-$"
+  done < "$NYAN_CACHE/archive-types-$$"
+  rm -f "$NYAN_CACHE/archive-types-$$"
 }
 usage() {
   cat <<'EOF'
