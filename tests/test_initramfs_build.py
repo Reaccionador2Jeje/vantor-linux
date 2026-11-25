@@ -35,6 +35,12 @@ class InitramfsBuildTests(unittest.TestCase):
             self.assertIn("modprobe", script)
             self.assertIn("switch_root", script)
 
+    def test_busybox_pid1_init_and_inittab_are_required(self):
+        script = (ROOT / "build/scripts/build-busybox.sh").read_text()
+        self.assertIn("set_config CONFIG_INIT y", script)
+        self.assertIn("set_config CONFIG_FEATURE_USE_INITTAB y", script)
+        self.assertIn("for applet in init vi", script)
+
     def test_busybox_service_manager_applet_is_enabled(self):
         script = (ROOT / "build/scripts/build-busybox.sh").read_text()
         self.assertIn("CONFIG_START_STOP_DAEMON", script)
