@@ -26,7 +26,7 @@ class TermuxIntegrationTests(unittest.TestCase):
     def test_installer_verifies_release_checksum_and_uses_proot_distro(self) -> None:
         source = (TERMUX / "install-vantor").read_text()
         self.assertIn("sha256sum -c -", source)
-        self.assertIn('proot-distro install "$WORK/$ARCHIVE" --name vantor', source)
+        self.assertIn('proot-distro install --name vantor "$WORK/$ARCHIVE"', source)
         self.assertIn('uname -m', source)
         self.assertIn("already exists", source)
 
