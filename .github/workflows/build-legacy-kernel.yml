@@ -1,0 +1,52 @@
+name: Build VANTOR Legacy i486 kernel
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "build/scripts/build-kernel-legacy.sh"
+      - "build/config/vantor.conf"
+      - "build/sources/sources.json"
+      - "kernel/configs/**"
+      - "tests/test_kernel_build.py"
+      - ".github/workflows/build-legacy-kernel.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vantor-legacy-kernel
+  cancel-in-progress: true
+
+jobs:
+  build-i486-kernel:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out VANTOR
+        uses: actions/checkout@v4
+      - name: Install kernel build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev libncurses-dev gcc-multilib
+      - name: Validate source pin and repository contracts
+        run: |
+          python3 tools/validate-sources.py --require-pinned --only linux-legacy
+          make check
+      - name: Build 486SX legacy kernel
+        run: make kernel-legacy
+      - name: Inspect kernel output
+        run: |
+          file build/work/kernel-legacy/vantor-legacy-kernel
+          test -s kernel/configs/vantor-i486.config
+          grep -q '^CONFIG_M486SX=y$' kernel/configs/vantor-i486.config
+          grep -q '^CONFIG_MATH_EMULATION=y$' kernel/configs/vantor-i486.config
+      - name: Upload legacy kernel
+        uses: actions/upload-artifact@v4
+        with:
+          name: vantor-legacy-i486-kernel-${{ github.sha }}
+          path: |
+            build/work/kernel-legacy/vantor-legacy-kernel
+            kernel/configs/vantor-i486.config
+          if-no-files-found: error
+          retention-days: 14
