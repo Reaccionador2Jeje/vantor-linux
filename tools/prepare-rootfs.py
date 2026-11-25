@@ -259,9 +259,11 @@ set -u
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
 SERVICE_DIR=/etc/vantor/services
 RUNTIME_DIR=/run/vantor/services
+LOG_DIR=/var/log/vantor-services
+SUPERVISOR=/usr/sbin/vantor-service-supervisor
 usage() {
     echo "VANTOR Service Control"
-    echo "Usage: vantor-service {list|start|stop|restart|status} SERVICE"
+    echo "Usage: vantor-service {list|start|stop|restart|status|logs} SERVICE [follow]"
 }
 valid_name() {
     case "$1" in ''|*[!A-Za-z0-9_-]*) return 1;; esac
@@ -269,7 +271,7 @@ valid_name() {
 }
 [ -x /bin/busybox ] || { echo "vantor-service: BusyBox is missing." >&2; exit 1; }
 command -v start-stop-daemon >/dev/null 2>&1 || { echo "vantor-service: start-stop-daemon applet is unavailable." >&2; exit 1; }
-mkdir -p "$RUNTIME_DIR"
+mkdir -p "$RUNTIME_DIR" "$LOG_DIR"
 action=${1:-help}
 name=${2:-}
 if [ "$action" = list ]; then
@@ -282,28 +284,48 @@ if [ "$action" = list ]; then
     [ "$found" -eq 1 ] || echo "No optional services are installed."
     exit 0
 fi
-case "$action" in start|stop|restart|status) ;; *) usage; exit 2;; esac
+case "$action" in start|stop|restart|status|logs) ;; *) usage; exit 2;; esac
 valid_name "$name" || { usage >&2; exit 2; }
 script="$SERVICE_DIR/$name.service"
 pidfile="$RUNTIME_DIR/$name.pid"
+policy_file="$SERVICE_DIR/$name.policy"
+logfile="$LOG_DIR/$name.log"
 [ -x "$script" ] || { echo "vantor-service: service not found: $name" >&2; exit 1; }
+restart_policy=never
+restart_delay=3
+if [ -r "$policy_file" ]; then
+    while IFS='=' read -r key value; do
+        case "$key" in
+            restart) case "$value" in never|on-failure|always) restart_policy=$value;; *) echo "Invalid restart policy in $policy_file" >&2; exit 2;; esac;;
+            restart-delay) case "$value" in ''|*[!0-9]*) echo "Invalid restart delay in $policy_file" >&2; exit 2;; *) [ "$value" -ge 1 ] && [ "$value" -le 60 ] || { echo "Restart delay must be 1..60 seconds." >&2; exit 2; }; restart_delay=$value;; esac;;
+            ''|'#'*) :;;
+            *) echo "Unknown setting '$key' in $policy_file" >&2; exit 2;;
+        esac
+    done < "$policy_file"
+fi
 is_running() {
     [ -s "$pidfile" ] || return 1
     pid=$(cat "$pidfile")
     case "$pid" in ''|*[!0-9]*) return 1;; esac
     [ -r "/proc/$pid/cmdline" ] || return 1
-    tr '\\000' ' ' < "/proc/$pid/cmdline" | grep -Fq -- "$script" || return 1
+    tr '\\000' ' ' < "/proc/$pid/cmdline" | grep -Fq -- "$SUPERVISOR" || return 1
     kill -0 "$pid" 2>/dev/null
 }
 start_service() {
     if is_running; then echo "$name is already running."; return 0; fi
     rm -f "$pidfile"
-    start-stop-daemon --start --background --make-pidfile --pidfile "$pidfile" --exec "$script" || {
+    start-stop-daemon --start --background --make-pidfile --pidfile "$pidfile" --exec "$SUPERVISOR" -- "$name" "$script" "$restart_policy" "$restart_delay" "$logfile" || {
         rm -f "$pidfile"
         echo "Failed to start $name." >&2
         return 1
     }
-    echo "Started $name."
+    sleep 1
+    if ! is_running; then
+        rm -f "$pidfile"
+        echo "Service supervisor for $name exited during startup; inspect $logfile." >&2
+        return 1
+    fi
+    echo "Started $name (restart=$restart_policy, delay=${restart_delay}s)."
 }
 stop_service() {
     if ! is_running; then rm -f "$pidfile"; echo "$name is not running."; return 0; fi
@@ -322,7 +344,8 @@ case "$action" in
     start) start_service;;
     stop) stop_service;;
     restart) stop_service && start_service;;
-    status) if is_running; then echo "$name is running (PID $(cat "$pidfile"))."; else echo "$name is stopped."; exit 1; fi;;
+    status) if is_running; then echo "$name is running (supervisor PID $(cat "$pidfile"); restart=$restart_policy)."; else echo "$name is stopped (restart=$restart_policy)."; exit 1; fi;;
+    logs) [ -r "$logfile" ] || { echo "No log exists for $name yet."; exit 1; }; if [ "${3:-}" = follow ]; then tail -f "$logfile"; else cat "$logfile"; fi;;
 esac
 """, 0o755)
 
