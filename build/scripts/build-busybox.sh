@@ -33,7 +33,7 @@ elif grep -q '^CONFIG_STATIC=' "$BUILD_DIR/.config"; then
 else
     printf '\nCONFIG_STATIC=y\n' >> "$BUILD_DIR/.config"
 fi
-yes '' | make -C "$SOURCE_DIR" O="$BUILD_DIR" oldconfig
+make -C "$SOURCE_DIR" O="$BUILD_DIR" oldconfig </dev/null
 make -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS"
 make -C "$SOURCE_DIR" O="$BUILD_DIR" CONFIG_PREFIX="$ROOTFS" install
 
