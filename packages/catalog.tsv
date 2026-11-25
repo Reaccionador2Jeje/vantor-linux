@@ -14,6 +14,7 @@ vantor-modules	system	bundled	VANTOR kernel module loader
 vantor-install	installer	bundled	VANTOR text-mode Minimal installer
 vi	editors	bundled	BusyBox vi console editor
 sudo	administration	building	Privilege elevation for wheel users; real executable required
+lua	languages	published	Lua 5.4.9 interpreter, bytecode compiler and static development library (x86_64)
 nano	editors	planned	Friendly terminal text editor
 vim	editors	planned	Full Vim editor
 fastfetch	diagnostics	building	Compact VANTOR system summary with branded terminal output
