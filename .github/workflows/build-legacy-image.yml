@@ -36,7 +36,7 @@ jobs:
       - name: Install legacy image build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev libncurses-dev gcc-multilib libc6-dev-i386 cpio gzip bzip2 grub-pc-bin grub-common xorriso
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev libncurses-dev gcc-multilib libc6-dev-i386 cpio gzip bzip2 grub-pc-bin grub-common xorriso mtools
       - name: Validate source and project contracts
         run: |
           make check
