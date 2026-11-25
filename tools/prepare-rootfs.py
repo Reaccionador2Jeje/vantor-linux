@@ -328,9 +328,27 @@ esac
     (output / "etc/vantor/services").chmod(0o755)
 
     write(output / "etc/init.d/rcS", """#!/bin/sh
-# VANTOR early system setup; safe to run more than once.
+# VANTOR early system setup with persistent boot diagnostics.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 mkdir -p /proc /sys /dev /run /tmp /var/log /home/live
+BOOT_LOG=/var/log/vantor-boot.log
+: > "$BOOT_LOG"
+log() {
+    printf '[VANTOR:boot] %s\\n' "$*"
+    printf '[VANTOR:boot] %s\\n' "$*" >> "$BOOT_LOG"
+}
+run_step() {
+    label=$1
+    shift
+    log "START: $label"
+    if "$@" >> "$BOOT_LOG" 2>&1; then
+        log "OK: $label"
+        return 0
+    fi
+    result=$?
+    log "WARN: $label (exit $result)"
+    return 0
+}
 mount -t proc proc /proc 2>/dev/null || true
 mount -t sysfs sysfs /sys 2>/dev/null || true
 mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
@@ -338,35 +356,32 @@ mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
 /usr/bin/vantor-splash step "Detecting hardware"
 chmod 1777 /tmp 2>/dev/null || true
 if [ -r /etc/hostname ]; then hostname "$(cat /etc/hostname)" 2>/dev/null || true; else hostname vantor 2>/dev/null || true; fi
+log "VANTOR Linux Minimal boot sequence started."
 if command -v mdev >/dev/null 2>&1; then
     echo /bin/mdev > /proc/sys/kernel/hotplug 2>/dev/null || true
-    /bin/busybox mdev -s 2>/dev/null || true
+    /bin/busybox mdev -s >> "$BOOT_LOG" 2>&1 || true
 fi
-/usr/sbin/vantor-modules
-# Mount configured filesystems only; never partition or format storage.
- /usr/sbin/vantor-storage mount-all >/dev/console 2>&1 || echo "[VANTOR] Some fstab entries could not be mounted."
-# Expose the booted VANTOR ISO read-only so the installer can copy its kernel/initramfs.
+run_step "Load optional kernel modules" /usr/sbin/vantor-modules
+run_step "Mount configured filesystems" /usr/sbin/vantor-storage mount-all
 mkdir -p /run/vantor-media
 for media_dev in /dev/sr0 /dev/cdrom; do
     [ -b "$media_dev" ] || continue
-    if mount -t iso9660 -o ro "$media_dev" /run/vantor-media 2>/dev/null; then
-        echo "[VANTOR] Installation media mounted at /run/vantor-media."
+    if mount -t iso9660 -o ro "$media_dev" /run/vantor-media 2>> "$BOOT_LOG"; then
+        log "Installation media mounted at /run/vantor-media."
         break
     fi
 done
-# Parse validated settings without sourcing an executable shell file.
-/usr/sbin/vantor-network >/dev/console 2>&1 || true
-# Start optional foreground daemons registered under /etc/vantor/services.
+run_step "Configure network" /usr/sbin/vantor-network
 for service_file in /etc/vantor/services/*.service; do
     [ -x "$service_file" ] || continue
     service_name=${service_file##*/}
     service_name=${service_name%.service}
-    /usr/sbin/vantor-service start "$service_name" || echo "[VANTOR] Service failed: $service_name"
+    run_step "Start service $service_name" /usr/sbin/vantor-service start "$service_name"
 done
-    /usr/bin/vantor-splash step "VANTOR userspace is ready"
-    sleep 1
-    /usr/bin/vantor-splash finish
-    echo "[VANTOR] Minimal userspace is ready."
+/usr/bin/vantor-splash step "VANTOR userspace is ready"
+sleep 1
+/usr/bin/vantor-splash finish
+log "Minimal userspace is ready."
 """, 0o755)
     write(output / "usr/share/udhcpc/default.script", """#!/bin/sh
 # Minimal BusyBox udhcpc hook for VANTOR.
@@ -568,7 +583,7 @@ set -u
 VERSION="0.1.0"
 usage() {
     echo "VANTOR Control $VERSION"
-    echo "Usage: vantorctl {help|version|info|hardware|network|storage|service|doctor|status}"
+    echo "Usage: vantorctl {help|version|info|hardware|network|storage|service|doctor|logs|status}"
 }
 case "${1:-help}" in
     help|-h|--help) usage ;;
@@ -577,6 +592,12 @@ case "${1:-help}" in
     hardware) exec /usr/bin/vantor-hw ;;
     storage) exec /usr/sbin/vantor-storage "${2:-status}" ;;\n    service) exec /usr/sbin/vantor-service "${2:-help}" "${3:-}" ;;
     doctor) exec /usr/bin/vantor-doctor "$@" ;;
+    logs)
+        if [ -r /var/log/vantor-boot.log ]; then
+            if [ "${2:-}" = follow ]; then tail -f /var/log/vantor-boot.log
+            else cat /var/log/vantor-boot.log; fi
+        else echo "VANTOR boot log is not available yet."; exit 1; fi
+        ;;
     network)
         echo "== Network interfaces =="
         if [ -d /sys/class/net ]; then
