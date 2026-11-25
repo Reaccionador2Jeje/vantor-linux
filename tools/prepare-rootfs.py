@@ -42,6 +42,29 @@ ANSI_COLOR="0;38;2;0;207;255"
 HOME_URL="https://github.com/Reaccionador2Jeje/vantor-linux"
 """)
     write(output / "etc/vantor-release", "VANTOR Linux 0.1.0 (Genesis)\n")
+    write(output / "etc/passwd", """root:x:0:0:root:/root:/bin/sh
+live:x:1000:1000:VANTOR Live User:/home/live:/bin/sh
+""")
+    write(output / "etc/group", """root:x:0:
+wheel:x:10:live
+users:x:100:
+""")
+    write(output / "etc/shadow", """root:!:19000:0:99999:7:::
+live:!:19000:0:99999:7:::
+""", 0o600)
+    write(output / "etc/gshadow", """root:!::
+wheel:!::live
+users:!::
+""", 0o600)
+    write(output / "etc/sudoers", """# VANTOR Minimal sudo policy
+# Passwords are locked in the Live image until explicitly configured.
+#includedir /etc/sudoers.d
+""", 0o440)
+    write(output / "etc/sudoers.d/10-wheel", "%wheel ALL=(ALL:ALL) ALL\n", 0o440)
+    (output / "root").mkdir(parents=True, exist_ok=True)
+    (output / "root").chmod(0o700)
+    (output / "home/live").mkdir(parents=True, exist_ok=True)
+    (output / "home/live").chmod(0o700)
     write(output / "etc/hostname", "vantor\n")
     write(output / "etc/issue", "\n\nVANTOR Linux \\r (\\l)\nONE SYSTEM. EVERY GENERATION.\n\n")
     write(output / "etc/motd", "Welcome to VANTOR Linux Genesis.\nONE SYSTEM. EVERY GENERATION.\n\nIndependent origin. Independent base. Universal goal.\n")
@@ -157,7 +180,7 @@ esac
     }, indent=2) + "\n")
     print(f"[OK] Prepared VANTOR rootfs skeleton at {output}")
     print(f"[OK] Installed {len(BRAND_FILES)} official branding assets.")
-    print("[OK] Added VANTOR Init, Control, Hardware inventory and Nyan package manager.")
+    print("[OK] Added VANTOR Init, Control, Hardware, Nyan and TUI installer.")\n    print("[OK] Added root and live accounts, wheel group and locked-password sudo policy.")
     print("[INFO] Full service supervision and network configuration are not implemented yet.")
     return 0
 
