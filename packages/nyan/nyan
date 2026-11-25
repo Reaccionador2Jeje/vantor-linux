@@ -3,6 +3,10 @@
 set -eu
 
 NYAN_ROOT=${NYAN_ROOT:-/}
+# A root target must be a real directory for tar -C; parameter expansion
+# alone turns the default '/' into an empty string.
+NYAN_DEST=${NYAN_ROOT%/}
+[ -n "$NYAN_DEST" ] || NYAN_DEST=/
 NYAN_CONFIG="${NYAN_ROOT%/}/etc/nyan.conf"
 # Load the selected root's architecture before applying the host defaults.
 [ ! -r "$NYAN_CONFIG" ] || . "$NYAN_CONFIG"
@@ -162,7 +166,12 @@ install_one() {
     target="${NYAN_ROOT%/}/$item"
     [ ! -e "$target" ] && [ ! -L "$target" ] || die "refusing to overwrite existing system path: $item"
   done < "$NYAN_STATE/installed/$name.files"
-  tar -xzf "$file" -C "${NYAN_ROOT%/}"
+  tar -xzf "$file" -C "$NYAN_DEST"
+  # Never mark a package installed unless every owned payload file exists.
+  while IFS= read -r item; do
+    target="${NYAN_ROOT%/}/$item"
+    [ -e "$target" ] || [ -L "$target" ] || die "package extraction did not install: $item"
+  done < "$NYAN_STATE/installed/$name.files"
   nyan_progress "$name" 95 "installing"
   printf '%s\t%s\t%s\n' "$name" "$version" "$digest" > "$record"
   rm -rf "$temp"
