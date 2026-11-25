@@ -20,7 +20,11 @@ The rootfs generator installs the official VANTOR identity, root and Live accoun
 - Keep build inputs and versions explicit.
 - Automate validation and builds with GitHub Actions.
 - Produce a minimal bootable image before adding a desktop environment.
-- Expand to AArch64 and other architectures only after the first target is reproducible.
+- Maintain separate x86_64 and low-resource i486 Legacy kernel profiles; expand to AArch64 only after these are reproducible.
+
+## Hardware generations
+
+VANTOR Minimal is being designed for modern x86_64 computers and a separate 32-bit i486 Legacy profile. Linux 6.1.193 is pinned for the legacy kernel because the current 6.18 kernel line no longer supports 486 CPUs. 386/286/8086 systems are not supported by this Linux build. See [hardware compatibility](docs/hardware-compatibility.md).
 
 ## Initial technical direction
 
@@ -105,4 +109,4 @@ The repository's top-level license applies to original project files where appli
 
 ## Contributing
 
-See [docs/architecture.md](docs/architecture.md), [docs/toolchain.md](docs/toolchain.md), [docs/rootfs-genesis.md](docs/rootfs-genesis.md), [docs/testing-limbo.md](docs/testing-limbo.md), and [docs/branding.md](docs/branding.md).
+See [docs/hardware-compatibility.md](docs/hardware-compatibility.md), [docs/architecture.md](docs/architecture.md), [docs/toolchain.md](docs/toolchain.md), [docs/rootfs-genesis.md](docs/rootfs-genesis.md), [docs/testing-limbo.md](docs/testing-limbo.md), and [docs/branding.md](docs/branding.md).
