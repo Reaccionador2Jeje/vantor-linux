@@ -19,7 +19,7 @@ on:
       - ".github/workflows/build-image.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: vantor-genesis-x86_64-image
@@ -77,6 +77,25 @@ jobs:
           gzip -t build/work/initramfs/vantor-initramfs.cpio.gz
           file output/vantor-genesis-0.1.0-x86_64.iso
           xorriso -indev output/vantor-genesis-0.1.0-x86_64.iso -report_el_torito plain
+
+      - name: Generate ISO checksum
+        run: sha256sum output/vantor-genesis-0.1.0-x86_64.iso > output/vantor-genesis-0.1.0-x86_64.iso.sha256
+
+      - name: Publish preview ISO to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: vantor-genesis-0.1.0-x86_64
+          name: VANTOR Genesis 0.1.0 — x86_64 Preview
+          prerelease: true
+          make_latest: false
+          fail_on_unmatched_files: true
+          body: |
+            VANTOR Genesis x86_64 ISO built by GitHub Actions.
+
+            **Preview build:** compilation and ISO structure checks passed. Boot compatibility has not yet been validated in Limbo/QEMU.
+          files: |
+            output/vantor-genesis-0.1.0-x86_64.iso
+            output/vantor-genesis-0.1.0-x86_64.iso.sha256
 
       - name: Upload unboot-tested ISO and build metadata
         uses: actions/upload-artifact@v4
