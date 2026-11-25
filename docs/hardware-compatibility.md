@@ -29,6 +29,12 @@ The legacy kernel build is:
 
 It produces build/work/kernel-legacy/vantor-legacy-kernel and the resolved configuration at kernel/configs/vantor-i486.config.
 
+The complete image pipeline is:
+
+    make image-legacy
+
+This builds the i486 rootfs, static BusyBox, initramfs, legacy kernel and a text-mode BIOS ISO at output/vantor-minimal-0.1.0-i486.iso. GitHub Actions also has a full image workflow that uploads the ISO as a temporary build artifact. The image is not considered bootable until it has been tested in Limbo and on physical 486 hardware.
+
 ## Practical hardware expectations
 
 The kernel's CPU floor is not the same as a usable system requirement. Real machines vary widely in RAM, storage, BIOS behavior and peripheral support. A 486 may boot a small console kernel but still lack enough memory or supported storage to run a full package installation comfortably. The first legacy release should therefore be treated as a low-resource console experiment, not a desktop distribution.
