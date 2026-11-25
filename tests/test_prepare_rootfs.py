@@ -121,7 +121,7 @@ class PrepareRootfsTests(unittest.TestCase):
         result = subprocess.run(["sh", "-n", str(launcher)], capture_output=True, text=True, check=False)
         self.assertEqual(result.returncode, 0, result.stderr)
         content = launcher.read_text()
-        self.assertIn("proot -0 -r", content)
+        self.assertIn("proot --link2symlink -0 -r", content)
         self.assertIn("/usr/bin/vantor-termux-shell", content)
 
     def test_aarch64_rootfs_metadata_is_termux_ready(self) -> None:
