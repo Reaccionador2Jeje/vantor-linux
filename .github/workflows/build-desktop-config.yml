@@ -5,18 +5,21 @@ on:
     paths:
       - "desktop/**"
       - ".github/workflows/build-desktop-config.yml"
+      - "tools/publish-package.sh"
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: vantor-desktop-config
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   package:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
       - name: Checkout VANTOR
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Validate desktop session and assemble package
         shell: bash
         run: |
@@ -34,7 +37,16 @@ jobs:
           tar -czf build/vantor-desktop-config-0.1.0-all.tar.gz -C "$root" .
           tar -tzf build/vantor-desktop-config-0.1.0-all.tar.gz
           sha256sum build/vantor-desktop-config-0.1.0-all.tar.gz
-      - name: Upload configuration package for testing
+      - name: Publish Nyan package and dependency metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bash tools/publish-package.sh \
+            build/vantor-desktop-config-0.1.0-all.tar.gz \
+            vantor-desktop-config 0.1.0 all \
+            "VANTOR branded Openbox and tint2 desktop session configuration" \
+            xorg-server,openbox,tint2,xsetroot
+      - name: Upload package build artifact
         uses: actions/upload-artifact@v4
         with:
           name: vantor-desktop-config-0.1.0
