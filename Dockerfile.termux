@@ -3,4 +3,4 @@ FROM scratch
 COPY build/work/rootfs-termux/ /
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 WORKDIR /root
-CMD ["/bin/sh"]
+CMD ["/usr/bin/vantor-termux-shell"]
