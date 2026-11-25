@@ -55,3 +55,4 @@ vdu	storage	building	Compact directory and file usage report
 vports	network	building	Read-only TCP listening and UDP socket overview
 vman	documentation	building	View local manual pages or command help
 jq	development	building	jq 1.8.1 JSON processor with bundled Oniguruma
+less	editors	building	less 710 terminal pager
