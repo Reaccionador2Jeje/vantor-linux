@@ -13,7 +13,9 @@ Nyan is VANTOR's native package manager. It currently supports repository refres
 - `nyan install NAME` — resolve and install declared dependencies before the requested package.
 - `nyan profiles` — list planned system profiles and their publication status.
 - `nyan install-profile NAME` — reserved for profiles whose full package sets have been published.
-- `nyan remove NAME` — remove files recorded for a package.
+- `nyan installed` — list packages recorded as installed in the selected root.
+- `nyan verify [NAME]` — check the installed package records and report missing files; without a name, verify every recorded package.
+- `nyan remove NAME` — remove files recorded for a package. Dependencies are retained until manually removed.
 
 Configuration: `NYAN_REPO`, `NYAN_ARCH`, and `NYAN_ROOT`.
 
@@ -64,3 +66,8 @@ lua -v
 ```
 
 The initial package does not yet provide LuaRocks.
+
+
+## Installed package inspection
+
+Use `nyan installed` to inspect the package database for the current root. Use `nyan verify` after an installation or system repair to confirm that every file recorded for each package still exists. A named check (`nyan verify busybox`) limits verification to one package. This checks file presence and ownership records; it does not yet validate installed file contents against per-file hashes or repair packages automatically.
