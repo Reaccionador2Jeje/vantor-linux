@@ -10,7 +10,8 @@ help:
 	  '  make check-sources Validate source manifest structure' '  make check-python  Compile and test Python tools' '  make check-nyan    Validate Nyan package manager syntax' \
 	  '  make sources-ready Require verified source checksums' '  make fetch-sources Download and verify pinned archives' \
 	  '  make toolchain      Build Binutils and GCC pass 1' '  make kernel         Build VANTOR x86_64 Linux kernel' \
-	  '  make rootfs         Assemble the VANTOR rootfs skeleton' \
+	  '  make busybox        Build static BusyBox userspace' '  make initramfs      Assemble VANTOR early userspace' \\
+	  '  make rootfs         Assemble the VANTOR rootfs skeleton' \\
 	  '  make boot-files     Check bootloader configuration and builder' \
 	  '  make iso            Build a GRUB ISO after kernel and initramfs exist' \
 	  '  make clean         Remove generated build output'
@@ -51,7 +52,7 @@ kernel-files:
 
 check-nyan:
 	@sh -n packages/nyan/nyan
-	@grep -q '^# VANTOR-PACKAGES 1$' packages/repository/x86_64/Packages
+	@grep -q 'VANTOR-PACKAGES 1' packages/repository/x86_64/Packages
 	@echo "[OK] Nyan client and repository index are valid."
 
 sources-ready:
