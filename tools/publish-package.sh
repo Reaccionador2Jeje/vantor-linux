@@ -56,5 +56,14 @@ git config user.name "github-actions[bot]"
 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 git add "packages/repository/$arch/Packages"
 git commit -m "Publish Nyan package $name $version ($arch)"
-git push
-echo "Published $name $version ($arch), SHA-256: $digest"
+branch=$(git branch --show-current)
+for attempt in 1 2 3; do
+  if git push origin "$branch"; then
+    echo "Published $name $version ($arch), SHA-256: $digest"
+    exit 0
+  fi
+  echo "[WARN] Repository changed during publish; rebasing and retrying ($attempt/3)." >&2
+  git pull --rebase origin "$branch"
+done
+echo "[ERROR] Could not publish after three attempts." >&2
+exit 1
