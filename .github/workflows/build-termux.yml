@@ -70,13 +70,16 @@ jobs:
           gh release upload termux-aarch64 output/vantor-termux-aarch64-0.1.0.tar.gz output/SHA256SUMS \
             --repo "${GITHUB_REPOSITORY}" --clobber
       - name: Publish Docker Hub image (optional credentials)
-        if: env.DOCKERHUB_USERNAME != '' && env.DOCKERHUB_TOKEN != ''
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-          docker buildx build --platform linux/arm64 \
-            -f Dockerfile.termux \
-            -t "$DOCKERHUB_USERNAME/vantor-linux:termux-arm64" --push .
-          docker logout
+          if [ -n "$DOCKERHUB_USERNAME" ] && [ -n "$DOCKERHUB_TOKEN" ]; then
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker buildx build --platform linux/arm64 \
+              -f Dockerfile.termux \
+              -t "$DOCKERHUB_USERNAME/vantor-linux:termux-arm64" --push .
+            docker logout
+          else
+            echo "[INFO] Docker Hub credentials not configured; GitHub Release remains the distribution channel."
+          fi
