@@ -1,19 +1,82 @@
 #!/data/data/com.termux/files/usr/bin/sh
 # VANTOR ARM64 userspace launcher for Termux + PRoot.
 set -eu
+
 PREFIX="${PREFIX:-/data/data/com.termux/files/usr}"
 ROOTFS="${VANTOR_ROOTFS:-$HOME/vantor/rootfs}"
+VERSION="0.1.0"
+
+usage() {
+  cat <<'EOF'
+VANTOR Linux — Termux edition
+
+Usage:
+  vantor                 Open the VANTOR shell
+  vantor COMMAND [...]   Run a command inside VANTOR
+  vantor doctor          Check the Termux host and VANTOR rootfs
+  vantor version         Show the installed VANTOR version
+  vantor help            Show this help
+
+Environment:
+  VANTOR_ROOTFS          Override the installed rootfs directory
+EOF
+}
+
+host_doctor() {
+  failed=0
+  printf '%s\n' "VANTOR Termux Doctor"
+  printf 'Host architecture: %s\n' "$(uname -m)"
+  [ "$(uname -m)" = aarch64 ] || { echo "[FAIL] ARM64 host required"; failed=1; }
+  command -v proot >/dev/null 2>&1 || { echo "[FAIL] PRoot missing; run: pkg install proot"; failed=1; }
+  [ -x "$ROOTFS/bin/busybox" ] || { echo "[FAIL] Rootfs missing: $ROOTFS"; failed=1; }
+  [ -x "$ROOTFS/usr/bin/vantor-termux-shell" ] || { echo "[FAIL] VANTOR shell missing"; failed=1; }
+  if [ -x "$ROOTFS/bin/busybox" ]; then
+    "$ROOTFS/bin/busybox" --help >/dev/null 2>&1 || { echo "[FAIL] BusyBox cannot execute"; failed=1; }
+  fi
+  if [ "$failed" -eq 0 ]; then
+    echo "[OK] Host and VANTOR userspace are ready."
+  else
+    return 1
+  fi
+}
+
+case "${1:-shell}" in
+  help|-h|--help) usage; exit 0;;
+  version|--version) echo "VANTOR Linux Termux $VERSION"; exit 0;;
+  doctor) host_doctor; exit $?;;
+esac
+
 if ! command -v proot >/dev/null 2>&1; then
-  echo "VANTOR: install PRoot first: pkg install proot" >&2
+  echo "VANTOR: PRoot is missing. Install it with: pkg install proot" >&2
   exit 1
 fi
-if [ ! -x "$ROOTFS/bin/busybox" ]; then
-  echo "VANTOR: rootfs not found at $ROOTFS" >&2
-  echo "Extract the VANTOR Termux ARM64 rootfs into that directory first." >&2
+if [ ! -x "$ROOTFS/bin/busybox" ] || [ ! -x "$ROOTFS/usr/bin/vantor-termux-shell" ]; then
+  echo "VANTOR: rootfs not found or incomplete at $ROOTFS" >&2
+  echo "Install it with: sh tools/termux/install-vantor" >&2
   exit 1
 fi
-exec proot -0 -r "$ROOTFS" \
-  -b /dev -b /proc -b /sys \
-  -b "$PREFIX/tmp:/tmp" \
-  -b "$HOME:/host-home" \
-  -w /root /usr/bin/vantor-termux-shell
+
+if [ "$#" -gt 0 ] && [ "$1" = shell ]; then shift; fi
+run_vantor() {
+  if [ -r "$PREFIX/etc/resolv.conf" ]; then
+    if [ "$#" -eq 0 ]; then
+      exec proot --link2symlink -0 -r "$ROOTFS" \
+        -b /dev -b /proc -b /sys -b "$HOME:/host-home" \
+        -b "$PREFIX/etc/resolv.conf:/etc/resolv.conf" \
+        -w /root /usr/bin/vantor-termux-shell
+    fi
+    exec proot --link2symlink -0 -r "$ROOTFS" \
+      -b /dev -b /proc -b /sys -b "$HOME:/host-home" \
+      -b "$PREFIX/etc/resolv.conf:/etc/resolv.conf" \
+      -w /root /usr/bin/vantor-termux-shell "$@"
+  fi
+  if [ "$#" -eq 0 ]; then
+    exec proot --link2symlink -0 -r "$ROOTFS" \
+      -b /dev -b /proc -b /sys -b "$HOME:/host-home" \
+      -w /root /usr/bin/vantor-termux-shell
+  fi
+  exec proot --link2symlink -0 -r "$ROOTFS" \
+    -b /dev -b /proc -b /sys -b "$HOME:/host-home" \
+    -w /root /usr/bin/vantor-termux-shell "$@"
+}
+run_vantor "$@"
