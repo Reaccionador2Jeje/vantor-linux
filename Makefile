@@ -176,15 +176,22 @@ iso:
 # Complete, ordered x86_64 pipeline. Rootfs must precede BusyBox installation.
 image:
 	@$(MAKE) kernel
+	@rm -rf -- build/work/rootfs build/work/busybox build/work/initramfs
 	@$(MAKE) rootfs
 	@$(MAKE) busybox
 	@bash build/scripts/build-initramfs.sh
 	@bash build/scripts/build-iso.sh
 
-iso-legacy: kernel-legacy initramfs-legacy
+iso-legacy:
 	@bash build/scripts/build-iso-legacy.sh
 
-image-legacy: iso-legacy
+image-legacy:
+	@$(MAKE) kernel-legacy
+	@rm -rf -- build/work/rootfs-legacy build/work/busybox-legacy build/work/initramfs-legacy
+	@$(MAKE) rootfs-legacy
+	@$(MAKE) busybox-legacy
+	@VANTOR_ROOTFS_DIR=build/work/rootfs-legacy VANTOR_INITRAMFS_DIR=build/work/initramfs-legacy VANTOR_INITRAMFS_NAME=vantor-legacy-initramfs.cpio.gz VANTOR_SKIP_KERNEL_MODULES=1 bash build/scripts/build-initramfs.sh
+	@bash build/scripts/build-iso-legacy.sh
 
 clean:
 	rm -rf -- build/work build/distfiles output
