@@ -66,6 +66,20 @@ for dev in "$SYS_ROOT"/bus/virtio/devices/*; do
     printf '%s vendor=%s device=%s\n' "$name" "$(read_value "$dev/vendor")" "$(read_value "$dev/device")"
 done
 [ "$found" -eq 1 ] || echo "No VirtIO devices found."
+section "USB DEVICES"
+found=0
+for dev in "$SYS_ROOT"/bus/usb/devices/*; do
+    [ -e "$dev" ] || continue
+    vendor="$(read_value "$dev/idVendor")"
+    product="$(read_value "$dev/idProduct")"
+    [ "$vendor" = unknown ] && [ "$product" = unknown ] && continue
+    found=1
+    name="${dev##*/}"
+    manufacturer="$(read_value "$dev/manufacturer")"
+    product_name="$(read_value "$dev/product")"
+    printf '%s vendor=%s product=%s manufacturer=%s name=%s\\n' "$name" "$vendor" "$product" "$manufacturer" "$product_name"
+done
+[ "$found" -eq 1 ] || echo "No USB devices found or USB sysfs unavailable."
 section "NETWORK INTERFACES"
 found=0
 for iface in "$SYS_ROOT"/class/net/*; do
