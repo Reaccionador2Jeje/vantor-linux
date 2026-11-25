@@ -18,49 +18,9 @@ if [[ ! -f "$SOURCE_DIR/Makefile" ]]; then
 fi
 mkdir -p "$BUILD_DIR" "$ROOTFS"
 make -C "$SOURCE_DIR" O="$BUILD_DIR" defconfig
-if grep -q '^CONFIG_TC=y
-set_config() {
-    local key="$1" value="$2"
-    if grep -q "^# ${key} is not set$" "$BUILD_DIR/.config"; then
-        sed -i "s/^# ${key} is not set$/${key}=${value}/" "$BUILD_DIR/.config"
-    elif grep -q "^${key}=" "$BUILD_DIR/.config"; then
-        sed -i "s/^${key}=.*/${key}=${value}/" "$BUILD_DIR/.config"
-    else
-        printf '%s=%s\n' "$key" "$value" >> "$BUILD_DIR/.config"
-    fi
-}
-set_config CONFIG_STATIC y
-set_config CONFIG_VI y
-set_config CONFIG_ASH y
-set_config CONFIG_SH_IS_ASH y
-set_config CONFIG_GETTY y
-set_config CONFIG_SU y
-set_config CONFIG_MDEV y
-set_config CONFIG_UDHCPC y
-set_config CONFIG_MOUNT y
-set_config CONFIG_UMOUNT y
-set_config CONFIG_PASSWD y
-set_config CONFIG_CHPASSWD y
-set_config CONFIG_REBOOT y
-set_config CONFIG_HALT y
-set_config CONFIG_POWEROFF y
-set_config CONFIG_FEATURE_SHADOWPASSWDS y
 
-make -C "$SOURCE_DIR" O="$BUILD_DIR" CC="$CC_LEGACY" oldconfig </dev/null
-grep -q '^CONFIG_STATIC=y$' "$BUILD_DIR/.config"
-grep -q '^CONFIG_VI=y$' "$BUILD_DIR/.config"
-make -C "$SOURCE_DIR" O="$BUILD_DIR" CC="$CC_LEGACY" -j"$VANTOR_BUILD_JOBS"
-make -C "$SOURCE_DIR" O="$BUILD_DIR" CC="$CC_LEGACY" CONFIG_PREFIX="$ROOTFS" install
-
-[[ -x "$ROOTFS/bin/busybox" ]] || { echo "[ERROR] Legacy BusyBox binary is missing." >&2; exit 1; }
-file "$ROOTFS/bin/busybox" | grep -q 'ELF 32-bit'
-readelf -h "$ROOTFS/bin/busybox" | grep -q 'Intel 80386'
-"$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
-for applet in vi getty su mdev udhcpc mount umount passwd chpasswd reboot halt poweroff; do
-    grep -qx "$applet" "$BUILD_DIR/applets.txt" || { echo "[ERROR] Legacy BusyBox applet missing: $applet" >&2; exit 1; }
-done
-echo "[OK] Static i486 BusyBox built and installed into build/work/rootfs-legacy."
- "$BUILD_DIR/.config"; then
+# Disable an optional applet that relies on removed legacy kernel CBQ headers.
+if grep -q '^CONFIG_TC=y$' "$BUILD_DIR/.config"; then
     sed -i 's/^CONFIG_TC=y$/# CONFIG_TC is not set/' "$BUILD_DIR/.config"
 fi
 
@@ -74,6 +34,7 @@ set_config() {
         printf '%s=%s\n' "$key" "$value" >> "$BUILD_DIR/.config"
     fi
 }
+
 set_config CONFIG_STATIC y
 set_config CONFIG_VI y
 set_config CONFIG_ASH y
