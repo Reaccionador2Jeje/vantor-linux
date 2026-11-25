@@ -6,11 +6,13 @@ SHELL := /bin/bash
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
 	  'Targets:' \
-	  '  make info         Show project configuration' \
-	  '  make check        Run repository validation' \
-	  '  make check-shell  Validate shell scripts' \
-	  '  make check-config Validate build configuration' \
-	  '  make clean        Remove generated build output'
+	  '  make info          Show project configuration' \
+	  '  make check         Run repository validation' \
+	  '  make check-shell   Validate shell scripts' \
+	  '  make check-config  Validate build configuration' \
+	  '  make check-sources Validate source manifest structure' \
+	  '  make sources-ready Require verified source checksums' \
+	  '  make clean         Remove generated build output'
 
 info:
 	@set -a; source build/config/vantor.conf; set +a; \
@@ -33,5 +35,11 @@ check-shell:
 	  while IFS= read -r -d '' file; do bash -n "$$file"; done
 	@echo "[OK] Shell syntax is valid."
 
+check-sources:
+	@python3 tools/validate-sources.py
+
+sources-ready:
+	@python3 tools/validate-sources.py --require-pinned
+
 clean:
-	rm -rf -- build/work build/sources output
+	rm -rf -- build/work build/distfiles output
