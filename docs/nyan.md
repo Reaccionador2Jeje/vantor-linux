@@ -89,9 +89,9 @@ The catalog is architecture-specific. Only packages present in the selected repo
 
 The isolated workflow `.github/workflows/build-nyan-extras.yml` builds and publishes four additional packages for both x86_64 and i486:
 
-- `vantor-hardware` — read-only CPU, memory, PCI, VirtIO, USB, storage and network inventory command (`vantor-hw`).
-- `vantor-installer` — VANTOR text-mode installer (`/usr/sbin/vantor-install`); depends on `vantor-base-files`.
-- `vantor-branding` — official VANTOR SVG marks and theme assets.
-- `vantor-docs` — system overview, license and Nyan documentation.
+- `vantor-hardware` — optional standalone copy of the read-only hardware inventory command at `/usr/local/bin/vantor-hw`.
+- `vantor-installer` — optional standalone installer copy at `/usr/local/sbin/vantor-install`; depends on `vantor-base-files`.
+- `vantor-branding` — optional copy of official SVG marks and theme assets under `/usr/local/share/vantor/branding`.
+- `vantor-docs` — system overview, license and Nyan documentation under `/usr/local/share/doc/vantor`.
 
 Run the workflow manually from GitHub Actions, or let its path-filtered push trigger it. It publishes eight architecture-specific archives and updates only the corresponding Nyan repository indexes. The ISO, kernel, legacy-image and general CI workflows are not edited by this package expansion.
