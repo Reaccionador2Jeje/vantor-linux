@@ -48,6 +48,7 @@ class PrepareRootfsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             target = Path(temporary) / "target"
             target.mkdir()
+            self.build_rootfs(target)
             result = subprocess.run(
                 ["sh", str(ROOT / "installer/vantor-install"), "--configure", str(target), "test-vantor", "tester"],
                 capture_output=True, text=True, check=False,
