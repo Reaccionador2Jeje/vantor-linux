@@ -35,9 +35,9 @@ Nyan exposes five profile names:
 - `development` — Lua 5.4.9 starter language environment.
 - `network` — DHCP, DNS, TLS and network diagnostic tools; not yet published.
 
-The local package catalog is maintained in `packages/catalog.tsv` and is installed at `/usr/share/nyan/catalog.tsv`. It distinguishes bundled tools from packages that are still planned; planned entries are not installable yet.
+The local package catalog is maintained in `packages/catalog.tsv` and is installed at `/usr/share/nyan/catalog.tsv`. It distinguishes bundled tools from packages that are still building or planned; only packages present in the architecture-specific repository index can be installed with Nyan. Core VANTOR commands (`vantorctl`, `vantor-hw`, `vantor-network`, `vantor-storage`, `vantor-service`, `vantor-modules`, `vantor-install`) and BusyBox `vi` belong to the base system and must be present before the first normal login. They are not optional add-ons. The `sudoers` wheel policy is already generated in the rootfs, but the actual `sudo` executable is still being integrated; do not treat the policy file as a working sudo installation. `nano` and full `vim` remain optional editor packages, while BusyBox `vi` is available immediately.
 
-The Minimal package workflow is `.github/workflows/build-nyan-minimal.yml`. It builds the base payload from the rootfs generator and BusyBox, then publishes the base package and Minimal meta-package. It does not make sudo, nano, full Vim or Fastfetch available yet; those remain separate package targets. The i486 package workflow builds a separate 32-bit BusyBox and publishes to `packages/repository/i486/Packages`.
+The Minimal package workflow is `.github/workflows/build-nyan-minimal.yml`. It builds the base payload from the rootfs generator and BusyBox, then publishes the base package and Minimal meta-package. The base payload is the source of truth for essential VANTOR commands. `sudo` must be built into the base payload before it is described as preinstalled; `nano`, full Vim and Fastfetch remain optional package targets. The i486 package workflow builds a separate 32-bit BusyBox and publishes to `packages/repository/i486/Packages`.
 
 
 ## VANTOR Community Mirror
