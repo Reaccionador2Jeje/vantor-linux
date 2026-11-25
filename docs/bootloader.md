@@ -26,25 +26,32 @@ The i486 Legacy menu intentionally stays in BIOS text mode, with the VANTOR pale
 
 ## VANTOR Genesis splash
 
-The kernel handoff now keeps the GRUB graphics payload where supported and uses
-a quiet normal boot command line. Once BusyBox init starts the root filesystem,
-`/usr/bin/vantor-splash` draws the VANTOR mark in a native ANSI text splash:
-Deep Space background, cyan orbital/V emblem, VANTOR LINUX name and the official
-slogan. The early init script reports hardware, network and userspace startup
-steps, then restores the cursor and clears the splash before the Live console.
+The x86_64 rootfs builds `core/boot/vantor-fb-splash.c` as a small static
+framebuffer application when a host C compiler and static libc are available.
+It opens `/dev/fb0`, detects the framebuffer pixel format through fbdev ioctls,
+and draws the VANTOR orbital mark, metallic V, product name, slogan and a
+progress bar directly into the framebuffer. It supports packed 16-, 24- and
+32-bit true-colour modes. No desktop, X server, Plymouth, image decoder or
+external assets are required.
 
-This first implementation is deliberately framebuffer-independent: it uses
-the Linux virtual terminal and BusyBox shell only, so it also works on the
-i486 text-console profile without shipping Plymouth, a GPU stack or external
-assets. It is a text-mode branded splash, not a pixel-perfect graphical
-framebuffer animation. Add `nosplash` to the kernel command line to disable it;
-the diagnostic GRUB entries do this automatically. Normal boot uses
-`quiet loglevel=3` to reduce kernel-message overlap, while diagnostic mode
-keeps verbose kernel output.
+The x86_64 kernel enables fbdev, VESA/EFI framebuffer and common virtual GPU
+drivers, with DRM fbdev emulation for devices that expose it. The early init
+script selects the graphical renderer when `/dev/fb0` exists; if the device,
+pixel format or static renderer is unavailable, it automatically uses the
+ANSI VANTOR text splash. The i486 rootfs intentionally remains text-only.
 
-The GRUB-to-kernel visual handoff depends on the firmware/GRUB video mode and
-kernel console driver. It must still be visually verified in Limbo after the
-first complete ISO is available.
+The graphical renderer displays a short animated orbital intro, then advances
+the progress bar at hardware, network and userspace startup milestones. This
+is milestone-based progress, not a measured percentage of kernel initialization.
+Add `nosplash` to the kernel command line to disable the splash; diagnostic
+GRUB entries do this automatically. Normal boot uses `quiet loglevel=3` to
+reduce kernel-message overlap.
+
+The GRUB-to-kernel framebuffer handoff depends on firmware video mode, GRUB
+payload retention and the kernel's framebuffer/DRM driver. The code and
+fallback path are implemented, but the actual visual result must be verified
+in Limbo after building and booting the complete ISO. No successful Limbo
+boot is claimed yet.
 
 ## ISO layout
 
