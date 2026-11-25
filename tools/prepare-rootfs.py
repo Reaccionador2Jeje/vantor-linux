@@ -94,7 +94,7 @@ ttyS0::respawn:/bin/busybox getty -L -n -l /usr/bin/vantor-live-session 115200 t
                 splash_binary.chmod(0o755)
             except (subprocess.CalledProcessError, OSError) as exc:
                 splash_binary.unlink(missing_ok=True)
-                print(f"[WARN] Static framebuffer splash unavailable; using text splash: {exc}")
+                print(f"[WARN] Static framebuffer splash unavailable; using text splash: {exc}\\n{exc.stderr or exc.stdout or 'no compiler diagnostics'}")
         else:
             print("[WARN] C compiler unavailable; using VANTOR text splash.")
 
