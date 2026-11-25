@@ -1,7 +1,6 @@
 # VANTOR-PACKAGES 1
 lua	5.4.9	x86_64	7ec8d0e95e2048710852b1ee79a767bf8e13f940d824f188876f1b91c7cf039c	lua-5.4.9-x86_64.tar.gz	Language: Lua 5.4.9 interpreter, compiler and static development library
 vantor-profile-development	0.1.0	x86_64	64ca831943980061d35d2b0bb02e677bc34980808d2d7377cf42e0138ccc5fbe	vantor-profile-development-0.1.0-x86_64.tar.gz	Profile: VANTOR development tools and programming languages	lua
-fastfetch	0.1.0	x86_64	8876a20daa2365acd7e8cb7478743f46b2144006a3a2050adb86bd3b1db42d1f	fastfetch-0.1.0-all.tar.gz	VANTOR terminal utility: fastfetch	
 tree	0.1.0	x86_64	e0559e688ff82f846c514d87dbc5778f383b90f96f9e4ec93fcf4983ad9d1007	tree-0.1.0-all.tar.gz	VANTOR terminal utility: tree	
 watch	0.1.0	x86_64	31ffe73f07926fccbc27760c5a4de2f6439400adb6eab0821139f1999f3fe950	watch-0.1.0-all.tar.gz	VANTOR terminal utility: watch	
 which	0.1.0	x86_64	a6af5a1c6b43d1531f5d23a058a577b8c76a99fb7d587dd67ee78c29d7ab58e1	which-0.1.0-all.tar.gz	VANTOR terminal utility: which	
@@ -22,3 +21,4 @@ vantor-profile-minimal	0.1.0	x86_64	bc0d78b8a8b989784170bc0846343744f436aae5f26b
 vantor-logview	0.1.0	x86_64	910557eed0ae404b2a558b88c59393bc88013f665511220029533b38f307b189	vantor-logview-0.1.0-all.tar.gz	VANTOR utility: vantor-logview (architecture-independent)	
 vantor-config-backup	0.1.0	x86_64	da492a2980e087e71ba22aae042f63a24d2b355fc3a3f974da4f2f5653c841c1	vantor-config-backup-0.1.0-all.tar.gz	VANTOR utility: vantor-config-backup (architecture-independent)	
 vantor-mountinfo	0.1.0	x86_64	41ec5296aeb3d61268c08c054dc047bfec8ae91cb9958b22dba5129aac2913f1	vantor-mountinfo-0.1.0-all.tar.gz	VANTOR utility: vantor-mountinfo (architecture-independent)	
+fastfetch	0.1.0	x86_64	8876a20daa2365acd7e8cb7478743f46b2144006a3a2050adb86bd3b1db42d1f	fastfetch-0.1.0-all.tar.gz	VANTOR terminal utility: fastfetch	
