@@ -15,6 +15,7 @@ class NyanNativeBuildTests(unittest.TestCase):
         "build-nyan-dialog.sh",
         "build-nyan-curl.sh",
         "build-nyan-jq.sh",
+        "build-nyan-less.sh",
     )
 
     def test_native_builders_are_valid_bash(self) -> None:
@@ -89,9 +90,22 @@ class NyanNativeBuildTests(unittest.TestCase):
             with self.subTest(value=value):
                 self.assertIn(value, jq)
 
-    def test_native_workflow_builds_five_packages_and_publishes_successes_once(self) -> None:
+    def test_less_is_pinned_static_and_smoke_tested_on_target(self) -> None:
+        less = (ROOT / "tools/build-nyan-less.sh").read_text()
+        for value in (
+            "less-710.tar.gz",
+            "d1008fb78dcae1323ddab664bcb352a61f022b1b131bd8018548e021d975ec7a",
+            "-static",
+            "qemu-i386 -cpu 486",
+            "readelf",
+            "less unexpectedly requires a dynamic interpreter",
+        ):
+            with self.subTest(value=value):
+                self.assertIn(value, less)
+
+    def test_native_workflow_builds_six_packages_and_publishes_successes_once(self) -> None:
         workflow = (ROOT / ".github/workflows/build-nyan-native.yml").read_text()
-        for package in ("nano", "htop", "dialog", "curl", "jq"):
+        for package in ("nano", "htop", "dialog", "curl", "jq", "less"):
             self.assertIn(f"package: {package}", workflow)
             self.assertIn(f"publish_one {package}", workflow)
         self.assertIn("arch: x86_64", workflow)
