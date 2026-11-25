@@ -5,7 +5,9 @@ usage() {
   echo "Usage: $0 PACKAGE.tar.gz NAME VERSION ARCH DESCRIPTION" >&2
   exit 2
 }
-[[ $# -eq 5 ]] || usage
+[[ $# -eq 5 || $# -eq 6 ]] || usage
+dependencies=${6:-}
+if [[ -n "$dependencies" && ! "$dependencies" =~ ^[A-Za-z0-9+_.-]+(,[A-Za-z0-9+_.-]+)*$ ]]; then echo "Invalid dependency list" >&2; exit 2; fi
 archive=$1 name=$2 version=$3 arch=$4 description=$5
 [[ -f "$archive" ]] || { echo "Package archive not found: $archive" >&2; exit 1; }
 [[ "$name" =~ ^[A-Za-z0-9][A-Za-z0-9+_.-]*$ ]] || { echo "Invalid package name" >&2; exit 1; }
@@ -26,7 +28,7 @@ if ! gh release view "$tag" >/dev/null 2>&1; then
 fi
 gh release upload "$tag" "$archive" --clobber
 export VANTOR_PKG_NAME="$name" VANTOR_PKG_VERSION="$version" VANTOR_PKG_ARCH="$arch"
-export VANTOR_PKG_SHA256="$digest" VANTOR_PKG_FILE="$filename" VANTOR_PKG_DESCRIPTION="$description"
+export VANTOR_PKG_SHA256="$digest" VANTOR_PKG_FILE="$filename" VANTOR_PKG_DESCRIPTION="$description" VANTOR_PKG_DEPENDENCIES="$dependencies"
 python3 - <<'PY'
 import os
 from pathlib import Path
