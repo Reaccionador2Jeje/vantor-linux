@@ -39,6 +39,7 @@ jobs:
           test -f Makefile
           test -f build/config/vantor.conf
           test -f docs/architecture.md
+          test -f docs/bootloader.md
           test -f docs/toolchain.md
           test -f docs/testing-limbo.md
           test -f docs/branding.md
@@ -57,6 +58,8 @@ jobs:
           test -f build/scripts/build-binutils.sh
           test -f build/scripts/build-gcc.sh
           test -f build/scripts/build-toolchain.sh
+          test -f build/scripts/build-iso.sh
+          test -f boot/grub/grub.cfg
           test -f .github/workflows/toolchain.yml
           test -f tests/test_source_tools.py
           test -f tests/test_prepare_rootfs.py
