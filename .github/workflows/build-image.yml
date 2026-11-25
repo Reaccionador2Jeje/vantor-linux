@@ -1,0 +1,73 @@
+name: Build VANTOR Genesis x86_64 ISO
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "build/scripts/build-kernel.sh"
+      - "build/scripts/build-busybox.sh"
+      - "build/scripts/build-initramfs.sh"
+      - "build/scripts/build-iso.sh"
+      - "build/config/vantor.conf"
+      - "build/sources/sources.json"
+      - "tools/prepare-rootfs.py"
+      - "core/**"
+      - "boot/grub/**"
+      - "kernel/**"
+      - "Makefile"
+      - "tests/**"
+      - ".github/workflows/build-image.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vantor-genesis-x86_64-image
+  cancel-in-progress: true
+
+jobs:
+  build-image:
+    name: Build complete VANTOR x86_64 ISO
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out VANTOR
+        uses: actions/checkout@v4
+
+      - name: Install image build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential bc bison flex libssl-dev libelf-dev libncurses-dev \
+            dwarves kmod python3 xz-utils bzip2 cpio gzip \
+            grub-pc-bin grub-efi-amd64-bin grub-common xorriso mtools
+
+      - name: Validate repository and pinned sources
+        run: |
+          make check
+          python3 tools/validate-sources.py --require-pinned --only linux busybox
+
+      - name: Build kernel, rootfs, BusyBox, initramfs and ISO
+        run: make image
+
+      - name: Inspect ISO and boot payload
+        run: |
+          test -s output/vantor-genesis-0.1.0-x86_64.iso
+          test -s build/work/kernel/vantor-kernel
+          test -s build/work/kernel/kernelrelease
+          test -d "build/work/modules/lib/modules/$(cat build/work/kernel/kernelrelease)"
+          gzip -t build/work/initramfs/vantor-initramfs.cpio.gz
+          file output/vantor-genesis-0.1.0-x86_64.iso
+          xorriso -indev output/vantor-genesis-0.1.0-x86_64.iso -report_el_torito plain
+
+      - name: Upload unboot-tested ISO and build metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: vantor-genesis-x86_64-iso-${{ github.sha }}
+          path: |
+            output/vantor-genesis-0.1.0-x86_64.iso
+            build/work/kernel/kernelrelease
+            kernel/configs/vantor-x86_64.config
+            build/logs/kernel-build.log
+          if-no-files-found: error
+          retention-days: 14
