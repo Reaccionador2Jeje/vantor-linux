@@ -27,3 +27,4 @@ vtime	0.1.0	x86_64	39f7d560539b09d6aadfc05f02de72989b0c9a9ecf4d220e0afdd534d76f4
 vantor-base-files	0.1.0	x86_64	bdcf5a8e948679e7d3c61412bd1c71e48909f727be1220a19ccdba0b48803730	vantor-base-files-0.1.0-x86_64.tar.gz	VANTOR Minimal base files, BusyBox, init and system accounts	
 vantor-profile-minimal	0.1.0	x86_64	00ea6c42e730c3945a5bde053f7f0906e612fef657213d1591a2e4d82681209f	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
 vchecksum	0.1.0	x86_64	1ff62d001df4acb516b3c420cd96d206f1db5d3be5277c68779db8d27f1558e1	vchecksum-0.1.0-all.tar.gz	VANTOR terminal utility: vchecksum	
+varchive	0.1.0	x86_64	78381e9aa686714f4e7399f430790b161f697042afa22fe12ad35a6c1c435d68	varchive-0.1.0-all.tar.gz	VANTOR terminal utility: varchive	
