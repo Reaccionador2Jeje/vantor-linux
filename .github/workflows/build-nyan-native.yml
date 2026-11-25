@@ -1,0 +1,51 @@
+name: Build Nyan native terminal tools
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tools/build-nyan-native.sh"
+      - "tools/publish-package.sh"
+      - ".github/workflows/build-nyan-native.yml"
+      - "packages/catalog.tsv"
+      - "tests/test_nyan_native.py"
+permissions:
+  contents: write
+concurrency:
+  group: vantor-nyan-native-publish
+  cancel-in-progress: false
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86_64, i486]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out VANTOR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install 486 user-mode smoke-test emulator
+        if: matrix.arch == 'i486'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-user
+      - name: Build and verify static GNU nano
+        run: bash tools/build-nyan-native.sh "${{ matrix.arch }}"
+      - name: Publish verified nano package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bash tools/publish-package.sh \
+            "build/nyan-native/nano-9.2-${{ matrix.arch }}.tar.gz" \
+            nano 9.2 "${{ matrix.arch }}" \
+            "GNU nano 9.2 tiny static editor (musl + ncurses)"
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vantor-nano-9.2-${{ matrix.arch }}
+          path: build/nyan-native/nano-9.2-${{ matrix.arch }}.tar.gz
+          if-no-files-found: error
+          retention-days: 30
