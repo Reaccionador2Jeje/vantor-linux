@@ -37,3 +37,20 @@ The initial test target is legacy BIOS boot. UEFI testing is a separate validati
 - Begin with a minimal console image.
 - Do not claim Limbo compatibility until a real VANTOR image has booted there.
 - GitHub Actions can perform repeatable build and automated QEMU smoke tests; Limbo remains the manual Android validation target.
+
+
+## Legacy i486 BIOS test profile
+
+After the separate i486 ISO is built, use a 32-bit x86 machine profile:
+
+| Setting | Legacy test value |
+|---|---|
+| Architecture | x86 / i386 |
+| CPU model | 486, if Limbo exposes it |
+| RAM | Start with 32 MB; try 64 MB if the guest cannot complete boot |
+| Machine | PC / i440fx-compatible |
+| Display | VGA text console |
+| Boot device | CD-ROM with the i486 ISO |
+| Firmware | Legacy BIOS; this profile does not target UEFI |
+
+If Limbo only offers a Pentium CPU model, it can test the 32-bit boot path but does not prove 486SX compatibility. A real 486SX/486DX computer is still required to validate the CPU floor. The i486 ISO has not yet been confirmed to boot.
