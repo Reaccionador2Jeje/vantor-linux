@@ -31,3 +31,9 @@ xsetroot	desktop	planned	Minimal X11 root-window utilities
 pcmanfm	desktop	planned	Optional desktop icons and file manager
 vantor-desktop	desktop	building	VANTOR-branded Openbox and tint2 session configuration
 lightdm	desktop	planned	Optional graphical login manager and X session selector
+vantor-about	diagnostics	building	VANTOR release, kernel, architecture and uptime summary
+vantor-doctor	diagnostics	building	Read-only checks for core VANTOR filesystems, tools and repository access
+vantor-netdiag	network	building	Network interfaces, routes, DNS and default gateway report
+vantor-logview	diagnostics	building	Simple system log viewer with pager fallback
+vantor-config-backup	backup	building	Create a non-overwriting archive of VANTOR system configuration
+vantor-mountinfo	storage	building	Readable mounted filesystem and mount-options report
