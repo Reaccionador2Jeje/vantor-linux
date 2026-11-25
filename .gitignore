@@ -1,0 +1,12 @@
+# Build output
+/output/
+/build/work/
+/build/downloads/
+*.log
+*.tmp
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
