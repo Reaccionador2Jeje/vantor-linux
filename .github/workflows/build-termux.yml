@@ -5,6 +5,8 @@ on:
   push:
     paths:
       - "tools/prepare-rootfs.py"
+      - "packages/nyan/nyan"
+      - "tests/test_nyan.py"
       - "build/scripts/build-termux-rootfs.sh"
       - "tools/termux/**"
       - "tests/test_termux.py"
