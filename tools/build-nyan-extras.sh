@@ -54,3 +54,16 @@ for tool in vantor-about vantor-doctor vantor-netdiag vantor-logview vantor-conf
     -czf "$OUT/$tool-0.1.0-all.tar.gz" -C "$stage" .
   tar -tzf "$OUT/$tool-0.1.0-all.tar.gz" >/dev/null
 done
+
+# More lightweight terminal tools, shipped as POSIX shell scripts. Each archive
+# is architecture-independent and is indexed for both VANTOR CPU targets.
+for tool in fastfetch tree watch which filetype vtop; do
+  stage="$OUT/stage-all-$tool"
+  rm -rf "$stage"
+  mkdir -p "$stage/usr/local/bin" "$stage/usr/local/share/doc/$tool"
+  install -m 0755 "$ROOT/packages/addons/$tool" "$stage/usr/local/bin/$tool"
+  printf '%s\n' "$tool — VANTOR terminal utility" "POSIX shell implementation; supports x86_64 and i486." > "$stage/usr/local/share/doc/$tool/README"
+  tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \
+    -czf "$OUT/$tool-0.1.0-all.tar.gz" -C "$stage" .
+  tar -tzf "$OUT/$tool-0.1.0-all.tar.gz" >/dev/null
+done
