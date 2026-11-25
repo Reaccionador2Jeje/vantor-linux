@@ -78,6 +78,8 @@ Use `nyan installed` to inspect the package database for the current root. Use `
 - `nyan browse` lists all packages published in the current architecture index.
 - `nyan search TERM` searches package names and descriptions.
 - `nyan install PACKAGE [PACKAGE ...]` installs several requested packages in one invocation and resolves each package's declared dependencies.
-- On an interactive terminal, installation phases display a compact Nyan Cat-inspired animated progress line. When stdout is not a terminal, the animation is suppressed so scripts and logs stay clean.
+- Every package (including dependencies) gets its own progress bar. A small `=^.^=` Nyan Cat marker moves along the bar as the package advances through resolving, downloading, verification, unpacking and installation. Each package's bar stays on one updating terminal line and finishes with a green `done` status.
+- Progress bars are shown only on an interactive terminal. When stdout is redirected or captured, the animation is suppressed so scripts, tests and build logs stay clean.
+- The percentage represents progress through the package installation stages, not a byte-exact download meter.
 
 The catalog is architecture-specific. Only packages present in the selected repository index are installable; planned packages are not treated as published packages.
