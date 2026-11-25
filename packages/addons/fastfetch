@@ -22,8 +22,7 @@ if [ -r /proc/cpuinfo ]; then
     cpu=$(awk -F: '/model name|Hardware/ {gsub(/^[ \t]+/,"",$2); print $2; exit}' /proc/cpuinfo)
     [ -n "$cpu" ] || cpu=unknown
 fi
-shell=$SHELL
-[ -n "$shell" ] || shell=/bin/sh
+shell=${SHELL:-/bin/sh}
 init=unknown
 [ ! -r /proc/1/comm ] || IFS= read -r init < /proc/1/comm
 
