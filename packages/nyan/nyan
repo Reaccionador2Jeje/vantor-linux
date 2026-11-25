@@ -155,8 +155,9 @@ case "$cmd" in
   profiles)
     index=$(index_file); [ -s "$index" ] || die "run 'nyan update' first"
     echo "VANTOR installation profiles:"
-    for profile in base desktop development network; do
+    for profile in minimal base desktop development network; do
       case "$profile" in
+        minimal) description="VANTOR Minimal base system";;
         base) description="Essential command-line system";;
         desktop) description="Graphical desktop environment";;
         development) description="Compilers and programming languages";;
@@ -171,7 +172,7 @@ case "$cmd" in
     ;;
   install-profile)
     [ "$#" -eq 2 ] || die "usage: nyan install-profile PROFILE"
-    case "$2" in base|desktop|development|network) ;; *) die "unknown profile: $2";; esac
+    case "$2" in minimal|base|desktop|development|network) ;; *) die "unknown profile: $2";; esac
     index=$(index_file); [ -s "$index" ] || die "run 'nyan update' first"
     package="vantor-profile-$2"
     [ -n "$(package_row "$package")" ] || die "profile '$2' is not published yet"
