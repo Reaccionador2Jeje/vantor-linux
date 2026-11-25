@@ -38,7 +38,7 @@ curl -fL --retry 3 "$RELEASE/SHA256SUMS" -o "$WORK/SHA256SUMS"
 )
 
 echo "Installing VANTOR Linux $VERSION into PRoot-Distro..."
-proot-distro install "$WORK/$ARCHIVE" --name vantor
+proot-distro install --name vantor "$WORK/$ARCHIVE"
 curl -fL --retry 3 "https://raw.githubusercontent.com/Reaccionador2Jeje/vantor-linux/main/tools/termux/vantor" -o "$WORK/vantor"
 curl -fL --retry 3 "https://raw.githubusercontent.com/Reaccionador2Jeje/vantor-linux/main/tools/termux/vantor-pd" -o "$WORK/vantor-pd"
 mkdir -p "$PREFIX/bin"
