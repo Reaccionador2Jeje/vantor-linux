@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+printf '%-20s %12s\n' FIELD VALUE
+awk '/^(MemTotal|MemFree|MemAvailable|Buffers|Cached|SwapTotal|SwapFree):/ {printf "%-20s %8.1f MiB\n",$1,$2/1024}' /proc/meminfo
