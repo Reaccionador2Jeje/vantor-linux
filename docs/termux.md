@@ -37,8 +37,8 @@ Run one command without opening an interactive shell:
 
 ~~~sh
 vantor uname -a
-vantor-info
-vantor-doctor
+vantor vantor-info
+vantor vantor-doctor
 ~~~
 
 You can also use PRoot-Distro directly:
