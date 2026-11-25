@@ -29,7 +29,7 @@ check-config:
 	@bash -n build/config/vantor.conf
 	@set -a; source build/config/vantor.conf; set +a; \
 	test "$$VANTOR_ARCH" = "x86_64"; test -n "$$VANTOR_VERSION"; test -n "$$VANTOR_TARGET"; \
-	test "$VANTOR_KERNEL_VERSION" = "6.18.65"; test "$VANTOR_LEGACY_KERNEL_VERSION" = "6.1.193"; test "$VANTOR_LEGACY_KERNEL_ARCH" = "i386"
+	test "$$VANTOR_KERNEL_VERSION" = "6.18.65"; test "$$VANTOR_LEGACY_KERNEL_VERSION" = "6.1.193"; test "$$VANTOR_LEGACY_KERNEL_ARCH" = "i386"
 	@echo "[OK] Build configuration is valid."
 
 check-shell:
