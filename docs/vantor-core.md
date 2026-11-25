@@ -4,7 +4,7 @@ VANTOR Core is the first project-owned userspace layer in Genesis. It is deliber
 
 ## Components
 
-- **VANTOR Init 0.1.0** (`/sbin/vantor-init`): mounts procfs, sysfs and devtmpfs when available, creates runtime directories, prints boot diagnostics, then hands off to `/sbin/init`. If no system init is installed, it opens an emergency shell. The Live startup script records ordered startup steps and command failures in `/var/log/vantor-boot.log`.
+- **VANTOR Init 0.2.0** (`/sbin/vantor-init`): mounts procfs, sysfs and devtmpfs when available, creates runtime directories, prints boot diagnostics, then hands off to `/sbin/init`. If no system init is installed, it opens an emergency shell. The Live startup script records ordered startup steps and command failures in `/var/log/vantor-boot.log`.
 - **Early entry point** (`/init`): delegates to VANTOR Init and provides a minimal emergency fallback.
 - **VANTOR Control 0.1.0** (`/usr/bin/vantorctl`): dispatches system information and diagnostics commands.
 - **VANTOR Doctor 0.2.0** (`/usr/bin/vantor-doctor`): built-in offline read-only checks for core binaries, virtual filesystem mounts, user environment, Nyan configuration and network-interface presence. It separates critical failures from warnings and never changes system state.
