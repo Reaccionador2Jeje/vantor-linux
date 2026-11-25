@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+case "${1:-}" in
+  -h|--help|'') echo "Usage: vantor-logview [system-log-file]"; exit 0;;
+esac
+file=$1
+[ -f "$file" ] || { echo "Not a regular file: $file" >&2; exit 1; }
+if command -v less >/dev/null 2>&1; then exec less "$file"; fi
+if command -v more >/dev/null 2>&1; then exec more "$file"; fi
+exec cat "$file"
