@@ -49,6 +49,8 @@ case "${1:-shell}" in
   doctor) host_doctor; exit $?;;
 esac
 
+if [ "$#" -gt 0 ] && [ "$1" = shell ]; then shift; fi
+
 if ! command -v proot >/dev/null 2>&1; then
   echo "VANTOR: PRoot is missing. Install it with: pkg install proot" >&2
   exit 1
@@ -65,7 +67,6 @@ if [ ! -x "$ROOTFS/bin/busybox" ] || [ ! -x "$ROOTFS/usr/bin/vantor-termux-shell
   exit 1
 fi
 
-if [ "$#" -gt 0 ] && [ "$1" = shell ]; then shift; fi
 run_vantor() {
   if [ -r "$PREFIX/etc/resolv.conf" ]; then
     if [ "$#" -eq 0 ]; then
