@@ -52,13 +52,21 @@ class ExtractSourceTests(unittest.TestCase):
             archive = base / "linked-source.tar.gz"
             destination = base / "out"
             with tarfile.open(archive, "w:gz") as bundle:
-                directory = tarfile.TarInfo("source/arch/arm/boot/dts")
-                directory.type = tarfile.DIRTYPE
-                directory.mode = 0o755
-                bundle.addfile(directory)
+                directories = (
+                    "source", "source/arch", "source/arch/arm",
+                    "source/arch/arm/boot", "source/arch/arm/boot/dts",
+                    "source/arch/arm64", "source/arch/arm64/boot",
+                    "source/arch/arm64/boot/dts", "source/arch/arm64/boot/dts/arm",
+                )
+                for name in directories:
+                    directory = tarfile.TarInfo(name)
+                    directory.type = tarfile.DIRTYPE
+                    directory.mode = 0o755
+                    bundle.addfile(directory)
                 payload = b"shared device tree include"
                 regular = tarfile.TarInfo("source/arch/arm/boot/dts/shared.dtsi")
                 regular.size = len(payload)
+                regular.mode = 0o644
                 bundle.addfile(regular, io.BytesIO(payload))
                 link = tarfile.TarInfo("source/arch/arm64/boot/dts/arm/shared.dtsi")
                 link.type = tarfile.SYMTYPE
