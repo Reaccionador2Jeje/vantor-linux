@@ -66,6 +66,10 @@ configure_target() {
     grep -q "^$username:" "$target/etc/passwd" || printf '%s:x:1000:1000:%s User:/home/%s:/bin/sh\n' "$username" "$username" "$username" >> "$target/etc/passwd"
     grep -q '^root:' "$target/etc/group" || printf 'root:x:0:\n' >> "$target/etc/group"
     grep -q '^wheel:' "$target/etc/group" || printf 'wheel:x:10:%s\n' "$username" >> "$target/etc/group"
+    if grep -q '^wheel:' "$target/etc/group" && ! grep '^wheel:' "$target/etc/group" | grep -q ",$username\\$"; then
+        awk -F: -v user="$username" 'BEGIN { OFS=":" } $1 == "wheel" { if ($4 == "") $4=user; else $4=$4 "," user } { print }' "$target/etc/group" > "$target/etc/group.tmp"
+        mv "$target/etc/group.tmp" "$target/etc/group"
+    fi
     grep -q '^users:' "$target/etc/group" || printf 'users:x:100:\n' >> "$target/etc/group"
     grep -q '^root:' "$target/etc/shadow" || printf 'root:!:19000:0:99999:7:::\n' >> "$target/etc/shadow"
     grep -q "^$username:" "$target/etc/shadow" || printf '%s:!:19000:0:99999:7:::\n' "$username" >> "$target/etc/shadow"
