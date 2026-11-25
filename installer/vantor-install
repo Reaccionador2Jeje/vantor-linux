@@ -59,13 +59,14 @@ menu() {
 }
 
 network_setup() {
- target=$(ask "Network" "Installed root (/mnt) or Live root (/):" "/mnt") || return 0
+ if [ "$#" -gt 0 ]; then target=$1; else target=$(ask "Network" "Installed system root:" "/mnt") || return 0; fi
  iface=$(ask "Network" "Interface (e.g. eth0):" "eth0") || return 0
  mode=$(ask "Network" "Mode: dhcp or static:" "dhcp") || return 0
  case "$iface" in ''|*[!A-Za-z0-9_.:-]*) die "invalid interface";; esac
  mkdir -p "$target/etc/vantor"
  if [ "$mode" = dhcp ]; then
    printf 'MODE=dhcp\nINTERFACE=%s\n' "$iface" > "$target/etc/vantor/network.conf"
+   if command -v udhcpc >/dev/null 2>&1; then /bin/busybox udhcpc -s /usr/share/udhcpc/default.script -i "$iface" -b -q -t 5 -T 2 || message "DHCP did not receive a lease."; fi
  else
    [ "$mode" = static ] || die "mode must be dhcp or static"
    address=$(ask "Static IPv4" "Address/prefix:" "192.168.1.50/24") || return 0
@@ -73,9 +74,15 @@ network_setup() {
    dns=$(ask "Static IPv4" "DNS:" "1.1.1.1") || return 0
    valid_ipv4_cidr "$address" && valid_ipv4 "$gateway" && valid_ipv4 "$dns" || die "invalid IPv4 settings"
    printf 'MODE=static\nINTERFACE=%s\nADDRESS=%s\nGATEWAY=%s\nDNS=%s\n' "$iface" "$address" "$gateway" "$dns" > "$target/etc/vantor/network.conf"
+   command -v ip >/dev/null 2>&1 || die "BusyBox ip applet is required for static IPv4"
+   ip link set "$iface" up || true
+   ip addr replace "$address" dev "$iface" || die "could not apply address"
+   ip route replace default via "$gateway" dev "$iface" || true
+   printf 'nameserver %s\n' "$dns" > /etc/resolv.conf
  fi
- message "Network configuration saved. Static settings are applied by VANTOR startup."
+ message "Network configured for the Live session and saved to the installed system."
 }
+
 valid_ipv4() {
  printf '%s\n' "$1" | awk -F. 'NF==4 {for(i=1;i<=4;i++) if($i!~/^[0-9]+$/ || $i>255) exit 1; exit 0} {exit 1}'
 }
@@ -192,10 +199,10 @@ install_minimal() {
     case "$repo" in https://*) ;; *) die "mirror must use HTTPS";; esac
     mkdir -p "$target/etc"
     printf '# Nyan repository\nNYAN_REPO=%s\nNYAN_ARCH=%s\n' "$repo" "${NYAN_ARCH:-x86_64}" > "$target/etc/nyan.conf"
+    network_setup "$target"
     NYAN_ROOT="$target" NYAN_REPO="$repo" "$NYAN_BIN" update
     NYAN_ROOT="$target" "$NYAN_BIN" install-profile minimal
     configure_target "$target" "$hostname" "$username"
-    network_setup
     preferences_setup
     packages_setup
     message "VANTOR Minimal has been installed. Passwords are locked; set secure passwords before normal use. Bootloader and filesystem configuration are separate steps in this early installer."
