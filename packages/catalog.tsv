@@ -1,13 +1,19 @@
 # package<TAB>category<TAB>status<TAB>description
-vantor-base-files	system	building	VANTOR Minimal identity, accounts, init and core tools
+vantor-base-files	system	bundled	VANTOR Minimal identity, accounts, init and core tools
 busybox	system	bundled	Static shell and essential command applets
 root-account	accounts	bundled	Administrative root account
 live-account	accounts	bundled	Standard Live-session account
 wheel-policy	security	bundled	Sudoers policy for wheel members
 nyan	package-manager	bundled	VANTOR native package manager
+vantorctl	system	bundled	VANTOR unified control and diagnostics command
+vantor-hw	diagnostics	bundled	Read-only CPU, memory, PCI, USB, VirtIO, storage and network inventory
+vantor-network	network	bundled	VANTOR network configuration and DHCP startup
+vantor-storage	system	bundled	VANTOR storage and filesystem inspection
+vantor-service	system	bundled	VANTOR service management
+vantor-modules	system	bundled	VANTOR kernel module loader
 vantor-install	installer	bundled	VANTOR text-mode Minimal installer
 vi	editors	bundled	BusyBox vi console editor
-sudo	administration	planned	Privilege elevation for wheel users
+sudo	administration	building	Privilege elevation for wheel users; real executable required
 nano	editors	planned	Friendly terminal text editor
 vim	editors	planned	Full Vim editor
 fastfetch	diagnostics	planned	System information and VANTOR branding
