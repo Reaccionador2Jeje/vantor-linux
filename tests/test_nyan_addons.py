@@ -39,6 +39,13 @@ class NyanAddonTests(unittest.TestCase):
                 )
                 self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_publisher_rebuilds_index_after_concurrent_push(self) -> None:
+        publisher = (ROOT / "tools/publish-package.sh").read_text()
+        self.assertIn("git fetch origin", publisher)
+        self.assertIn("git reset --hard FETCH_HEAD", publisher)
+        self.assertIn("for attempt in 1 2 3 4 5", publisher)
+        self.assertNotIn("git pull --rebase", publisher)
+
     def test_extras_workflow_publishes_addons_to_both_architectures(self) -> None:
         workflow = (ROOT / ".github/workflows/build-nyan-extras.yml").read_text()
         builder = (ROOT / "tools/build-nyan-extras.sh").read_text()
