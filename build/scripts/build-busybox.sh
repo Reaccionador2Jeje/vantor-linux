@@ -24,73 +24,38 @@ fi
 mkdir -p "$BUILD_DIR" "$ROOTFS"
 make -C "$SOURCE_DIR" O="$BUILD_DIR" defconfig
 
-# Traffic control is optional in the bootstrap and its legacy CBQ structures
-# are not available in some modern host kernel header sets.
+# Keep the bootstrap independent from optional traffic-control headers.
 if grep -q '^CONFIG_TC=y$' "$BUILD_DIR/.config"; then
     sed -i 's/^CONFIG_TC=y$/# CONFIG_TC is not set/' "$BUILD_DIR/.config"
 fi
 
-# Keep the first userspace independent from the not-yet-built VANTOR libc.
-if grep -q '^# CONFIG_STATIC is not set$' "$BUILD_DIR/.config"; then
-    sed -i 's/^# CONFIG_STATIC is not set$/CONFIG_STATIC=y/' "$BUILD_DIR/.config"
-elif grep -q '^CONFIG_STATIC=' "$BUILD_DIR/.config"; then
-    sed -i 's/^CONFIG_STATIC=.*/CONFIG_STATIC=y/' "$BUILD_DIR/.config"
-else
-    printf '\nCONFIG_STATIC=y\n' >> "$BUILD_DIR/.config"
-fi
-
-# Keep the vi editor applet in the Minimal bootstrap.
-if grep -q '^# CONFIG_VI is not setmake -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS"
-make -C "$SOURCE_DIR" O="$BUILD_DIR" CONFIG_PREFIX="$ROOTFS" install
-
-[[ -x "$ROOTFS/bin/busybox" ]] || { echo "[ERROR] BusyBox install did not produce /bin/busybox." >&2; exit 1; }
-grep -q '^CONFIG_VI=y
-"$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
-echo "[OK] Static BusyBox installed into build/work/rootfs."
-echo "[INFO] The VANTOR initramfs can now be assembled with: make initramfs"
- "$BUILD_DIR/.config"; then
-    sed -i 's/^# CONFIG_VI is not set$/CONFIG_VI=y/' "$BUILD_DIR/.config"
-elif ! grep -q '^CONFIG_VI=ymake -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS"
-make -C "$SOURCE_DIR" O="$BUILD_DIR" CONFIG_PREFIX="$ROOTFS" install
-
-[[ -x "$ROOTFS/bin/busybox" ]] || { echo "[ERROR] BusyBox install did not produce /bin/busybox." >&2; exit 1; }
-"$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
-echo "[OK] Static BusyBox installed into build/work/rootfs."
-echo "[INFO] The VANTOR initramfs can now be assembled with: make initramfs"
- "$BUILD_DIR/.config"; then
-    printf '\nCONFIG_VI=y\n' >> "$BUILD_DIR/.config"
-fi
+# Build a self-contained multicall binary and include the vi applet.
+set_config() {
+    local key="$1" value="$2"
+    if grep -q "^# ${key} is not set$" "$BUILD_DIR/.config"; then
+        sed -i "s/^# ${key} is not set$/${key}=${value}/" "$BUILD_DIR/.config"
+    elif grep -q "^${key}=" "$BUILD_DIR/.config"; then
+        sed -i "s/^${key}=.*/${key}=${value}/" "$BUILD_DIR/.config"
+    else
+        printf '%s=%s\n' "$key" "$value" >> "$BUILD_DIR/.config"
+    fi
+}
+set_config CONFIG_STATIC y
+set_config CONFIG_VI y
+set_config CONFIG_ASH y
+set_config CONFIG_SH_IS_ASH y
+set_config CONFIG_FEATURE_PREFER_APPLETS y
 
 make -C "$SOURCE_DIR" O="$BUILD_DIR" oldconfig </dev/null
+grep -q '^CONFIG_STATIC=y$' "$BUILD_DIR/.config" || { echo "[ERROR] BusyBox static mode was not selected." >&2; exit 1; }
+grep -q '^CONFIG_VI=y$' "$BUILD_DIR/.config" || { echo "[ERROR] BusyBox vi applet was not selected." >&2; exit 1; }
+
 make -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS"
 make -C "$SOURCE_DIR" O="$BUILD_DIR" CONFIG_PREFIX="$ROOTFS" install
 
 [[ -x "$ROOTFS/bin/busybox" ]] || { echo "[ERROR] BusyBox install did not produce /bin/busybox." >&2; exit 1; }
 "$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
+grep -qx 'vi' "$BUILD_DIR/applets.txt" || { echo "[ERROR] BusyBox vi applet is missing." >&2; exit 1; }
 echo "[OK] Static BusyBox installed into build/work/rootfs."
-echo "[INFO] The VANTOR initramfs can now be assembled with: make initramfs"
- "$BUILD_DIR/.config" || { echo "[ERROR] BusyBox vi applet is not enabled." >&2; exit 1; }
-"$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
-echo "[OK] Static BusyBox installed into build/work/rootfs."
-echo "[INFO] The VANTOR initramfs can now be assembled with: make initramfs"
- "$BUILD_DIR/.config"; then
-    sed -i 's/^# CONFIG_VI is not set$/CONFIG_VI=y/' "$BUILD_DIR/.config"
-elif ! grep -q '^CONFIG_VI=ymake -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS"
-make -C "$SOURCE_DIR" O="$BUILD_DIR" CONFIG_PREFIX="$ROOTFS" install
-
-[[ -x "$ROOTFS/bin/busybox" ]] || { echo "[ERROR] BusyBox install did not produce /bin/busybox." >&2; exit 1; }
-"$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
-echo "[OK] Static BusyBox installed into build/work/rootfs."
-echo "[INFO] The VANTOR initramfs can now be assembled with: make initramfs"
- "$BUILD_DIR/.config"; then
-    printf '\nCONFIG_VI=y\n' >> "$BUILD_DIR/.config"
-fi
-
-make -C "$SOURCE_DIR" O="$BUILD_DIR" oldconfig </dev/null
-make -C "$SOURCE_DIR" O="$BUILD_DIR" -j"$VANTOR_BUILD_JOBS"
-make -C "$SOURCE_DIR" O="$BUILD_DIR" CONFIG_PREFIX="$ROOTFS" install
-
-[[ -x "$ROOTFS/bin/busybox" ]] || { echo "[ERROR] BusyBox install did not produce /bin/busybox." >&2; exit 1; }
-"$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
-echo "[OK] Static BusyBox installed into build/work/rootfs."
+echo "[OK] Shell, vi editor and essential applets are enabled."
 echo "[INFO] The VANTOR initramfs can now be assembled with: make initramfs"
