@@ -43,9 +43,11 @@ jobs:
               bash tools/publish-package.sh "$archive" "$name" 0.1.0 "$arch" "$description"
             fi
           }
-          for arch in x86_64 i486; do
+          for arch in x86_64 i486 aarch64; do
             publish "build/nyan-extras/vantor-hardware-0.1.0-$arch.tar.gz" vantor-hardware "$arch" "VANTOR read-only hardware inventory utility"
-            publish "build/nyan-extras/vantor-installer-0.1.0-$arch.tar.gz" vantor-installer "$arch" "VANTOR text-mode system installer" vantor-base-files
+            if [ "$arch" != aarch64 ]; then
+              publish "build/nyan-extras/vantor-installer-0.1.0-$arch.tar.gz" vantor-installer "$arch" "VANTOR text-mode system installer" vantor-base-files
+            fi
             publish "build/nyan-extras/vantor-branding-0.1.0-$arch.tar.gz" vantor-branding "$arch" "Official VANTOR identity assets"
             publish "build/nyan-extras/vantor-docs-0.1.0-$arch.tar.gz" vantor-docs "$arch" "VANTOR system and Nyan documentation"
           done
