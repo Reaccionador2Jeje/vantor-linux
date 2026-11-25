@@ -8,6 +8,7 @@ on:
       - "tools/build-nyan-htop.sh"
       - "tools/build-nyan-dialog.sh"
       - "tools/build-nyan-curl.sh"
+      - "tools/build-nyan-jq.sh"
       - "tools/publish-package.sh"
       - ".github/workflows/build-nyan-native.yml"
       - "packages/catalog.tsv"
@@ -59,6 +60,18 @@ jobs:
             script: tools/build-nyan-dialog.sh
             archive: dialog-1.3-20260721
             description: "Dialog terminal UI widgets, static musl and ncurses"
+          - arch: x86_64
+            package: jq
+            version: "1.8.1"
+            script: tools/build-nyan-jq.sh
+            archive: jq-1.8.1
+            description: "jq 1.8.1 JSON processor, statically linked with musl and bundled Oniguruma"
+          - arch: i486
+            package: jq
+            version: "1.8.1"
+            script: tools/build-nyan-jq.sh
+            archive: jq-1.8.1
+            description: "jq 1.8.1 JSON processor, statically linked with musl and bundled Oniguruma"
           - arch: x86_64
             package: curl
             version: "8.23.0"
@@ -136,6 +149,8 @@ jobs:
           publish_one dialog-1.3-20260721 dialog 1.3-20260721 i486 "Dialog terminal UI widgets, static musl and ncurses"
           publish_one curl-8.23.0 curl 8.23.0 x86_64 "curl 8.23.0 with static OpenSSL 3.5.9 LTS and Mozilla CA bundle"
           publish_one curl-8.23.0 curl 8.23.0 i486 "curl 8.23.0 with static OpenSSL 3.5.9 LTS and Mozilla CA bundle"
+          publish_one jq-1.8.1 jq 1.8.1 x86_64 "jq 1.8.1 JSON processor, statically linked with musl and bundled Oniguruma"
+          publish_one jq-1.8.1 jq 1.8.1 i486 "jq 1.8.1 JSON processor, statically linked with musl and bundled Oniguruma"
           if (( failures > 0 )); then
             exit 1
           fi
