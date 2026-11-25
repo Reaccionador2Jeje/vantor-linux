@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
-.PHONY: help info check check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel rootfs boot-files iso clean
+.PHONY: help info check check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel busybox initramfs rootfs boot-files iso clean
 
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
@@ -20,7 +20,7 @@ info:
 	printf '%s %s (%s)\nTarget: %s\nKernel: Linux %s (%s)\n' \
 	  "$$VANTOR_NAME" "$$VANTOR_VERSION" "$$VANTOR_CODENAME" "$$VANTOR_TARGET" "$$VANTOR_KERNEL_VERSION" "$$VANTOR_KERNEL_ARCH"
 
-check: check-config check-shell check-sources check-python check-nyan kernel-files boot-files
+check: check-config check-shell check-sources check-python check-nyan kernel-files initramfs-files boot-files
 	@python3 -m json.tool assets/branding/theme.json > /dev/null
 	@echo "[OK] VANTOR repository checks passed."
 
