@@ -197,15 +197,15 @@ case "$cmd" in
   installed)
     [ "$#" -eq 1 ] || die "usage: nyan installed"
     dir="$NYAN_STATE/installed"
-    printf "%-24s %-12s %s\\n" "PACKAGE" "VERSION" "STATUS"
+    printf "%-24s %-12s %s\n" "PACKAGE" "VERSION" "STATUS"
     found=0
     for record in "$dir"/*; do
       [ -f "$record" ] || continue
       case "$record" in *.files) continue;; esac
       name=${record##*/}
       valid_name "$name" || continue
-      version=$(awk -F '\\t' 'NR==1 {print $2}' "$record")
-      printf "%-24s %-12s installed\\n" "$name" "${version:-unknown}"
+      version=$(cut -f2 "$record")
+      printf "%-24s %-12s installed\n" "$name" "${version:-unknown}"
       found=1
     done
     [ "$found" -eq 1 ] || say "no packages installed"
@@ -230,16 +230,16 @@ case "$cmd" in
       record="$dir/$name"
       files="$dir/$name.files"
       if [ ! -s "$record" ] || [ ! -s "$files" ]; then
-        printf "nyan: verify: incomplete record for %s\\n" "$name" >&2
+        printf "nyan: verify: incomplete record for %s\n" "$name" >&2
         failed=1
         continue
       fi
       missing=0
       while IFS= read -r item; do
         [ -n "$item" ] || continue
-        case "$item" in /*|../*|*/../*|*/..) printf "nyan: verify: unsafe file record: %s\\n" "$item" >&2; missing=1; continue;; esac
+        case "$item" in /*|../*|*/../*|*/..) printf "nyan: verify: unsafe file record: %s\n" "$item" >&2; missing=1; continue;; esac
         target="${NYAN_ROOT%/}/$item"
-        [ -e "$target" ] || [ -L "$target" ] || { printf "nyan: verify: missing %s\\n" "$item" >&2; missing=1; }
+        [ -e "$target" ] || [ -L "$target" ] || { printf "nyan: verify: missing %s\n" "$item" >&2; missing=1; }
       done < "$files"
       if [ "$missing" -eq 0 ]; then say "verified $name"; else failed=1; fi
     done
