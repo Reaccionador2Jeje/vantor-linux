@@ -31,7 +31,7 @@ def main() -> int:
         shutil.copy2(BRANDING / name, brand_dir / name)
 
     write(output / "etc/os-release", """NAME="VANTOR Linux"
-PRETTY_NAME="VANTOR Linux Genesis 0.1.0"
+PRETTY_NAME="VANTOR Linux Minimal 0.1.0"\nVARIANT="Minimal"\nVARIANT_ID=minimal
 ID=vantor
 ID_LIKE=linux
 VERSION="0.1.0"
@@ -105,7 +105,7 @@ if [ "${1:-}" = "--version" ]; then
 fi
 if [ "$$" -ne 1 ]; then log "NOTICE: running as PID $$; PID 1 is recommended."; fi
 
-log "Starting VANTOR Linux Genesis..."
+log "Starting VANTOR Linux Minimal..."
 mkdir -p /proc /sys /dev /run /tmp
 mount_virtual_fs /proc proc proc
 mount_virtual_fs /sys sysfs sysfs
@@ -174,7 +174,7 @@ esac
 """)
 
     write(output / "etc/vantor-brand.json", json.dumps({
-        "brand": theme["brand"], "version": "0.1.0", "codename": "Genesis",
+        "brand": theme["brand"], "edition": "Minimal", "version": "0.1.0", "codename": "Genesis",
         "slogan": theme["slogan"], "branding_path": "/usr/share/vantor/branding",
         "core": {"init": "VANTOR Init 0.1.0", "control": "VANTOR Control 0.1.0", "hardware": "VANTOR Hardware 0.1.0"}
     }, indent=2) + "\n")
