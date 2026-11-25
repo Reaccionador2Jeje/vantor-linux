@@ -82,6 +82,10 @@ Upstream candidates are recorded in \`build/sources/sources.json\`; each source 
 
 CI validates repository structure, configuration, source metadata, safe extraction, rootfs generation and rootfs identity files. The first-stage toolchain scripts, GRUB boot menu, kernel build script and initial rootfs generator are implemented. Binutils and GCC bootstrap sources are pinned; glibc, Linux and BusyBox remain unpinned. No completed compiler, kernel, initramfs or bootable image is claimed yet. The kernel source remains unpinned until its official checksum is verified.
 
+## Nyan package management
+
+VANTOR's native package manager is **Nyan**. The initial POSIX shell prototype and repository index format are documented in [docs/nyan.md](docs/nyan.md). The official package mirror is being prepared on the project website; package downloads are not available until Cloudflare R2 storage is enabled and signed packages are published.
+
 ## Licensing
 
 The repository's top-level license applies to original project files where applicable. Third-party components retain their own licenses and notices. Linux kernel licensing is governed by the kernel's own COPYING file and source headers.
