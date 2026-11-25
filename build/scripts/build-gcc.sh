@@ -9,7 +9,7 @@ source "$ROOT/build/config/vantor.conf"
 
 TOOLS_PREFIX="$ROOT/build/tools"
 SYSROOT="$ROOT/build/sysroot"
-SOURCE="$ROOT/build/work/sources/gcc"
+SOURCE="$ROOT/build/work/sources/gcc-16.2.0"
 BUILD="$ROOT/build/work/build-gcc"
 
 [[ -x "$TOOLS_PREFIX/bin/$VANTOR_TARGET-as" ]] || { echo "[ERROR] Build Binutils pass 1 first." >&2; exit 1; }
