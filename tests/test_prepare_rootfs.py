@@ -54,6 +54,18 @@ class PrepareRootfsTests(unittest.TestCase):
                 self.assertEqual(check.returncode, 0, f"{script}: {check.stderr}")
 
 
+    def test_i486_rootfs_selects_legacy_nyan_architecture(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "rootfs-i486"
+            result = subprocess.run(
+                [sys.executable, str(BUILDER), "--output", str(output), "--arch", "i486"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn('NYAN_ARCH:=i486', (output / "etc/nyan.conf").read_text())
+            brand = json.loads((output / "etc/vantor-brand.json").read_text())
+            self.assertEqual(brand["architecture"], "i486")
+
     def test_installer_configures_root_live_and_wheel_without_touching_host(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             target = Path(temporary) / "target"
