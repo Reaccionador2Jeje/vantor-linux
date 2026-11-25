@@ -1,0 +1,43 @@
+name: Build VANTOR Desktop configuration package
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "desktop/**"
+      - ".github/workflows/build-desktop-config.yml"
+permissions:
+  contents: read
+concurrency:
+  group: vantor-desktop-config
+  cancel-in-progress: true
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout VANTOR
+        uses: actions/checkout@v4
+      - name: Validate desktop session and assemble package
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          sh -n desktop/bin/vantor-session
+          test -s desktop/xsessions/vantor.desktop
+          test -s desktop/openbox/rc.xml
+          test -s desktop/openbox/menu.xml
+          test -s desktop/tint2/tint2rc
+          root="$PWD/build/vantor-desktop-config"
+          install -D -m 0755 desktop/bin/vantor-session "$root/usr/local/bin/vantor-session"
+          install -D -m 0644 desktop/xsessions/vantor.desktop "$root/usr/share/xsessions/vantor.desktop"
+          mkdir -p "$root/usr/share/vantor/desktop"
+          cp -a desktop/openbox desktop/tint2 desktop/themes desktop/applications "$root/usr/share/vantor/desktop/"
+          tar -czf build/vantor-desktop-config-0.1.0-all.tar.gz -C "$root" .
+          tar -tzf build/vantor-desktop-config-0.1.0-all.tar.gz
+          sha256sum build/vantor-desktop-config-0.1.0-all.tar.gz
+      - name: Upload configuration package for testing
+        uses: actions/upload-artifact@v4
+        with:
+          name: vantor-desktop-config-0.1.0
+          path: build/vantor-desktop-config-0.1.0-all.tar.gz
+          if-no-files-found: error
+          retention-days: 14
