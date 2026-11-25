@@ -114,16 +114,7 @@ case "\${1:-help}" in
     help|-h|--help) usage ;;
     version|--version) echo "VANTOR Control $VERSION" ;;
     info) [ -r /etc/os-release ] && cat /etc/os-release ;;
-    hardware)
-        echo "== CPU =="
-        if [ -r /proc/cpuinfo ]; then grep -m 1 -E 'model name|Hardware|Processor' /proc/cpuinfo || echo "CPU details unavailable"; else echo "CPU details unavailable"; fi
-        echo; echo "== Memory =="
-        if [ -r /proc/meminfo ]; then grep -E '^(MemTotal|MemAvailable):' /proc/meminfo; else echo "Memory details unavailable"; fi
-        echo; echo "== Block devices =="
-        if [ -d /sys/block ]; then
-            for device in /sys/block/*; do [ -e "$device" ] && echo "\${device##*/}"; done
-        else echo "Block device information unavailable"; fi
-        ;;
+    hardware) exec /usr/bin/vantor-hw ;;
     network)
         echo "== Network interfaces =="
         if [ -d /sys/class/net ]; then
@@ -146,14 +137,18 @@ case "\${1:-help}" in
 esac
 """, 0o755)
 
+    hardware_tool = ROOT / "core/hardware/vantor-hw"
+    shutil.copy2(hardware_tool, output / "usr/bin/vantor-hw")
+    (output / "usr/bin/vantor-hw").chmod(0o755)
+
     write(output / "etc/vantor-brand.json", json.dumps({
         "brand": theme["brand"], "version": "0.1.0", "codename": "Genesis",
         "slogan": theme["slogan"], "branding_path": "/usr/share/vantor/branding",
-        "core": {"init": "VANTOR Init 0.1.0", "control": "VANTOR Control 0.1.0"}
+        "core": {"init": "VANTOR Init 0.1.0", "control": "VANTOR Control 0.1.0", "hardware": "VANTOR Hardware 0.1.0"}
     }, indent=2) + "\n")
     print(f"[OK] Prepared VANTOR rootfs skeleton at {output}")
     print(f"[OK] Installed {len(BRAND_FILES)} official branding assets.")
-    print("[OK] Added VANTOR Init and VANTOR Control.")
+    print("[OK] Added VANTOR Init, Control and Hardware inventory.")
     print("[INFO] Full service supervision and network configuration are not implemented yet.")
     return 0
 
