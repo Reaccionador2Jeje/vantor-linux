@@ -3,7 +3,6 @@ lua	5.4.9	x86_64	7ec8d0e95e2048710852b1ee79a767bf8e13f940d824f188876f1b91c7cf039
 vantor-profile-development	0.1.0	x86_64	64ca831943980061d35d2b0bb02e677bc34980808d2d7377cf42e0138ccc5fbe	vantor-profile-development-0.1.0-x86_64.tar.gz	Profile: VANTOR development tools and programming languages	lua
 vantor-base-files	0.1.0	x86_64	c26423924370bd2287bffb3a3c4fa8222dac184108cd56ef7e9a0e0f428a469a	vantor-base-files-0.1.0-x86_64.tar.gz	VANTOR Minimal base files, BusyBox, init and system accounts	
 vantor-profile-minimal	0.1.0	x86_64	d5ab90a95127036fc8c8704ba241bb9baf24f9a9ec4229417a2c9810409482f8	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
-vantor-branding	0.1.0	x86_64	af7f0574bd4d3a7a2098f62f6852792318985429dff1ecdfc4f46408e272e088	vantor-branding-0.1.0-x86_64.tar.gz	Official VANTOR identity assets	
 vantor-docs	0.1.0	x86_64	4a9859ebd53473897b27893996c225070486b462c9e44bd985fc985c4a430168	vantor-docs-0.1.0-x86_64.tar.gz	VANTOR system and Nyan documentation	
 vantor-about	0.1.0	x86_64	df7270871f161d22ac80ab981046eb266632002eb6af967ced2c1205f28bd5bf	vantor-about-0.1.0-all.tar.gz	VANTOR utility: vantor-about (architecture-independent)	
 vantor-doctor	0.1.0	x86_64	52702543bed76508546bf62d7e4ed3df5d0d73736c79d697a0ad936a8ebb68c5	vantor-doctor-0.1.0-all.tar.gz	VANTOR utility: vantor-doctor (architecture-independent)	
@@ -22,3 +21,4 @@ htop	3.4.1	x86_64	1ecb217ff2f5335e5c30b010d3f54d60841fd2a43384fb20b2446cdda0ed56
 dialog	1.3-20260721	x86_64	b490eb0e4a06ee16934d97495c0d5a71f995170f72505c60621949409678cbe8	dialog-1.3-20260721-x86_64.tar.gz	Dialog terminal UI widgets, static musl and ncurses	
 vantor-hardware	0.1.0	x86_64	d2dd76572977e23adb06319e44c2ce1eb9d8f399bde705e175dcc89fcbf63e26	vantor-hardware-0.1.0-x86_64.tar.gz	VANTOR read-only hardware inventory utility	
 vantor-installer	0.1.0	x86_64	b65cc8c15b1846ba01ac8142ee0d4c549543acb4239c952a2394b8fe216dfbfe	vantor-installer-0.1.0-x86_64.tar.gz	VANTOR text-mode system installer	vantor-base-files
+vantor-branding	0.1.0	x86_64	af7f0574bd4d3a7a2098f62f6852792318985429dff1ecdfc4f46408e272e088	vantor-branding-0.1.0-x86_64.tar.gz	Official VANTOR identity assets	
