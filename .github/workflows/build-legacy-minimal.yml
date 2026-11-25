@@ -7,6 +7,8 @@ on:
       - "tools/prepare-rootfs.py"
       - "build/scripts/build-busybox-legacy.sh"
       - "build/sources/sources.json"
+      - "tools/extract-source.py"
+      - "tests/test_source_tools.py"
       - "packages/profiles/minimal/**"
       - "tools/publish-package.sh"
       - "Makefile"
