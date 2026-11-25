@@ -11,7 +11,7 @@
 
 ## Minimal installation flow
 
-1. Boot the VANTOR Live environment.
+1. Boot the VANTOR Live environment. Live startup attempts to mount the booted ISO read-only at /run/vantor-media.
 2. Prepare and mount the destination filesystem yourself.
 3. Run `vantor-install` as root.
 4. Choose **Install VANTOR Minimal**.
