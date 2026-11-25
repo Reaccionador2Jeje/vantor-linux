@@ -74,6 +74,8 @@ check-nyan:
 	@grep -q 'dependency cycle detected' packages/nyan/nyan
 	@grep -q 'install-profile' packages/nyan/nyan
 	@grep -q 'minimal' packages/nyan/nyan
+	@grep -q 'catalog)' packages/nyan/nyan
+	@test -s packages/catalog.tsv
 	@test -s packages/profiles/development/PROFILE.txt
 	@test -s .github/workflows/build-nyan-profiles.yml
 	@test -s .github/workflows/build-nyan-minimal.yml
