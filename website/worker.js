@@ -30,7 +30,7 @@ const SITE_HTML = `<!doctype html>
  <div class="wrap nav">
   <a class="brand" href="#inicio" aria-label="VANTOR Linux, inicio"><img src="/assets/vantor-mark.svg" alt="">VANTOR LINUX</a>
   <nav class="navlinks" id="navlinks" aria-label="Navegación principal">
-   <a href="#sistema">Sistema</a><a href="#ediciones">Ediciones</a><a href="#arquitectura">Arquitectura</a><a href="#instalar">Empezar</a><a href="#documentacion">Documentación</a>
+   <a href="#sistema">Sistema</a><a href="#ediciones">Ediciones</a><a href="#descargas">Descargas</a><a href="#arquitectura">Arquitectura</a><a href="#instalar">Empezar</a><a href="#documentacion">Documentación</a>
   </nav>
   <a class="nav-cta" href="https://github.com/Reaccionador2Jeje/vantor-linux">Ver en GitHub ↗</a>
   <button class="menu" id="menu" aria-label="Abrir menú" aria-expanded="false">☰</button>
@@ -77,10 +77,19 @@ const SITE_HTML = `<!doctype html>
 <section class="section" id="ediciones"><div class="wrap">
  <div class="section-head"><div class="kicker">02 / Ediciones</div><h2>Distintas generaciones. Una misma identidad.</h2><p>Los perfiles se construyen por separado para no prometer compatibilidad universal donde todavía no se ha probado.</p></div>
  <div class="grid three">
-  <article class="card edition"><div class="arch">X86_64 · PC</div><h3>VANTOR Minimal</h3><p>El perfil principal: un sistema ligero de consola, BusyBox, Nyan, herramientas de diagnóstico y una ruta hacia un escritorio propio.</p><span class="tag pending">ISO en validación</span></article>
-  <article class="card edition"><div class="arch">I486 · LEGACY</div><h3>VANTOR Legacy</h3><p>Perfil separado para equipos antiguos compatibles con i486, con un kernel de la rama 6.1 y un userspace reducido.</p><span class="tag pending">Compatibilidad en pruebas</span></article>
+  <article class="card edition"><div class="arch">X86_64 · PC</div><h3>VANTOR Minimal</h3><p>El perfil principal: un sistema ligero de consola, BusyBox, Nyan, herramientas de diagnóstico y una ruta hacia un escritorio propio.</p><span class="tag pending">ISO compilada · arranque por validar</span></article>
+  <article class="card edition"><div class="arch">I486 · LEGACY</div><h3>VANTOR Legacy</h3><p>Perfil separado para equipos antiguos compatibles con i486, con un kernel de la rama 6.1 y un userspace reducido.</p><span class="tag pending">ISO compilada · hardware por validar</span></article>
   <article class="card edition"><div class="arch">AARCH64 · ANDROID</div><h3>VANTOR Termux</h3><p>Userspace ARM64 para Android mediante Termux y PRoot-Distro. Android conserva el control del kernel; no es una ISO ni sustituye el arranque de PC.</p><span class="tag">Userspace disponible</span></article>
  </div>
+</div></section>
+
+<section class="section" id="descargas"><div class="wrap">
+ <div class="section-head"><div class="kicker">03 / Descargas</div><h2>Prueba VANTOR en tu hardware.</h2><p>Imágenes ISO generadas por CI y publicadas como versiones preliminares. La compilación terminó correctamente; el arranque real todavía debe probarse en Limbo/QEMU o hardware compatible.</p></div>
+ <div class="grid two split">
+  <article class="card edition"><div class="arch">X86_64 · PC MODERNO</div><h3>VANTOR Genesis 0.1.0</h3><p>Imagen principal de 64 bits. Diseñada para equipos x86_64 y pruebas en máquinas virtuales.</p><div class="actions"><a class="button primary" href="https://github.com/Reaccionador2Jeje/vantor-linux/releases/download/vantor-genesis-0.1.0-x86_64/vantor-genesis-0.1.0-x86_64.iso">Descargar ISO ↗</a><a class="button secondary" href="https://github.com/Reaccionador2Jeje/vantor-linux/releases/download/vantor-genesis-0.1.0-x86_64/vantor-genesis-0.1.0-x86_64.iso.sha256">SHA256</a></div><span class="tag pending">Preview · no estable</span></article>
+  <article class="card edition"><div class="arch">I486 · LEGACY</div><h3>VANTOR Minimal Legacy 0.1.0</h3><p>Imagen BIOS de 32 bits para equipos de clase i486 compatibles. Perfil mínimo y separado.</p><div class="actions"><a class="button primary" href="https://github.com/Reaccionador2Jeje/vantor-linux/releases/download/vantor-minimal-0.1.0-i486/vantor-minimal-0.1.0-i486.iso">Descargar ISO ↗</a><a class="button secondary" href="https://github.com/Reaccionador2Jeje/vantor-linux/releases/download/vantor-minimal-0.1.0-i486/vantor-minimal-0.1.0-i486.iso.sha256">SHA256</a></div><span class="tag pending">Preview · no estable</span></article>
+ </div>
+ <p class="muted">Antes de usar: verifica el checksum y prueba primero en una máquina virtual. Estas imágenes no deben considerarse listas para instalación diaria hasta completar las pruebas de arranque y hardware.</p>
 </div></section>
 
 <section class="section" id="arquitectura"><div class="wrap">
