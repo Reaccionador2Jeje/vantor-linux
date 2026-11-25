@@ -74,7 +74,7 @@ tmpfs     /tmp    tmpfs     mode=1777,nosuid  0 0
     write(output / "etc/inittab", """# VANTOR Minimal BusyBox init configuration
 ::sysinit:/etc/init.d/rcS
 tty1::respawn:/bin/busybox getty -L -n -l /usr/bin/vantor-live-session 0 tty1 vt100
-ttyS0::respawn:/sbin/getty -L -n -l /usr/bin/vantor-live-session 115200 ttyS0 vt100
+ttyS0::respawn:/bin/busybox getty -L -n -l /usr/bin/vantor-live-session 115200 ttyS0 vt100
 ::ctrlaltdel:/bin/busybox reboot
 ::shutdown:/bin/busybox umount -a -r
 """)
@@ -88,7 +88,7 @@ mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
 chmod 1777 /tmp 2>/dev/null || true
 hostname vantor 2>/dev/null || true
 if command -v mdev >/dev/null 2>&1; then
-    echo /bin/busybox > /proc/sys/kernel/hotplug 2>/dev/null || true
+    echo /bin/mdev > /proc/sys/kernel/hotplug 2>/dev/null || true
     /bin/busybox mdev -s 2>/dev/null || true
 fi
 # Start DHCP only on detected non-loopback interfaces.
