@@ -13,7 +13,7 @@ mkdir -p "$WORK/src" "$WORK/downloads" "$WORK/openssl" "$WORK/stage" "$OUT"
 case "$ARCH" in
   x86_64)
     TOOLCHAIN="x86_64-linux-musl-cross"
-    TOOLCHAIN_SHA="c5d410d9f82a4f24c549fe5d24f988f85b2679b452bcf5e7f5f2fe7ea"
+    TOOLCHAIN_SHA="c5d410d9f82a4f24c549fe5d24f988f85b2679b452a4f5e7f5f2fe7ea"
     OPENSSL_TARGET="linux-x86_64"
     ARCH_FLAGS=""
     ;;
@@ -54,6 +54,15 @@ CURL="$WORK/downloads/curl-8.23.0.tar.xz"
 curl -fL --retry 3 "https://github.com/curl/curl/releases/download/curl-8_23_0/curl-8.23.0.tar.xz" -o "$CURL"
 echo "8dadd7d2536a314f982ad05a651b713f426bf7d02cc2c76cffb9796f2218e6c5  $CURL" | sha256sum -c -
 tar -xJf "$CURL" -C "$WORK/src"
+
+# Bundle Mozilla root CAs from curl.se and verify against its published digest.
+CA_BUNDLE="$WORK/downloads/cacert.pem"
+curl -fL --retry 3 https://curl.se/ca/cacert.pem -o "$CA_BUNDLE"
+curl -fL --retry 3 https://curl.se/ca/cacert.pem.sha256 -o "$WORK/downloads/cacert.pem.sha256"
+CA_SHA="$(awk '{print $1}' "$WORK/downloads/cacert.pem.sha256")"
+case "$CA_SHA" in ????????*) ;; *) echo "Invalid CA bundle SHA-256 metadata" >&2; exit 1;; esac
+[ "${#CA_SHA}" -eq 64 ] || { echo "Invalid CA bundle SHA-256 length" >&2; exit 1; }
+echo "$CA_SHA  $CA_BUNDLE" | sha256sum -c -
 mkdir -p "$WORK/build-curl"
 (
   cd "$WORK/build-curl"
@@ -90,7 +99,7 @@ curl 8.23.0
 OpenSSL 3.5.9 LTS
 Target: $ARCH
 Static musl build; HTTP and HTTPS protocols enabled
-CA bundle expected at /etc/ssl/certs/ca-certificates.crt
+Mozilla CA bundle included at /etc/ssl/certs/ca-certificates.crt
 EOF
 tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \
   -czf "$OUT/curl-8.23.0-$ARCH.tar.gz" -C "$WORK/stage" .
