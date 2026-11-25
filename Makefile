@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
-.PHONY: help info check image desktop-files check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel kernel-legacy busybox busybox-legacy initramfs initramfs-legacy rootfs rootfs-legacy termux-rootfs boot-files iso iso-legacy image-legacy clean kernel-files initramfs-files
+.PHONY: help info check image desktop-files termux-files check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel kernel-legacy busybox busybox-legacy initramfs initramfs-legacy rootfs rootfs-legacy termux-rootfs boot-files iso iso-legacy image-legacy clean kernel-files initramfs-files
 
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
@@ -21,9 +21,19 @@ info:
 	printf '%s %s (%s)\nTarget: %s\nKernel: Linux %s (%s)\n' \
 	  "$$VANTOR_NAME" "$$VANTOR_VERSION" "$$VANTOR_CODENAME" "$$VANTOR_TARGET" "$$VANTOR_KERNEL_VERSION" "$$VANTOR_KERNEL_ARCH"
 
-check: check-config check-shell check-sources check-python check-nyan desktop-files core-files kernel-files initramfs-files boot-files
+check: check-config termux-files check-shell check-sources check-python check-nyan desktop-files core-files kernel-files initramfs-files boot-files
 	@python3 -m json.tool assets/branding/theme.json > /dev/null
 	@echo "[OK] VANTOR repository checks passed."
+
+termux-files:
+	@test -s docs/termux.md
+	@test -s build/scripts/build-termux-rootfs.sh
+	@test -s tools/termux/vantor
+	@test -s .github/workflows/build-termux.yml
+	@bash -n build/scripts/build-termux-rootfs.sh
+	@sh -n tools/termux/vantor
+	@grep -q 'aarch64' tools/prepare-rootfs.py
+	@echo "[OK] VANTOR Termux ARM64 target files are present."
 
 desktop-files:
 	@test -x desktop/bin/vantor-session
