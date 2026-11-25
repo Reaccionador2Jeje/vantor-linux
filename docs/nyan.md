@@ -136,3 +136,8 @@ The isolated workflow `.github/workflows/build-nyan-extras.yml` builds and publi
 - `vantor-docs` — system overview, license and Nyan documentation under `/usr/local/share/doc/vantor`.
 
 Run the workflow manually from GitHub Actions, or let its path-filtered push trigger it. It publishes eight architecture-specific archives and updates only the corresponding Nyan repository indexes. The ISO, kernel, legacy-image and general CI workflows are not edited by this package expansion.
+
+
+## JSON processing: jq
+
+The native Nyan workflow builds jq 1.8.1 for x86_64 and i486 using pinned musl cross-toolchains and the verified upstream source archive. The bundled Oniguruma engine is built into the static executable. Each target binary is checked for a dynamic interpreter and smoke-tested on its own CPU target (i486 through QEMU user-mode) before publication. jq remains marked `building` in the local catalog until both architecture artifacts are published successfully. The package is not advertised for aarch64 yet; that architecture needs a separately validated toolchain and build.
