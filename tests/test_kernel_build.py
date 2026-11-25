@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import shutil
+import subprocess
 import unittest
 from pathlib import Path
 
@@ -26,6 +28,19 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("FRAMEBUFFER_CONSOLE", script)
         self.assertIn("DRM_FBDEV_EMULATION", script)
         self.assertIn("DRM_BOCHS", script)
+
+    def test_framebuffer_splash_renderer_is_valid_c(self) -> None:
+        source = ROOT / "core/boot/vantor-fb-splash.c"
+        self.assertTrue(source.is_file())
+        compiler = shutil.which("cc")
+        if compiler:
+            result = subprocess.run(
+                [compiler, "-fsyntax-only", str(source)],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+        else:
+            self.skipTest("host C compiler is unavailable")
 
     def test_legacy_linux_source_is_pinned_to_upstream_checksum(self) -> None:
         manifest = json.loads((ROOT / "build/sources/sources.json").read_text())
