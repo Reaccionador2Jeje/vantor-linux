@@ -36,25 +36,20 @@ jobs:
           LUA_SHA256: "2335b6c582a52654f94612bf10d2f4672805d05329aa6568b1d8cd9e5c6fb8e6"
         run: |
           set -euo pipefail
-          curl --fail --location --retry 3 "https://www.lua.org/ftp/lua-${LUA_VERSION}.tar.gz" -o "/tmp/lua-${LUA_VERSION}.tar.gz"
-          echo "${LUA_SHA256}  /tmp/lua-${LUA_VERSION}.tar.gz" | sha256sum --check
-          tar -xzf "/tmp/lua-${LUA_VERSION}.tar.gz" -C /tmp
+          curl --fail --location --retry 3 "https://www.lua.org/ftp/lua-\${LUA_VERSION}.tar.gz" -o "/tmp/lua-\${LUA_VERSION}.tar.gz"
+          echo "\${LUA_SHA256}  /tmp/lua-\${LUA_VERSION}.tar.gz" | sha256sum --check
+          tar -xzf "/tmp/lua-\${LUA_VERSION}.tar.gz" -C /tmp
 
       - name: Build and test static Lua
         env:
           LUA_VERSION: "5.4.9"
         run: |
           set -euo pipefail
-          make -C "/tmp/lua-${LUA_VERSION}" clean
-          make -C "/tmp/lua-${LUA_VERSION}" linux CC=musl-gcc MYCFLAGS="-O2" MYLDFLAGS="-static" -j2
-          "/tmp/lua-${LUA_VERSION}/src/lua" -e 'assert(_VERSION == "Lua 5.4"); print(_VERSION .. " runtime OK")'
-          file "/tmp/lua-${LUA_VERSION}/src/lua"
-          if file "/tmp/lua-${LUA_VERSION}/src/lua" | grep -q "statically linked"; then
-            echo "Lua interpreter is statically linked."
-          else
-            echo "Lua interpreter is not static; refusing to publish." >&2
-            exit 1
-          fi
+          make -C "/tmp/lua-\${LUA_VERSION}" clean
+          make -C "/tmp/lua-\${LUA_VERSION}" linux CC=musl-gcc MYCFLAGS="-O2" MYLDFLAGS="-static" -j2
+          "/tmp/lua-\${LUA_VERSION}/src/lua" -e 'assert(_VERSION == "Lua 5.4"); print(_VERSION .. " runtime OK")'
+          file "/tmp/lua-\${LUA_VERSION}/src/lua"
+          file "/tmp/lua-\${LUA_VERSION}/src/lua" | grep -q "statically linked"
 
       - name: Assemble package filesystem
         env:
@@ -63,25 +58,19 @@ jobs:
           set -euo pipefail
           package_root="$PWD/build/package-lua"
           mkdir -p "$package_root"
-          make -C "/tmp/lua-${LUA_VERSION}" install INSTALL_TOP="$package_root/usr"
+          make -C "/tmp/lua-\${LUA_VERSION}" install INSTALL_TOP="$package_root/usr"
           mkdir -p "$package_root/usr/share/doc/vantor-lua"
-          printf '%s\\n' "Lua ${LUA_VERSION}" "VANTOR Nyan package: lua" "Static x86_64 interpreter built with musl." "Upstream: https://www.lua.org/" > "$package_root/usr/share/doc/vantor-lua/BUILD-INFO"
+          printf '%s\n' "Lua \${LUA_VERSION}" "VANTOR Nyan package: lua" "Static x86_64 interpreter built with musl." "Upstream: https://www.lua.org/" > "$package_root/usr/share/doc/vantor-lua/BUILD-INFO"
           test -x "$package_root/usr/bin/lua"
+          test -x "$package_root/usr/bin/luac"
           "$package_root/usr/bin/lua" -e 'print("Nyan package smoke test: OK")'
           mkdir -p dist
-          tar -czf "dist/lua-${LUA_VERSION}-x86_64.tar.gz" -C "$package_root" .
-          tar -tzf "dist/lua-${LUA_VERSION}-x86_64.tar.gz" > dist/package-files.txt
-          grep -q 'usr/bin/lua
+          tar -czf "dist/lua-\${LUA_VERSION}-x86_64.tar.gz" -C "$package_root" .
+          tar -tzf "dist/lua-\${LUA_VERSION}-x86_64.tar.gz" > dist/package-files.txt
+          grep -q 'usr/bin/lua$' dist/package-files.txt
 
       - name: Publish Lua into the official Nyan repository
         env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          bash tools/publish-package.sh "dist/lua-5.4.9-x86_64.tar.gz" "lua" "5.4.9" "x86_64" "Language: Lua 5.4.9 interpreter, compiler and static development library"
- dist/package-files.txt
-
-      - name: Publish Lua into the official Nyan repository
-        env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: \${{ github.token }}
         run: |
           bash tools/publish-package.sh "dist/lua-5.4.9-x86_64.tar.gz" "lua" "5.4.9" "x86_64" "Language: Lua 5.4.9 interpreter, compiler and static development library"
