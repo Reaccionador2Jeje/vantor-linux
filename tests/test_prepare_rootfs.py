@@ -1,5 +1,6 @@
 from __future__ import annotations
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -85,6 +86,37 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertEqual((target / "etc/hostname").read_text(), "test-vantor\n")
             self.assertTrue((target / "home/tester").is_dir())
             self.assertIn("tester:!", (target / "etc/shadow").read_text())
+
+    def test_installer_prepares_kernel_initramfs_grub_and_fstab(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            target = base / "target"
+            target.mkdir()
+            (target / "etc").mkdir()
+            kernel = base / "kernel"
+            initramfs = base / "initramfs.cpio.gz"
+            kernel.write_bytes(b"test-kernel")
+            initramfs.write_bytes(b"test-initramfs")
+            fakebin = base / "bin"
+            fakebin.mkdir()
+            mountpoint = fakebin / "mountpoint"
+            mountpoint.write_text("#!/bin/sh\\nexit 0\\n")
+            mountpoint.chmod(0o755)
+            env = dict(os.environ, PATH=str(fakebin) + os.pathsep + os.environ.get("PATH", ""))
+            result = subprocess.run(
+                ["sh", str(ROOT / "installer/vantor-install"), "--prepare-boot",
+                 str(target), str(kernel), str(initramfs), "/dev/vda1", "ext4", "i486"],
+                capture_output=True, text=True, check=False, env=env,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual((target / "boot/vantor-kernel").read_bytes(), b"test-kernel")
+            self.assertEqual((target / "boot/vantor-initramfs.cpio.gz").read_bytes(), b"test-initramfs")
+            grub = (target / "boot/grub/grub.cfg").read_text()
+            self.assertIn("root=/dev/vda1 rootfstype=ext4", grub)
+            self.assertIn("VANTOR Linux Minimal — i486", grub)
+            fstab = (target / "etc/fstab").read_text()
+            self.assertIn("/dev/vda1 / ext4 defaults 0 1", fstab)
+            self.assertIn("proc /proc proc", fstab)
 
     def test_hardware_inventory_reads_proc_and_sys_fixtures(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
