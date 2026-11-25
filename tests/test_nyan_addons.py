@@ -39,6 +39,15 @@ class NyanAddonTests(unittest.TestCase):
                 )
                 self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_fastfetch_uses_large_vantor_emblem_and_system_details(self) -> None:
+        fastfetch = (ROOT / "packages/addons/fastfetch").read_text()
+        self.assertIn("Large VANTOR orbital V emblem", fastfetch)
+        self.assertIn("ONE SYSTEM. EVERY GENERATION.", fastfetch)
+        for field in ("Host:", "Kernel:", "Architecture:", "CPU:", "Memory:", "Uptime:", "Init:"):
+            with self.subTest(field=field):
+                self.assertIn(field, fastfetch)
+        self.assertIn("${SHELL:-/bin/sh}", fastfetch)
+
     def test_publisher_rebuilds_index_after_concurrent_push(self) -> None:
         publisher = (ROOT / "tools/publish-package.sh").read_text()
         self.assertIn("git fetch origin", publisher)
