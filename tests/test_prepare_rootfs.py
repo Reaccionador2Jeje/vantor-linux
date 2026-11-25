@@ -24,12 +24,14 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertTrue((output / "sbin/vantor-init").stat().st_mode & 0o111)
             self.assertTrue((output / "usr/bin/vantorctl").stat().st_mode & 0o111)
             self.assertTrue((output / "usr/bin/vantor-hw").stat().st_mode & 0o111)
+            self.assertTrue((output / "usr/bin/nyan").stat().st_mode & 0o111)
+            self.assertIn("NYAN_REPO=", (output / "etc/nyan.conf").read_text())
             self.assertTrue((output / "usr/share/vantor/branding/vantor-mark.svg").is_file())
             brand = json.loads((output / "etc/vantor-brand.json").read_text())
             self.assertEqual(brand["brand"], "VANTOR Linux")
             self.assertEqual(brand["core"]["init"], "VANTOR Init 0.1.0")
             self.assertEqual(brand["core"]["hardware"], "VANTOR Hardware 0.1.0")
-            for script in ("init", "sbin/vantor-init", "usr/bin/vantorctl", "usr/bin/vantor-hw"):
+            for script in ("init", "sbin/vantor-init", "usr/bin/vantorctl", "usr/bin/vantor-hw", "usr/bin/nyan"):
                 check = subprocess.run(["sh", "-n", str(output / script)], capture_output=True, text=True, check=False)
                 self.assertEqual(check.returncode, 0, f"{script}: {check.stderr}")
 
