@@ -110,10 +110,10 @@ case "$cmd" in
       done < "$NYAN_STATE/installed/$name.files"
     done
     while IFS= read -r item; do
-      target="\${NYAN_ROOT%/}/$item"
+      target="${NYAN_ROOT%/}/$item"
       [ ! -e "$target" ] && [ ! -L "$target" ] || die "refusing to overwrite existing system path: $item"
     done < "$NYAN_STATE/installed/$name.files"
-    tar -xzf "$file" -C "\${NYAN_ROOT%/}/"
+    tar -xzf "$file" -C "${NYAN_ROOT%/}/"
     printf '%s\t%s\t%s\n' "$name" "$version" "$digest" > "$NYAN_STATE/installed/$name"
     rm -rf "$temp"
     say "installed $name $version"
