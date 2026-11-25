@@ -174,6 +174,76 @@ done < /etc/modules
 exit 0
 """, 0o755)
 
+    write(output / "usr/sbin/vantor-network", """#!/bin/sh
+# VANTOR Network: safe configuration parser and DHCP/static IPv4 setup.
+set -u
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+CONFIG=/etc/vantor/network.conf
+MODE=dhcp
+INTERFACE=""
+ADDRESS=""
+GATEWAY=""
+DNS=""
+valid_iface() { case "$1" in ''|*[!A-Za-z0-9_.:-]*) return 1;; esac; [ "${#1}" -le 15 ]; }
+valid_ipv4() {
+    printf '%s\\n' "$1" | awk -F. 'NF==4 { for(i=1;i<=4;i++) if($i !~ /^[0-9]+$/ || $i>255) exit 1; exit 0 } { exit 1 }'
+}
+load_config() {
+    [ -r "$CONFIG" ] || return 0
+    while IFS='=' read -r key value || [ -n "$key$value" ]; do
+        case "$key" in
+            MODE) MODE=$value;;
+            INTERFACE) INTERFACE=$value;;
+            ADDRESS) ADDRESS=$value;;
+            GATEWAY) GATEWAY=$value;;
+            DNS) DNS=$value;;
+            ''|'#'*) ;;
+            *) echo "[VANTOR:network] Ignoring unknown setting: $key";;
+        esac
+    done < "$CONFIG"
+}
+start_dhcp() {
+    iface=$1
+    valid_iface "$iface" || { echo "[VANTOR:network] Invalid interface name."; return 1; }
+    ip link set "$iface" up 2>/dev/null || true
+    udhcpc -i "$iface" -s /usr/share/udhcpc/default.script -p "/run/udhcpc.$iface.pid" -b -q -t 4 -T 2
+}
+load_config
+if ! command -v ip >/dev/null 2>&1 || ! command -v udhcpc >/dev/null 2>&1; then
+    echo "[VANTOR:network] BusyBox ip/udhcpc is unavailable."
+    exit 0
+fi
+if [ -n "$INTERFACE" ]; then
+    valid_iface "$INTERFACE" || { echo "[VANTOR:network] Invalid configured interface."; exit 1; }
+    case "$MODE" in
+        dhcp) start_dhcp "$INTERFACE" || true;;
+        static)
+            case "$ADDRESS" in */*) ;; *) echo "[VANTOR:network] Static address needs a prefix."; exit 1;; esac
+            address=${ADDRESS%/*}; prefix=${ADDRESS#*/}
+            valid_ipv4 "$address" && case "$prefix" in ''|*[!0-9]*) false;; *) [ "$prefix" -ge 1 ] && [ "$prefix" -le 32 ];; esac || { echo "[VANTOR:network] Invalid static address."; exit 1; }
+            valid_ipv4 "$GATEWAY" && valid_ipv4 "$DNS" || { echo "[VANTOR:network] Invalid gateway or DNS address."; exit 1; }
+            ip link set "$INTERFACE" up || exit 1
+            ip addr replace "$ADDRESS" dev "$INTERFACE" || exit 1
+            ip route replace default via "$GATEWAY" dev "$INTERFACE" || true
+            printf 'nameserver %s\\n' "$DNS" > /etc/resolv.conf
+            ;;
+        *) echo "[VANTOR:network] Unknown network mode: $MODE"; exit 1;;
+    esac
+else
+    # Automatic discovery supports virtio, e1000 and legacy PC NIC names.
+    found=0
+    for iface_path in /sys/class/net/*; do
+        [ -e "$iface_path" ] || continue
+        iface=${iface_path##*/}
+        [ "$iface" = lo ] && continue
+        found=1
+        start_dhcp "$iface" || true
+    done
+    [ "$found" -eq 1 ] || echo "[VANTOR:network] No network interfaces detected."
+fi
+exit 0
+""", 0o755)
+
     write(output / "etc/init.d/rcS", """#!/bin/sh
 # VANTOR early system setup; safe to run more than once.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
@@ -199,27 +269,8 @@ for media_dev in /dev/sr0 /dev/cdrom; do
         break
     fi
 done
-# Apply persistent installer network configuration, or fall back to DHCP.
-/usr/bin/vantor-splash step "Starting network services"
-network_cfg=/etc/vantor/network.conf
-if [ -r "$network_cfg" ]; then
-    . "$network_cfg"
-    if [ "$MODE" = static ] && command -v ip >/dev/null 2>&1; then
-        ip link set "$INTERFACE" up 2>/dev/null || true
-        ip addr replace "$ADDRESS" dev "$INTERFACE" 2>/dev/null || true
-        ip route replace default via "$GATEWAY" dev "$INTERFACE" 2>/dev/null || true
-        printf 'nameserver %s\n' "$DNS" > /etc/resolv.conf
-    elif [ "$MODE" = dhcp ] && command -v udhcpc >/dev/null 2>&1; then
-        /bin/busybox udhcpc -s /usr/share/udhcpc/default.script -i "$INTERFACE" -b -q -t 5 -T 2 >/dev/null 2>&1 || true
-    fi
-elif command -v udhcpc >/dev/null 2>&1 && [ -d /sys/class/net ]; then
-    for iface_path in /sys/class/net/*; do
-        [ -e "$iface_path" ] || continue
-        iface=$(basename "$iface_path")
-        [ "$iface" = lo ] && continue
-        /bin/busybox udhcpc -s /usr/share/udhcpc/default.script -i "$iface" -b -q -t 3 -T 2 >/dev/null 2>&1 || true
-    done
-fi
+# Parse validated settings without sourcing an executable shell file.
+/usr/sbin/vantor-network >/dev/console 2>&1 || true
     /usr/bin/vantor-splash step "VANTOR userspace is ready"
     sleep 1
     /usr/bin/vantor-splash finish
