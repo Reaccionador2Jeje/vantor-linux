@@ -23,7 +23,7 @@ its published SHA-256. The fetch helper verifies the archive before extraction.
 
 ## Early userspace contract
 
-- Kernel loads the gzip-compressed `newc` cpio archive.
+- Kernel loads the gzip-compressed `newc` cpio archive.\n- When the matching kernel build is available, its loadable modules are copied into `/lib/modules/<kernel-release>` and dependency metadata is refreshed. A release mismatch or missing module tree fails the build instead of silently producing a broken image.
 - Kernel executes `/init` as PID 1.
 - `/init` mounts proc, sysfs and devtmpfs, prints the VANTOR identity and starts
   the available shell if a full init system is not present.
