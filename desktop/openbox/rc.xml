@@ -6,7 +6,7 @@
     <followMouse>no</followMouse>
     <focusLast>yes</focusLast>
     <underMouse>no</underMouse>
-    < focusDelay>200</ focusDelay>
+    <focusDelay>200</focusDelay>
     <raiseOnFocus>no</raiseOnFocus>
   </focus>
   <placement>
