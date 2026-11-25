@@ -59,6 +59,7 @@ package_row() {
   awk -F '\t' -v n="$1" '$1==n {print; exit}' "$(index_file)"
 }
 install_one() {
+  local name record row oldifs pkg version arch digest archive description dependencies dependency file actual temp owned_file item target
   name=$1
   valid_name "$name" || die "invalid package name: $name"
   record="$NYAN_STATE/installed/$name"
