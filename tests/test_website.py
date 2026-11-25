@@ -41,7 +41,7 @@ class VantorWebsiteTests(unittest.TestCase):
     def test_site_is_honest_about_iso_validation_status(self) -> None:
         source = (ROOT / "website" / "worker.js").read_text()
         self.assertIn("ISO en validación", source)
-        self.assertIn("no se presenta todavía como una versión estable", source)
+        self.assertIn("No se presenta todavía como una versión estable", source)
         self.assertIn("no es una ISO", source)
 
 
