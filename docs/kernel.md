@@ -36,7 +36,7 @@ The first profile prioritizes Limbo/QEMU's virtual PC: PCI, VirtIO block/network
 
 ## Current limitations
 
-- The first automated x86_64 build is in progress; a green CI check is not itself proof of a successful kernel compilation.
+- The latest module-build implementation is awaiting a fresh CI result; earlier checks exposed a test mismatch, which has been corrected in the build script.
 - The generated kernel has not yet been boot-tested in Limbo.
 - The initramfs is still a skeleton; BusyBox and the final /init environment must be assembled before the kernel can reach a usable VANTOR shell.
 - A successful kernel build alone does not prove GRUB, BIOS, UEFI or Limbo compatibility.
