@@ -8,13 +8,25 @@ VANTOR is an independent distribution assembled from upstream source projects. I
 
 The first milestone is a minimal x86_64 system that can boot in QEMU. A graphical desktop is deliberately out of scope until the base system is reproducible.
 
+## Boot sequence
+
+1. Platform firmware: legacy BIOS or UEFI.
+2. GNU GRUB 2: displays the VANTOR boot menu and loads the kernel/initramfs.
+3. Linux kernel: initializes x86_64 hardware and unpacks the initramfs.
+4. Initramfs: provides the minimal early userspace and mounts required virtual filesystems.
+5. VANTOR \`/init\`: starts the initial userspace process and eventually the system shell.
+
+GRUB is the initial bootloader; it is not a replacement for the Linux kernel. See [bootloader design](bootloader.md).
+
 ## Initial component plan
 
 1. Cross-toolchain: GNU Binutils and GCC targeting x86_64 VANTOR.
 2. C library: glibc built for the target.
-3. Kernel: upstream Linux configured for the first virtual-machine target.
-4. Userland: BusyBox and a minimal root filesystem.
-5. Boot: a documented boot path and QEMU smoke test.
+3. Bootloader: GNU GRUB 2 with BIOS and UEFI platform modules.
+4. Kernel: upstream Linux configured for the first virtual-machine target.
+5. Userland: BusyBox and a minimal root filesystem.
+6. Initramfs and ISO: assemble the early userspace and package it with GRUB.
+7. QEMU smoke test: verify the complete firmware-to-shell boot path.
 
 The exact upstream versions, source URLs, signatures, and SHA-256 checksums must be recorded in a source manifest before automated downloads are enabled.
 
@@ -29,8 +41,8 @@ The exact upstream versions, source URLs, signatures, and SHA-256 checksums must
 
 ## Architecture policy
 
-x86_64 is the first supported build target. AArch64 is a planned second target. Additional architectures require their own toolchain configuration, kernel configuration, and automated boot tests.
+x86_64 is the first supported build target. AArch64 is a planned second target. Additional architectures require their own toolchain configuration, kernel configuration, bootloader target and automated boot tests.
 
 ## Current status
 
-The repository currently contains project metadata, configuration, and validation scaffolding. It does not yet contain a toolchain builder, kernel build, root filesystem image, or bootable ISO.
+The repository has an initial GRUB 2 menu and a guarded ISO assembly script. The ISO builder requires a built kernel and initramfs, which are not yet available. The rootfs generator is a skeleton; BusyBox, kernel, initramfs and full boot integration remain future work. No bootable ISO is claimed.
