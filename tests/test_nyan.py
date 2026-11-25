@@ -194,25 +194,25 @@ class NyanIntegrationTests(unittest.TestCase):
         package_dir.mkdir()
         archive = package_dir / "arch-test.tar.gz"
         with tarfile.open(archive, "w:gz") as tar:
-            data = b"i486 package\\n"
+            data = b"i486 package\n"
             info = tarfile.TarInfo("usr/share/arch-test")
             info.size = len(data)
             tar.addfile(info, io.BytesIO(data))
         digest = hashlib.sha256(archive.read_bytes()).hexdigest()
         (index_dir / "Packages").write_text(
-            "# VANTOR-PACKAGES 1\\n"
-            f"arch-test\\t1.0\\ti486\\t{digest}\\tarch-test.tar.gz\\tLegacy test\\n"
+            "# VANTOR-PACKAGES 1\n"
+            f"arch-test\t1.0\ti486\t{digest}\tarch-test.tar.gz\tLegacy test\n"
         )
         config = self.root / "etc/nyan.conf"
         config.parent.mkdir(parents=True, exist_ok=True)
-        config.write_text('NYAN_ARCH="i486"\\n')
+        config.write_text('NYAN_ARCH="i486"\n')
         self.env.pop("NYAN_ARCH", None)
         updated = self.run_nyan("update")
         self.assertEqual(updated.returncode, 0, updated.stderr)
         self.assertIn("i486", updated.stdout)
         installed = self.run_nyan("install", "arch-test")
         self.assertEqual(installed.returncode, 0, installed.stderr)
-        self.assertEqual((self.root / "usr/share/arch-test").read_text(), "i486 package\\n")
+        self.assertEqual((self.root / "usr/share/arch-test").read_text(), "i486 package\n")
 
 if __name__ == "__main__":
     unittest.main()
