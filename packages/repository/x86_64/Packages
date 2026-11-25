@@ -19,3 +19,4 @@ watch	0.1.0	x86_64	31ffe73f07926fccbc27760c5a4de2f6439400adb6eab0821139f1999f3fe
 which	0.1.0	x86_64	a6af5a1c6b43d1531f5d23a058a577b8c76a99fb7d587dd67ee78c29d7ab58e1	which-0.1.0-all.tar.gz	VANTOR terminal utility: which	
 filetype	0.1.0	x86_64	4392e89bcd40ac84a189439f50ec9b6735551204ce906c8aef6bdc95e466ede6	filetype-0.1.0-all.tar.gz	VANTOR terminal utility: filetype	
 vtop	0.1.0	x86_64	9a446dd88e382f518c293abbf6b3f5e36a3690c353d3c61dccf1a3328b689941	vtop-0.1.0-all.tar.gz	VANTOR terminal utility: vtop	
+nano	9.2	x86_64	007f0ad700a80617e4ac55bdfb1db20f82336a6d6dfcde0dcedca24d01f5a067	nano-9.2-x86_64.tar.gz	GNU nano 9.2 tiny static editor (musl + ncurses)	
