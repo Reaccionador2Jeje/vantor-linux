@@ -36,6 +36,7 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("depmod", script)
         self.assertIn("--no-print-directory", script)
         self.assertIn("kernelrelease | tail -n 1", script)
+        self.assertIn("printf '%s\\\\n'", script)
         for filesystem in ("EXT2_FS", "EXT4_FS", "ISO9660_FS", "VFAT_FS", "FAT_FS"):
             self.assertIn(filesystem, script)
         for storage_driver in ("VIRTIO_BLK", "SCSI_VIRTIO", "SATA_AHCI", "BLK_DEV_SR"):
@@ -64,6 +65,20 @@ class KernelBuildContractTests(unittest.TestCase):
         makefile = (ROOT / "Makefile").read_text()
         self.assertIn("# Complete, ordered x86_64 pipeline", makefile)
 
+    def test_legacy_iso_workflow_tracks_all_legacy_build_inputs(self) -> None:
+        workflow = (ROOT / ".github/workflows/build-legacy-image.yml").read_text()
+        for path in (
+            "build/scripts/build-kernel-legacy.sh",
+            "build/scripts/build-busybox-legacy.sh",
+            "build/scripts/build-initramfs.sh",
+            "build/scripts/build-iso-legacy.sh",
+            "tools/fetch-sources.py",
+            "tools/validate-sources.py",
+            "tools/prepare-rootfs.py",
+        ):
+            self.assertIn(path, workflow)
+        self.assertIn("make image-legacy", workflow)
+        self.assertIn("vantor-minimal-0.1.0-i486.iso", workflow)
     def test_framebuffer_splash_renderer_is_valid_c(self) -> None:
         source = ROOT / "core/boot/vantor-fb-splash.c"
         self.assertTrue(source.is_file())
