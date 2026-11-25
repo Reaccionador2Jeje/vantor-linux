@@ -39,6 +39,8 @@ set_config() {
     printf '%s=%s\\n' "$key" "$value" >> "$BUILD_DIR/.config"
   fi
 }
+set_config CONFIG_SHA1_HWACCEL n
+set_config CONFIG_SHA256_HWACCEL n
 set_config CONFIG_STATIC y
 set_config CONFIG_VI y
 set_config CONFIG_ASH y
