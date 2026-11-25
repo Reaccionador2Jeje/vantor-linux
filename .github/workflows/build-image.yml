@@ -40,9 +40,9 @@ jobs:
           path: |
             build/distfiles
             ${{ runner.temp }}/vantor-ccache
-          key: vantor-${{ 'image' }}-cache-${{ runner.os }}-${{ hashFiles('build/sources/sources.json', 'build/scripts/build-kernel.sh', 'kernel/configs/vantor-x86_64.config') }}
+          key: vantor-image-cache-${{ runner.os }}-${{ hashFiles('build/sources/sources.json', 'build/scripts/build-kernel.sh', 'kernel/configs/vantor-x86_64.config') }}
           restore-keys: |
-            vantor-${{ 'image' }}-cache-${{ runner.os }}-
+            vantor-image-cache-${{ runner.os }}-
 
       - name: Install image build dependencies
         run: |
