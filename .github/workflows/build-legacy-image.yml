@@ -1,0 +1,59 @@
+name: Build VANTOR Minimal Legacy i486 ISO
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "build/scripts/build-kernel-legacy.sh"
+      - "build/scripts/build-busybox-legacy.sh"
+      - "build/scripts/build-initramfs.sh"
+      - "build/scripts/build-iso-legacy.sh"
+      - "build/config/vantor.conf"
+      - "build/sources/sources.json"
+      - "tools/prepare-rootfs.py"
+      - "boot/grub/grub-legacy.cfg"
+      - "Makefile"
+      - "tests/test_kernel_build.py"
+      - "tests/test_initramfs_build.py"
+      - ".github/workflows/build-legacy-image.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vantor-legacy-image
+  cancel-in-progress: true
+
+jobs:
+  build-i486-image:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    steps:
+      - name: Check out VANTOR
+        uses: actions/checkout@v4
+      - name: Install legacy image build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev libncurses-dev gcc-multilib libc6-dev-i386 cpio gzip bzip2 grub-pc-bin grub-common xorriso
+      - name: Validate source and project contracts
+        run: |
+          make check
+          python3 tools/validate-sources.py --require-pinned --only linux-legacy busybox
+      - name: Build complete i486 Minimal BIOS image
+        run: make image-legacy
+      - name: Inspect image
+        run: |
+          file output/vantor-minimal-0.1.0-i486.iso
+          test -s output/vantor-minimal-0.1.0-i486.iso
+          test -s build/work/kernel-legacy/arch/x86/boot/bzImage
+          gzip -t build/work/initramfs-legacy/vantor-legacy-initramfs.cpio.gz
+          grep -q '^CONFIG_M486SX=y$' kernel/configs/vantor-i486.config
+      - name: Upload unboot-tested ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vantor-minimal-i486-iso-${{ github.sha }}
+          path: |
+            output/vantor-minimal-0.1.0-i486.iso
+            kernel/configs/vantor-i486.config
+          if-no-files-found: error
+          retention-days: 14
