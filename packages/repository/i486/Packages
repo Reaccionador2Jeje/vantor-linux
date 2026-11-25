@@ -1,7 +1,6 @@
 # VANTOR-PACKAGES 1
 vantor-base-files	0.1.0	i486	502c7e380f348eebaeb7eda94ca3ab75b6c441497bf33becbca9ec5b159ff3c9	vantor-base-files-0.1.0-i486.tar.gz	VANTOR Minimal i486 base files and static 486-compatible BusyBox	
 vantor-profile-minimal	0.1.0	i486	2ca599033521bc2db1d8bbc6f558d7463fddcf51befd75c58b7a18c1d470d0a6	vantor-profile-minimal-0.1.0-i486.tar.gz	VANTOR Minimal profile for 486SX/486DX and later 32-bit PCs	vantor-base-files
-vtop	0.1.0	i486	9a446dd88e382f518c293abbf6b3f5e36a3690c353d3c61dccf1a3328b689941	vtop-0.1.0-all.tar.gz	VANTOR terminal utility: vtop	
 htop	3.4.1	i486	add90701ca435934f353faeb67f9fd7f7eb6f56a92fc7d7afc1e7f07aab3ad82	htop-3.4.1-i486.tar.gz	htop 3.4.1 static process monitor (musl + ncurses)	
 nano	9.2	i486	83e23f2b88c23a5a8f5b6b6d2cb3747078e54a86ca58c79f8f13b6473f670145	nano-9.2-i486.tar.gz	GNU nano 9.2 tiny static editor (musl + ncurses)	
 vantor-hardware	0.1.0	i486	d2dd76572977e23adb06319e44c2ce1eb9d8f399bde705e175dcc89fcbf63e26	vantor-hardware-0.1.0-i486.tar.gz	VANTOR read-only hardware inventory utility	
@@ -19,3 +18,4 @@ tree	0.1.0	i486	e0559e688ff82f846c514d87dbc5778f383b90f96f9e4ec93fcf4983ad9d1007
 watch	0.1.0	i486	31ffe73f07926fccbc27760c5a4de2f6439400adb6eab0821139f1999f3fe950	watch-0.1.0-all.tar.gz	VANTOR terminal utility: watch	
 which	0.1.0	i486	a6af5a1c6b43d1531f5d23a058a577b8c76a99fb7d587dd67ee78c29d7ab58e1	which-0.1.0-all.tar.gz	VANTOR terminal utility: which	
 filetype	0.1.0	i486	4392e89bcd40ac84a189439f50ec9b6735551204ce906c8aef6bdc95e466ede6	filetype-0.1.0-all.tar.gz	VANTOR terminal utility: filetype	
+vtop	0.1.0	i486	9a446dd88e382f518c293abbf6b3f5e36a3690c353d3c61dccf1a3328b689941	vtop-0.1.0-all.tar.gz	VANTOR terminal utility: vtop	
