@@ -7,6 +7,7 @@ VANTOR Core is the first project-owned userspace layer in Genesis. It is deliber
 - **VANTOR Init 0.1.0** (`/sbin/vantor-init`): mounts procfs, sysfs and devtmpfs when available, creates runtime directories, prints boot diagnostics, then hands off to `/sbin/init`. If no system init is installed, it opens an emergency shell.
 - **Early entry point** (`/init`): delegates to VANTOR Init and provides a minimal emergency fallback.
 - **VANTOR Control 0.1.0** (`/usr/bin/vantorctl`): dispatches system information and diagnostics commands.
+- **VANTOR Doctor 0.2.0** (`/usr/bin/vantor-doctor`): built-in offline read-only checks for core binaries, virtual filesystem mounts, user environment, Nyan configuration and network-interface presence. It separates critical failures from warnings and never changes system state.
 - **VANTOR Hardware 0.1.0** (`/usr/bin/vantor-hw`): read-only inventory of CPU, memory, block devices, PCI devices and bound drivers, VirtIO devices, USB devices and network interfaces.
 - **VANTOR Modules** (`/usr/sbin/vantor-modules`): loads optional storage, filesystem, VirtIO, USB and network drivers listed in `/etc/modules` through BusyBox `modprobe`; built-in kernel drivers are unaffected. The initramfs invokes this before searching for an installed root filesystem.
 - **VANTOR Network** (`/usr/sbin/vantor-network`): reads installer settings as data (never executes the config file), validates interface and IPv4 fields, applies static IPv4 or discovers network interfaces and starts BusyBox DHCP. The DHCP hook configures the address, default route and DNS resolver.
@@ -29,6 +30,7 @@ VANTOR Core is the first project-owned userspace layer in Genesis. It is deliber
 | `vantorctl service stop NAME` | Stop a service |
 | `vantorctl service status NAME` | Check a service process |
 | `vantorctl status` | Show release, kernel, PID 1 and uptime |
+| `vantor-doctor` | Run offline base-system health checks without changing files or settings |
 | `vantorctl version` | Show command version |
 
 VANTOR Hardware reads procfs and sysfs only. It does not load drivers, change device state, configure networking, or write to hardware. Missing procfs/sysfs data is reported as unavailable rather than guessed. For isolated tests, the collector accepts `VANTOR_PROC_ROOT` and `VANTOR_SYS_ROOT` fixture paths.
