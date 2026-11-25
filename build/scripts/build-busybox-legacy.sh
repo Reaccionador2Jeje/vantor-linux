@@ -63,7 +63,7 @@ make -C "$SOURCE_DIR" O="$BUILD_DIR" CC="$CC_LEGACY" CONFIG_PREFIX="$ROOTFS" ins
 file "$ROOTFS/bin/busybox" | grep -q 'ELF 32-bit'
 readelf -h "$ROOTFS/bin/busybox" | grep -q 'Intel 80386'
 "$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
-for applet in vi getty su mdev udhcpc mount umount passwd chpasswd reboot halt poweroff switch_root; do
+for applet in vi getty su mdev udhcpc ip mount umount passwd chpasswd reboot halt poweroff switch_root; do
     grep -qx "$applet" "$BUILD_DIR/applets.txt" || { echo "[ERROR] Legacy BusyBox applet missing: $applet" >&2; exit 1; }
 done
 echo "[OK] Static i486 BusyBox built and installed into build/work/rootfs-legacy."
