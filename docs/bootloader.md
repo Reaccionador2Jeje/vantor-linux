@@ -16,11 +16,13 @@ This first boot profile targets x86_64. Limbo PC Emulator is the manual Android 
 
 The maintained configuration is \`boot/grub/grub.cfg\`. It provides:
 
-- **VANTOR Linux — Genesis:** normal boot.
-- **VANTOR Linux — Recovery shell:** starts the initramfs shell as PID 1 for recovery.
+- **VANTOR Linux — Live Genesis:** normal Live boot.
+- **VANTOR Linux — Live (Diagnostic mode):** verbose diagnostic boot.
 - Reboot and power-off entries.
 
-The menu uses VANTOR's dark console palette and cyan highlight. Graphical boot artwork and a custom GRUB theme are intentionally deferred until the basic boot path works.
+The x86_64 menu loads the native theme from `boot/grub/themes/vantor/theme.txt`. It uses the Deep Space navy background, cyan VANTOR title and selection, titanium menu text, and the **ONE SYSTEM. EVERY GENERATION.** slogan. The theme is bundled into the ISO by `build/scripts/build-iso.sh`; it does not fetch assets or fonts from the network.
+
+The i486 Legacy menu intentionally stays in BIOS text mode, with the VANTOR palette and slogan, to avoid making older hardware depend on graphical GRUB support. When the installer prepares an x86_64 installed system, it copies the theme from the Live media if available. Legacy installed systems retain the text-mode menu.
 
 ## ISO layout
 
@@ -31,7 +33,10 @@ The ISO builder stages:
 ├── vantor-kernel
 ├── vantor-initramfs.cpio.gz
 └── grub/
-    └── grub.cfg
+    ├── grub.cfg
+    └── themes/
+        └── vantor/
+            └── theme.txt
 \`\`\`
 
 GRUB's \`grub-mkrescue\` creates the ISO using BIOS and/or EFI platform modules installed on the build host. For both firmware paths, install the matching GRUB platform packages (commonly \`grub-pc-bin\` and \`grub-efi-amd64-bin\`) plus \`xorriso\`. Test both firmware modes; a GRUB menu alone does not prove both work.
