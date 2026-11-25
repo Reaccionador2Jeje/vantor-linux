@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openbox_menu xmlns="http://openbox.org/3.4/menu">
+  <menu id="root-menu" label="VANTOR">
+    <item label="Terminal"><action name="Execute"><command>xterm</command></action></item>
+    <item label="File Manager"><action name="Execute"><command>pcmanfm</command></action></item>
+    <separator/>
+    <item label="System Information"><action name="Execute"><command>xterm -e vantorctl status</command></action></item>
+    <item label="Nyan Packages"><action name="Execute"><command>xterm -e nyan</command></action></item>
+    <separator/>
+    <menu id="desktop-workspaces" label="Workspaces"><item label="Workspace 1"><action name="GoToDesktop"><to>1</to></action></item><item label="Workspace 2"><action name="GoToDesktop"><to>2</to></action></item></menu>
+    <separator/>
+    <item label="Restart Window Manager"><action name="Restart"/></item>
+    <item label="Exit VANTOR Desktop"><action name="Exit"/></item>
+  </menu>
+</openbox_menu>
