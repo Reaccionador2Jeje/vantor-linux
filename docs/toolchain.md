@@ -25,11 +25,11 @@ will be retained as CI artifacts once the build stage is enabled.
 
 | Component | Candidate | Reason |
 |---|---:|---|
-| GNU Binutils | 2.46.1 | Upstream release archive exists |
+| GNU Binutils | 2.47 | Upstream release archive exists |
 | GCC | 16.2.0 | Listed in GNU's release timeline |
 | glibc | 2.44 | Upstream's current stable release |
 | Linux | 6.18.65 | Current 6.18 long-term-support point release |
-| BusyBox | 1.37.0 | Stable release; 1.38.0 is marked unstable upstream |
+| BusyBox | 1.37.0 | Stable baseline; upstream marks 1.38.0 unstable |
 
 These are candidates, not yet build-approved pins. The manifest intentionally
 leaves SHA-256 values empty. The project must verify each digest against an
