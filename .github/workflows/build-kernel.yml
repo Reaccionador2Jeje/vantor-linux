@@ -35,7 +35,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             build-essential bc bison flex libssl-dev libelf-dev libncurses-dev \
-            dwarves python3 xz-utils
+            dwarves kmod python3 xz-utils
 
       - name: Validate pinned kernel source and repository contracts
         run: |
@@ -48,6 +48,9 @@ jobs:
       - name: Inspect kernel image and configuration
         run: |
           test -s build/work/kernel/vantor-kernel
+          test -s build/work/kernel/kernelrelease
+          test -d "build/work/modules/lib/modules/$(cat build/work/kernel/kernelrelease)"
+          find "build/work/modules/lib/modules/$(cat build/work/kernel/kernelrelease)" -type f | grep -q .
           file build/work/kernel/vantor-kernel
           grep -q '^CONFIG_X86_64=y$' kernel/configs/vantor-x86_64.config
           grep -q '^CONFIG_BLK_DEV_INITRD=y$' kernel/configs/vantor-x86_64.config
@@ -63,6 +66,8 @@ jobs:
           name: vantor-x86_64-kernel-${{ github.sha }}
           path: |
             build/work/kernel/vantor-kernel
+            build/work/kernel/kernelrelease
+            build/work/modules/lib/modules/**
             kernel/configs/vantor-x86_64.config
             build/logs/kernel-bzImage.log
           if-no-files-found: error
