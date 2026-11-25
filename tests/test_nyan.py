@@ -67,6 +67,18 @@ class NyanIntegrationTests(unittest.TestCase):
         (self.repo / "repo" / "x86_64" / "Packages").write_text("# VANTOR-PACKAGES 1\n" + row)
         return archive, digest
 
+    def add_package(self, name: str, path: str, data: bytes, dependencies: str = "") -> None:
+        archive = self.repo / "packages" / "x86_64" / f"{name}.tar.gz"
+        with tarfile.open(archive, "w:gz") as tar:
+            info = tarfile.TarInfo(path)
+            info.size = len(data)
+            tar.addfile(info, io.BytesIO(data))
+        digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+        index = self.repo / "repo" / "x86_64" / "Packages"
+        existing = index.read_text().splitlines() if index.exists() else ["# VANTOR-PACKAGES 1"]
+        existing.append(f"{name}\t1.0\tx86_64\t{digest}\t{name}.tar.gz\tTest package\t{dependencies}")
+        index.write_text("\\n".join(existing) + "\\n")
+
     def run_nyan(self, *args: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(["sh", str(NYAN), *args], env=self.env, capture_output=True, text=True, check=False)
 
@@ -82,6 +94,24 @@ class NyanIntegrationTests(unittest.TestCase):
         removed = self.run_nyan("remove", "sample")
         self.assertEqual(removed.returncode, 0, removed.stderr)
         self.assertFalse(target.exists())
+
+    def test_installs_dependencies_before_requested_package(self) -> None:
+        self.add_package("runtime", "usr/lib/runtime.txt", b"runtime\\n")
+        self.add_package("application", "usr/bin/application", b"app\\n", "runtime")
+        self.assertEqual(self.run_nyan("update").returncode, 0)
+        result = self.run_nyan("install", "application")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue((self.root / "usr/lib/runtime.txt").exists())
+        self.assertTrue((self.root / "usr/bin/application").exists())
+        self.assertTrue((self.root / "var/lib/nyan/installed/runtime").exists())
+
+    def test_rejects_dependency_cycles(self) -> None:
+        self.add_package("alpha", "usr/share/alpha", b"a", "beta")
+        self.add_package("beta", "usr/share/beta", b"b", "alpha")
+        self.assertEqual(self.run_nyan("update").returncode, 0)
+        result = self.run_nyan("install", "alpha")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("dependency cycle", result.stderr)
 
     def test_rejects_path_traversal(self) -> None:
         self.make_archive("badpath", [("../outside.txt", b"escape", "traversal")])
