@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+[ "$#" -eq 0 ] || { echo "Usage: vantor-about" >&2; exit 2; }
+echo "VANTOR Linux"
+if [ -r /etc/os-release ]; then
+  . /etc/os-release
+  printf 'Edition: %s\n' "${PRETTY_NAME:-VANTOR}"
+fi
+printf 'Kernel: %s\n' "$(uname -sr)"
+printf 'Architecture: %s\n' "$(uname -m)"
+printf 'Hostname: %s\n' "$(hostname 2>/dev/null || echo unknown)"
+printf 'Uptime: '
+if [ -r /proc/uptime ]; then
+  awk '{printf "%.0f seconds\n",$1}' /proc/uptime
+else
+  echo unavailable
+fi
