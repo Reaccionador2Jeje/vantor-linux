@@ -67,3 +67,13 @@ The interactive installer now includes these additional setup actions:
 - **System preferences:** saves hostname, locale (`/etc/locale.conf`) and timezone (`/etc/timezone`); copies the timezone file to `/etc/localtime` when it exists in the Live environment.
 
 These options are also available from the installer menu after installation. The current package selection prompt uses package names rather than a graphical catalog; package availability depends on the selected mirror and architecture. Static networking requires the BusyBox `ip` applet in the image.
+
+
+## Disk inspection and GRUB BIOS installation
+
+The installer menu now provides two additional actions:
+
+- **Inspect disks and partitions** displays `lsblk` output when available, or falls back to `/proc/partitions` and optional `blkid`. This action is read-only.
+- **Install GRUB bootloader** checks that the installed target is mounted and already has a generated `/boot/grub/grub.cfg`. It identifies the parent whole disk from sysfs, rejects partition paths, and requires the user to type the exact disk path before running `grub-install --target=i386-pc`.
+
+Important: the current Live image does not yet bundle `grub-install` and its BIOS modules. The menu therefore reports that the feature is unavailable and makes no disk changes until those tools are included in a future image. This implementation is a guarded integration point, not proof of a working installed bootloader. The disk inventory is informational only; partitioning and formatting remain manual.
