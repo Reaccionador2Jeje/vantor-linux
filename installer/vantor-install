@@ -251,22 +251,39 @@ prepare_boot_files() {
     mkdir -p "$target/boot" "$target/boot/grub" "$target/etc"
     cp "$kernel" "$target/boot/vantor-kernel"
     cp "$initramfs" "$target/boot/vantor-initramfs.cpio.gz"
+    if [ "$arch" = "x86_64" ]; then
+        theme_source="\${VANTOR_GRUB_THEME:-/run/vantor-media/boot/grub/themes/vantor/theme.txt}"
+        if [ -s "$theme_source" ]; then
+            mkdir -p "$target/boot/grub/themes/vantor"
+            cp "$theme_source" "$target/boot/grub/themes/vantor/theme.txt"
+        fi
+    fi
     cat > "$target/boot/grub/grub.cfg.tmp" <<EOF
 # VANTOR Linux Minimal — installed system
 set default=0
-set timeout=5
+set timeout=8
 set timeout_style=menu
-set menu_color_normal="white/black"
-set menu_color_highlight="black/light-cyan"
-terminal_output console
+set menu_color_normal="light-gray/black"
+set menu_color_highlight="black/cyan"
+if [ -f /boot/grub/themes/vantor/theme.txt ]; then
+    insmod all_video
+    insmod gfxterm
+    insmod gfxmenu
+    loadfont unicode
+    set gfxmode=auto
+    terminal_output gfxterm
+    set theme=/boot/grub/themes/vantor/theme.txt
+else
+    terminal_output console
+fi
 
-menuentry "VANTOR Linux Minimal — $arch" --class vantor {
+menuentry "VANTOR Linux — Live installed ($arch)" --class vantor {
     search --no-floppy --file --set=root /boot/vantor-kernel
     linux /boot/vantor-kernel root=$root_device rootfstype=$root_fstype rw rootwait console=tty0 loglevel=4
     initrd /boot/vantor-initramfs.cpio.gz
 }
 
-menuentry "VANTOR Linux Minimal — Diagnostic mode" --class recovery {
+menuentry "VANTOR Linux — Installed (Diagnostic mode)" --class recovery {
     search --no-floppy --file --set=root /boot/vantor-kernel
     linux /boot/vantor-kernel root=$root_device rootfstype=$root_fstype rw rootwait console=tty0 loglevel=7 initcall_debug
     initrd /boot/vantor-initramfs.cpio.gz
