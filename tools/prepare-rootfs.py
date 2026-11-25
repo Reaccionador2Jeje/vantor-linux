@@ -141,6 +141,15 @@ esac
     shutil.copy2(hardware_tool, output / "usr/bin/vantor-hw")
     (output / "usr/bin/vantor-hw").chmod(0o755)
 
+    # Nyan is the native package manager and is available in the first boot image.
+    nyan_client = ROOT / "packages/nyan/nyan"
+    shutil.copy2(nyan_client, output / "usr/bin/nyan")
+    (output / "usr/bin/nyan").chmod(0o755)
+    write(output / "etc/nyan.conf", """# Nyan package repository configuration
+NYAN_REPO="https://vantor-linux.cristopheriguaran-7.workers.dev"
+NYAN_ARCH="x86_64"
+""")
+
     write(output / "etc/vantor-brand.json", json.dumps({
         "brand": theme["brand"], "version": "0.1.0", "codename": "Genesis",
         "slogan": theme["slogan"], "branding_path": "/usr/share/vantor/branding",
@@ -148,7 +157,7 @@ esac
     }, indent=2) + "\n")
     print(f"[OK] Prepared VANTOR rootfs skeleton at {output}")
     print(f"[OK] Installed {len(BRAND_FILES)} official branding assets.")
-    print("[OK] Added VANTOR Init, Control and Hardware inventory.")
+    print("[OK] Added VANTOR Init, Control, Hardware inventory and Nyan package manager.")
     print("[INFO] Full service supervision and network configuration are not implemented yet.")
     return 0
 
