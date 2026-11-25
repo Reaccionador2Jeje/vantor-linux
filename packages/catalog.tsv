@@ -16,7 +16,7 @@ vi	editors	bundled	BusyBox vi console editor
 sudo	administration	building	Privilege elevation for wheel users; real executable required
 nano	editors	planned	Friendly terminal text editor
 vim	editors	planned	Full Vim editor
-fastfetch	diagnostics	planned	System information and VANTOR branding
+fastfetch	diagnostics	building	Compact VANTOR system summary with branded terminal output
 dialog	installer	planned	Full-screen TUI widgets
 curl	network	planned	TLS-capable transfer client
 ca-certificates	network	planned	Trusted certificate bundle
@@ -37,7 +37,6 @@ vantor-netdiag	network	building	Network interfaces, routes, DNS and default gate
 vantor-logview	diagnostics	building	Simple system log viewer with pager fallback
 vantor-config-backup	backup	building	Create a non-overwriting archive of VANTOR system configuration
 vantor-mountinfo	storage	building	Readable mounted filesystem and mount-options report
-fastfetch	diagnostics	building	Compact VANTOR system summary with branded terminal output
 tree	files	building	Recursive directory tree viewer
 watch	system	building	Repeat a command at a configurable interval
 which	system	building	Locate executable commands in PATH
@@ -88,12 +87,9 @@ pcmanfm-qt	desktop	planned	LXQt file manager
 lxde	desktop	planned	LXDE desktop environment meta-package
 lxsession	desktop	planned	LXDE session manager
 lxpanel	desktop	planned	LXDE panel
-openbox	desktop	planned	Lightweight X11 window manager
 lxterminal	desktop	planned	LXDE terminal emulator
-pcmanfm	desktop	planned	LXDE file manager
 dbus	desktop	planned	Desktop message bus required by graphical sessions
 seatd	desktop	planned	Seat and device access service for compositor sessions
-mesa	desktop	planned	OpenGL and EGL graphics libraries
 gtk3	desktop	planned	GTK 3 toolkit runtime
 gtk4	desktop	planned	GTK 4 toolkit runtime
 qt6-base	desktop	planned	Qt 6 base toolkit runtime
@@ -102,7 +98,6 @@ xdg-desktop-portal	desktop	planned	Desktop portal interfaces
 xdg-desktop-portal-gtk	desktop	planned	GTK portal backend
 xdg-desktop-portal-kde	desktop	planned	KDE portal backend
 greetd	desktop	planned	Lightweight graphical login manager
-lightdm	desktop	planned	Display manager for X11 desktop sessions
 sddm	desktop	planned	Simple Desktop Display Manager; KDE-friendly graphical login
 gdm	desktop	planned	GNOME Display Manager and GNOME login screen
 xorg-xwayland	desktop	planned	X11 application compatibility server for Wayland
