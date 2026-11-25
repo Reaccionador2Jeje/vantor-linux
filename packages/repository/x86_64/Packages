@@ -3,3 +3,4 @@ lua	5.4.9	x86_64	7ec8d0e95e2048710852b1ee79a767bf8e13f940d824f188876f1b91c7cf039
 vantor-profile-development	0.1.0	x86_64	64ca831943980061d35d2b0bb02e677bc34980808d2d7377cf42e0138ccc5fbe	vantor-profile-development-0.1.0-x86_64.tar.gz	Profile: VANTOR development tools and programming languages	lua
 vantor-base-files	0.1.0	x86_64	4c8b1d82418d5cd9d64e9d6c5c614892551ad9712e2ac6d8a552f18bdcb213a0	vantor-base-files-0.1.0-x86_64.tar.gz	VANTOR Minimal base files, BusyBox, init and system accounts	
 vantor-profile-minimal	0.1.0	x86_64	4a96e939bd33f8ee2feca9bfbf49051db76591fac3e123ab109254426432cb22	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
+vantor-hardware	0.1.0	x86_64	97b8ae20d22dd1dce138db21376121cc54943fa5253ad89254a0e934d300c517	vantor-hardware-0.1.0-x86_64.tar.gz	VANTOR read-only hardware inventory utility	
