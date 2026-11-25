@@ -63,6 +63,7 @@ core-files:
 	@test -s .github/workflows/build-nyan-minimal.yml
 	@test -s .github/workflows/build-legacy-minimal.yml
 	@test -s .github/workflows/build-legacy-image.yml
+	@test -s .github/workflows/build-image.yml
 	@test -s packages/repository/i486/Packages
 	@test -s packages/profiles/minimal/PROFILE.txt
 	@grep -q 'root:x:0:0:root' tools/prepare-rootfs.py
@@ -86,6 +87,7 @@ core-files:
 kernel-files:
 	@test -s build/scripts/build-kernel.sh
 	@test -s .github/workflows/build-kernel.yml
+	@test -s .github/workflows/build-image.yml
 	@test -s kernel/configs/README.md
 	@test -s docs/kernel.md
 	@test -s build/scripts/build-kernel-legacy.sh
