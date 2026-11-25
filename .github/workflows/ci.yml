@@ -35,7 +35,10 @@ jobs:
         run: make check
 
       - name: Compile Python tools
-        run: python3 -m compileall -q tools
+        run: python3 -m compileall -q tools tests
+
+      - name: Run source tooling tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
 
       - name: Check required repository paths
         run: |
