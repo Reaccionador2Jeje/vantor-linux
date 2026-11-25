@@ -56,7 +56,7 @@ class PrepareRootfsTests(unittest.TestCase):
             (sysroot / "class" / "net" / "eth0" / "operstate").write_text("up\n")
             (sysroot / "class" / "net" / "eth0" / "address").write_text("02:00:00:00:00:01\n")
             env = dict(__import__("os").environ, VANTOR_PROC_ROOT=str(proc), VANTOR_SYS_ROOT=str(sysroot))
-            result = subprocess.run([str(ROOT / "core/hardware/vantor-hw")], env=env, capture_output=True, text=True, check=False)
+            result = subprocess.run(["sh", str(ROOT / "core/hardware/vantor-hw")], env=env, capture_output=True, text=True, check=False)
             self.assertEqual(result.returncode, 0, result.stderr)
             for expected in ("VANTOR Test CPU", "MemTotal:", "vda: sectors=4096", "vendor=0x1af4", "virtio0", "eth0 state=up"):
                 self.assertIn(expected, result.stdout, expected)
