@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
-.PHONY: help info check check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel busybox initramfs rootfs boot-files iso clean
+.PHONY: help info check check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel busybox initramfs rootfs boot-files iso clean kernel-files initramfs-files
 
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
@@ -65,6 +65,19 @@ toolchain:
 
 kernel:
 	@bash build/scripts/build-kernel.sh
+
+busybox:
+	@bash build/scripts/build-busybox.sh
+
+initramfs:
+	@bash build/scripts/build-initramfs.sh
+
+initramfs-files:
+	@test -s build/scripts/build-busybox.sh
+	@test -s build/scripts/build-initramfs.sh
+	@test -s docs/initramfs.md
+	@test -s tests/test_initramfs_build.py
+	@echo "[OK] BusyBox and initramfs build files are present."
 
 rootfs:
 	@python3 tools/prepare-rootfs.py --output build/work/rootfs
