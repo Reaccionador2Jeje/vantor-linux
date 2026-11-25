@@ -109,8 +109,8 @@ cat > "$ROOTFS/usr/bin/vantor-doctor" <<'EOF'
 failed=0
 check() {
   label=$1; shift
-  if "$@"; then printf '[ OK ] %s\\n' "$label"
-  else printf '[FAIL] %s\\n' "$label"; failed=1
+  if "$@"; then printf '[ OK ] %s\n' "$label"
+  else printf '[FAIL] %s\n' "$label"; failed=1
   fi
 }
 check "BusyBox executable" test -x /bin/busybox
@@ -134,7 +134,7 @@ export VANTOR_RUNTIME=proot
 if [ "$#" -gt 0 ]; then
   exec "$@"
 fi
-printf '\\033[1;36mVANTOR Linux\\033[0m — Termux ARM64 userspace\\n'
+printf '\033[1;36mVANTOR Linux\033[0m — Termux ARM64 userspace\n'
 echo "Android supplies the kernel; VANTOR supplies this userspace."
 echo "Run 'vantor-info' or 'vantor-doctor' to inspect this environment."
 exec /bin/sh -l
