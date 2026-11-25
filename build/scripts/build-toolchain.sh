@@ -9,8 +9,8 @@ make sources-ready
 make fetch-sources
 
 mkdir -p build/work/sources build/logs
-python3 tools/extract-source.py build/distfiles/binutils-2.47.tar.xz build/work/sources/binutils
-python3 tools/extract-source.py build/distfiles/gcc-16.2.0.tar.xz build/work/sources/gcc
+python3 tools/extract-source.py build/distfiles/binutils-2.47.tar.xz build/work/sources/binutils-2.47
+python3 tools/extract-source.py build/distfiles/gcc-16.2.0.tar.xz build/work/sources/gcc-16.2.0
 
 export PATH="$ROOT/build/tools/bin:$PATH"
 echo "[VANTOR] Building Binutils pass 1..."
