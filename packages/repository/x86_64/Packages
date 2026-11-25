@@ -1,2 +1,3 @@
 # VANTOR-PACKAGES 1
 # Genesis repository — no installable packages have been published yet.
+lua	5.4.9	x86_64	7ec8d0e95e2048710852b1ee79a767bf8e13f940d824f188876f1b91c7cf039c	lua-5.4.9-x86_64.tar.gz	Language: Lua 5.4.9 interpreter, compiler and static development library
