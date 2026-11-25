@@ -14,6 +14,7 @@ class NyanNativeBuildTests(unittest.TestCase):
         "build-nyan-htop.sh",
         "build-nyan-dialog.sh",
         "build-nyan-curl.sh",
+        "build-nyan-jq.sh",
     )
 
     def test_native_builders_are_valid_bash(self) -> None:
@@ -73,9 +74,24 @@ class NyanNativeBuildTests(unittest.TestCase):
             with self.subTest(value=value):
                 self.assertIn(value, curl)
 
-    def test_native_workflow_builds_four_packages_and_publishes_successes_once(self) -> None:
+    def test_jq_is_pinned_static_and_smoke_tested_on_target(self) -> None:
+        jq = (ROOT / "tools/build-nyan-jq.sh").read_text()
+        for value in (
+            "jq-1.8.1.tar.gz",
+            "2be64e7129cecb11d5906290eba10af694fb9e3e7f9fc208a311dc33ca837eb0",
+            "--with-oniguruma=builtin",
+            "--disable-maintainer-mode",
+            "-static",
+            "qemu-i386 -cpu 486",
+            "readelf",
+            "jq unexpectedly requires a dynamic interpreter",
+        ):
+            with self.subTest(value=value):
+                self.assertIn(value, jq)
+
+    def test_native_workflow_builds_five_packages_and_publishes_successes_once(self) -> None:
         workflow = (ROOT / ".github/workflows/build-nyan-native.yml").read_text()
-        for package in ("nano", "htop", "dialog", "curl"):
+        for package in ("nano", "htop", "dialog", "curl", "jq"):
             self.assertIn(f"package: {package}", workflow)
             self.assertIn(f"publish_one {package}", workflow)
         self.assertIn("arch: x86_64", workflow)
