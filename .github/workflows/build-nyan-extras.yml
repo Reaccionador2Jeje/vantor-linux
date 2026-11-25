@@ -54,6 +54,11 @@ jobs:
               publish "build/nyan-extras/$tool-0.1.0-all.tar.gz" "$tool" "$arch" "VANTOR utility: $tool (architecture-independent)"
             done
           done
+          for tool in fastfetch tree watch which filetype vtop; do
+            for arch in x86_64 i486; do
+              publish "build/nyan-extras/$tool-0.1.0-all.tar.gz" "$tool" "$arch" "VANTOR terminal utility: $tool"
+            done
+          done
       - name: Upload package archives
         uses: actions/upload-artifact@v4
         with:
