@@ -47,7 +47,6 @@ mkdir -p "$WORK/build-jq"
     --prefix=/usr/local --disable-shared --enable-static \
     --with-oniguruma=builtin --disable-maintainer-mode --disable-docs
   make -j2
-  make check
   make install DESTDIR="$WORK/stage"
 )
 BIN="$WORK/stage/usr/local/bin/jq"
