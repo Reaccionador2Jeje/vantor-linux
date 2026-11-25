@@ -63,7 +63,13 @@ configure_target() {
     mkdir -p "$target/etc" "$target/home/$username" "$target/root" "$target/etc/sudoers.d"
     touch "$target/etc/passwd" "$target/etc/group" "$target/etc/shadow" "$target/etc/gshadow"
     grep -q '^root:' "$target/etc/passwd" || printf 'root:x:0:0:root:/root:/bin/sh\n' >> "$target/etc/passwd"
-    grep -q "^$username:" "$target/etc/passwd" || printf '%s:x:1000:1000:%s User:/home/%s:/bin/sh\n' "$username" "$username" "$username" >> "$target/etc/passwd"
+    if ! grep -q "^$username:" "$target/etc/passwd"; then
+        uid=$(awk -F: 'BEGIN { max=999 } { if ($3 > max) max=$3 } END { print max+1 }' "$target/etc/passwd")
+        gid=$uid
+        printf '%s:x:%s:%s:%s User:/home/%s:/bin/sh\n' "$username" "$uid" "$gid" "$username" "$username" >> "$target/etc/passwd"
+        printf '%s:x:%s:\n' "$username" "$gid" >> "$target/etc/group"
+        printf '%s:!::\n' "$username" >> "$target/etc/gshadow"
+    fi
     grep -q '^root:' "$target/etc/group" || printf 'root:x:0:\n' >> "$target/etc/group"
     grep -q '^wheel:' "$target/etc/group" || printf 'wheel:x:10:%s\n' "$username" >> "$target/etc/group"
     if grep -q '^wheel:' "$target/etc/group" && ! grep '^wheel:' "$target/etc/group" | grep -q ",$username\\$"; then
