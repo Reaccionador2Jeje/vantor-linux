@@ -1,0 +1,56 @@
+name: Build and publish Nyan extras
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "core/hardware/vantor-hw"
+      - "installer/vantor-install"
+      - "assets/branding/**"
+      - "README.md"
+      - "LICENSE"
+      - "docs/nyan.md"
+      - "tools/build-nyan-extras.sh"
+      - ".github/workflows/build-nyan-extras.yml"
+      - "tools/publish-package.sh"
+permissions:
+  contents: write
+concurrency:
+  group: vantor-nyan-extras-publish
+  cancel-in-progress: false
+jobs:
+  build-publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out VANTOR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build architecture-independent payloads
+        run: bash tools/build-nyan-extras.sh
+      - name: Publish eight Nyan packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          publish() {
+            local archive="$1" name="$2" arch="$3" description="$4" dependency="${5:-}"
+            if [ -n "$dependency" ]; then
+              bash tools/publish-package.sh "$archive" "$name" 0.1.0 "$arch" "$description" "$dependency"
+            else
+              bash tools/publish-package.sh "$archive" "$name" 0.1.0 "$arch" "$description"
+            fi
+          }
+          for arch in x86_64 i486; do
+            publish "build/nyan-extras/vantor-hardware-0.1.0-$arch.tar.gz" vantor-hardware "$arch" "VANTOR read-only hardware inventory utility"
+            publish "build/nyan-extras/vantor-installer-0.1.0-$arch.tar.gz" vantor-installer "$arch" "VANTOR text-mode system installer" vantor-base-files
+            publish "build/nyan-extras/vantor-branding-0.1.0-$arch.tar.gz" vantor-branding "$arch" "Official VANTOR identity assets"
+            publish "build/nyan-extras/vantor-docs-0.1.0-$arch.tar.gz" vantor-docs "$arch" "VANTOR system and Nyan documentation"
+      - name: Upload package archives
+        uses: actions/upload-artifact@v4
+        with:
+          name: vantor-nyan-extras-${{ github.sha }}
+          path: build/nyan-extras/*.tar.gz
+          if-no-files-found: error
+          retention-days: 30
