@@ -97,7 +97,7 @@ if command -v depmod >/dev/null 2>&1; then
 else
     echo "[WARN] depmod unavailable; target system must regenerate module dependencies."
 fi
-printf '%s\\n' "$KERNEL_RELEASE" > "$ROOT/build/work/kernel/kernelrelease"
+printf '%s\n' "$KERNEL_RELEASE" > "$ROOT/build/work/kernel/kernelrelease"
 
 echo "[OK] VANTOR kernel built: build/work/kernel/vantor-kernel"
 echo "[OK] VANTOR modules staged for $KERNEL_RELEASE"
