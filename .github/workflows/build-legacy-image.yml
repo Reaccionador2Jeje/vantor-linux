@@ -23,7 +23,7 @@ on:
       - ".github/workflows/build-legacy-image.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: vantor-legacy-image
@@ -53,6 +53,25 @@ jobs:
           test -s build/work/kernel-legacy/arch/x86/boot/bzImage
           gzip -t build/work/initramfs-legacy/vantor-legacy-initramfs.cpio.gz
           grep -q '^CONFIG_M486SX=y$' kernel/configs/vantor-i486.config
+      - name: Generate ISO checksum
+        run: sha256sum output/vantor-minimal-0.1.0-i486.iso > output/vantor-minimal-0.1.0-i486.iso.sha256
+
+      - name: Publish Legacy preview ISO to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: vantor-minimal-0.1.0-i486
+          name: VANTOR Minimal Legacy 0.1.0 — i486 Preview
+          prerelease: true
+          make_latest: false
+          fail_on_unmatched_files: true
+          body: |
+            VANTOR Minimal Legacy i486 ISO built by GitHub Actions.
+
+            **Preview build:** compilation and ISO structure checks passed. Hardware boot compatibility has not yet been validated.
+          files: |
+            output/vantor-minimal-0.1.0-i486.iso
+            output/vantor-minimal-0.1.0-i486.iso.sha256
+
       - name: Upload unboot-tested ISO artifact
         uses: actions/upload-artifact@v4
         with:
