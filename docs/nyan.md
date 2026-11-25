@@ -23,12 +23,12 @@ See [the repository format and publishing guide](../packages/repository/README.m
 
 ## Current limitations
 
-This is experimental, not production-ready. It lacks dependency resolution, signatures, transactional rollback, file-conflict detection, reliable shared-file ownership, upgrade logic and safe handling of maintainer scripts. SHA-256 alone does not authenticate repository publishers. Do not use this version to modify a real system.
+This is experimental, not production-ready. It lacks dependency resolution, signed repository metadata, transactional rollback, upgrades and maintainer scripts. The Genesis client now rejects archive traversal, links and special files, refuses to overwrite existing system paths, and tracks installed file lists. Shared-file ownership is not supported; the package manager remains experimental. SHA-256 alone does not authenticate repository publishers. Do not use this version to modify a real system.
 
 
 ## Programming languages
 
-The first language package is **Lua 5.4.9** for x86_64. Its GitHub Actions workflow builds a static interpreter with musl, verifies the official upstream source checksum, runs a smoke test, and publishes the archive and package-index entry to the GitHub Releases mirror.
+The first language package, **Lua 5.4.9**, is published for x86_64. Its GitHub Actions workflow builds a static interpreter with musl, verifies the official upstream source checksum, runs smoke tests, and publishes the archive to the `nyan-repository` GitHub Release. The repository index contains its SHA-256 digest.
 
 After the package is published:
 
@@ -39,4 +39,4 @@ nyan install lua
 lua -v
 ```
 
-The package is not installable until its build-and-publish workflow succeeds and the index contains the `lua` entry. The initial package does not yet provide LuaRocks.
+Lua is available through the published x86_64 index. The initial package does not yet provide LuaRocks.
