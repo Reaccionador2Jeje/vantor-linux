@@ -47,6 +47,8 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertIn("ttyS0", inittab)
             self.assertIn("/bin/busybox getty", inittab)
             self.assertIn("udhcpc", (output / "etc/init.d/rcS").read_text())
+            self.assertIn("mount -t iso9660 -o ro", (output / "etc/init.d/rcS").read_text())
+            self.assertIn("/run/vantor-media", (output / "etc/init.d/rcS").read_text())
             self.assertIn("/bin/busybox su -s /bin/sh - live", (output / "usr/bin/vantor-live-session").read_text())
             self.assertEqual((output / "etc/fstab").stat().st_mode & 0o777, 0o644)
             self.assertTrue((output / "usr/share/vantor/branding/vantor-mark.svg").is_file())
