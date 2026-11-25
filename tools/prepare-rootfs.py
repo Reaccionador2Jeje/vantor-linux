@@ -111,18 +111,40 @@ if [ -r "$network_cfg" ]; then
         ip route replace default via "$GATEWAY" dev "$INTERFACE" 2>/dev/null || true
         printf 'nameserver %s\n' "$DNS" > /etc/resolv.conf
     elif [ "$MODE" = dhcp ] && command -v udhcpc >/dev/null 2>&1; then
-        /bin/busybox udhcpc -i "$INTERFACE" -b -q -t 5 -T 2 >/dev/null 2>&1 || true
+        /bin/busybox udhcpc -s /usr/share/udhcpc/default.script -i "$INTERFACE" -b -q -t 5 -T 2 >/dev/null 2>&1 || true
     fi
 elif command -v udhcpc >/dev/null 2>&1 && [ -d /sys/class/net ]; then
     for iface_path in /sys/class/net/*; do
         [ -e "$iface_path" ] || continue
         iface=$(basename "$iface_path")
         [ "$iface" = lo ] && continue
-        /bin/busybox udhcpc -i "$iface" -b -q -t 3 -T 2 >/dev/null 2>&1 || true
+        /bin/busybox udhcpc -s /usr/share/udhcpc/default.script -i "$iface" -b -q -t 3 -T 2 >/dev/null 2>&1 || true
     done
 fi
     echo "[VANTOR] Minimal userspace is ready."
 """, 0o755)
+    write(output / "usr/share/udhcpc/default.script", """#!/bin/sh
+# Minimal BusyBox udhcpc hook for VANTOR.
+case "$1" in
+    deconfig)
+        ip addr flush dev "$interface" 2>/dev/null || true
+        ;;
+    bound|renew)
+        prefix=$(printf '%s\\n' "$subnet" | awk -F. 'NF==4 { n=0; zero=0; for(i=1;i<=4;i++){ v=$i; for(b=0;b<8;b++){ bit=int(v/128); if(bit){ if(zero) exit 1; n++; v-=128 } else zero=1; v*=2 } } print n }')
+        [ -n "$prefix" ] || prefix=24
+        ip link set "$interface" up 2>/dev/null || true
+        ip addr replace "$ip/$prefix" dev "$interface" 2>/dev/null || true
+        if [ -n "$router" ]; then
+            set -- $router
+            ip route replace default via "$1" dev "$interface" 2>/dev/null || true
+        fi
+        : > /etc/resolv.conf
+        for server in $dns; do printf 'nameserver %s\\n' "$server" >> /etc/resolv.conf; done
+        ;;
+esac
+exit 0
+""", 0o755)
+
     write(output / "usr/bin/vantor-live-session", """#!/bin/sh
 # Local Live console session; the root account remains locked.
 exec /bin/busybox su -s /bin/sh - live
