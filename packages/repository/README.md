@@ -1,32 +1,29 @@
-# VANTOR package repository
+# VANTOR Community Mirror
 
-Nyan reads a tab-separated index at:
+The initial official mirror uses GitHub Releases for binary assets and this repository for package indexes. It requires no Cloudflare R2 or payment method.
 
-`/repo/<architecture>/Packages`
+## Public endpoints
 
-Package archives are served from:
+- Index: `https://vantor-linux.cristopheriguaran-7.workers.dev/repo/<architecture>/Packages`
+- Package: `https://vantor-linux.cristopheriguaran-7.workers.dev/packages/<architecture>/<archive>`
+- Asset storage: GitHub Release tag `nyan-repository`
 
-`/packages/<architecture>/<archive>`
+The Worker proxies indexes from this public repository and redirects package requests to matching GitHub Release assets.
 
 ## Index format — V1
 
-The first line must be:
-
-`# VANTOR-PACKAGES 1`
-
-Each subsequent record is one tab-separated row:
+First line: `# VANTOR-PACKAGES 1`. Each package row is tab-separated:
 
 `name<TAB>version<TAB>architecture<TAB>sha256<TAB>archive<TAB>description`
 
-- Architecture is `x86_64`, `aarch64`, or `all`.
-- Archives are gzip-compressed tar files (`.tar.gz`).
-- SHA-256 is the lowercase digest of the exact archive bytes.
-- Archive paths are flat filenames; path traversal and absolute paths are forbidden.
-- A package archive contains paths relative to the target root (for example `usr/bin/hello`).
-- Empty repositories contain only the format header and comments.
+Architectures: `x86_64`, `aarch64`, or `all`. Archives are gzip-compressed tar files. SHA-256 is the lowercase digest of exact archive bytes. Archive filenames must be flat filenames without path separators.
 
-## Security and current limitations
+## Publishing
 
-Nyan verifies SHA-256 before extracting and rejects unsafe archive paths. A digest protects against accidental corruption, but does not authenticate who published an index. Signed repository metadata, dependency resolution, package scripts/hooks, rollback transactions, file ownership conflicts, and robust shared-file tracking are not implemented yet. Do not use this prototype as a production package manager.
+Use GitHub Actions workflow **Publish Nyan package**. Supply a repository-relative archive path, package name, version, architecture and description. The workflow validates the archive, calculates SHA-256, uploads the asset to release `nyan-repository`, updates the index and pushes the index commit.
 
-The official mirror is being prepared on Cloudflare Workers + R2. Package downloads remain unavailable until R2 is enabled and release artifacts are published.
+No package has been published yet; initial indexes are intentionally empty.
+
+## Limits and security
+
+GitHub Releases is suitable for an initial community repository, not an unlimited CDN or high-availability mirror. SHA-256 detects corruption but does not authenticate the publisher. Signed repository metadata, dependency resolution, transactional installation, file ownership tracking and rollback remain future work. The current Nyan prototype is not production-safe.
