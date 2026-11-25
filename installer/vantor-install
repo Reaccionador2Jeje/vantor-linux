@@ -47,6 +47,7 @@ menu() {
             packages "Install additional packages" \
             prefs "Language, timezone and hostname" \
             storage "Inspect disks and partitions" \
+            mountroot "Mount existing Linux partition" \
             bootloader "Install GRUB bootloader" \
             exit "Exit" 3>&1 1>&2 2>&3
     else
@@ -54,9 +55,9 @@ menu() {
         printf ' VANTOR LINUX — MINIMAL INSTALLER %s\n' "$VERSION" >/dev/tty
         printf ' ONE SYSTEM. EVERY GENERATION.\n' >/dev/tty
         printf '==============================================\n' >/dev/tty
-        printf '1) Install VANTOR Minimal\n2) Configure installed system\n3) Prepare installed boot files\n4) Configure network\n5) Nyan mirror\n6) Additional packages\n7) System preferences\n8) About\n9) Inspect disks\n10) Install GRUB bootloader\n11) Exit\nSelect: ' >/dev/tty
+        printf '1) Install VANTOR Minimal\n2) Configure installed system\n3) Prepare installed boot files\n4) Configure network\n5) Nyan mirror\n6) Additional packages\n7) System preferences\n8) About\n9) Inspect disks\n10) Mount existing Linux partition\n11) Install GRUB bootloader\n12) Exit\nSelect: ' >/dev/tty
         IFS= read -r choice </dev/tty || return 1
-        case "$choice" in 1) printf install;; 2) printf configure;; 3) printf boot;; 4) printf network;; 5) printf mirror;; 6) printf packages;; 7) printf prefs;; 8) printf about;; 9) printf storage;; 10) printf bootloader;; *) printf exit;; esac
+        case "$choice" in 1) printf install;; 2) printf configure;; 3) printf boot;; 4) printf network;; 5) printf mirror;; 6) printf packages;; 7) printf prefs;; 8) printf about;; 9) printf storage;; 10) printf mountroot;; 11) printf bootloader;; *) printf exit;; esac
     fi
 }
 
@@ -318,6 +319,28 @@ storage_inspect() {
     message "Disk inspection complete. This screen did not modify storage. Mount an existing Linux filesystem before installing."
 }
 
+mount_existing_partition() {
+    device=$(ask "Mount existing partition" "Linux partition device (example: /dev/vda2):" "") || return 0
+    case "$device" in /dev/*) ;; *) die "device must be under /dev";; esac
+    [ -b "$device" ] || die "selected device is not a block device"
+    fs=$(ask "Filesystem" "Filesystem type (ext4, ext3 or ext2):" "ext4") || return 0
+    case "$fs" in ext2|ext3|ext4) ;; *) die "only ext2, ext3 and ext4 are supported";; esac
+    target=$(ask "Mount point" "Where should the partition be mounted?" "/mnt/vantor-target") || return 0
+    case "$target" in /*) ;; *) die "mount point must be an absolute path";; esac
+    [ "$target" != "/" ] || die "refusing to mount over the Live root"
+    mkdir -p "$target"
+    [ ! -L "$target" ] || die "mount point must not be a symbolic link"
+    if command -v mountpoint >/dev/null 2>&1 && mountpoint -q "$target"; then
+        die "mount point is already in use"
+    fi
+    if awk -v path="$target" '$2 == path { found=1 } END { exit !found }' "${VANTOR_PROC_MOUNTS:-/proc/mounts}"; then
+        die "mount point is already mounted"
+    fi
+    message "VANTOR will mount $device as $fs at $target. No partitioning or formatting will occur."
+    mount -t "$fs" -o rw "$device" "$target" || die "mount failed; check filesystem and kernel support"
+    info "Mounted $device at $target. Select Install VANTOR Minimal and use this exact mount point."
+}
+
 install_bootloader() {
     target=$(ask "GRUB bootloader" "Mounted installed system directory:" "/mnt") || return 0
     [ -d "$target" ] && [ ! -L "$target" ] || die "invalid target directory"
@@ -352,7 +375,7 @@ install_bootloader() {
 }
 
 about() {
-    message "VANTOR Linux Minimal Installer $VERSION\n\nA modular text interface. Disk inspection is read-only. It never partitions or formats disks. GRUB installation is available only when grub-install and its BIOS modules are present. The target filesystem must already be mounted."
+    message "VANTOR Linux Minimal Installer $VERSION\n\nA modular text interface. Disk inspection is read-only; existing ext2/ext3/ext4 partitions can be mounted without formatting. It never partitions or formats disks. GRUB installation is available only when grub-install and its BIOS modules are present. The target filesystem must already be mounted."
 }
 
 if [ "${1:-}" = "--version" ]; then echo "VANTOR Installer $VERSION"; exit 0; fi
