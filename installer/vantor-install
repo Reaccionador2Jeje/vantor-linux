@@ -122,11 +122,81 @@ install_minimal() {
     message "VANTOR Minimal has been installed. Passwords are locked; set secure passwords before normal use. Bootloader and filesystem configuration are separate steps in this early installer."
 }
 
+prepare_boot_files() {
+    target=$1 kernel=$2 initramfs=$3 root_device=$4 root_fstype=$5 arch=$6
+    [ -d "$target" ] || die "target directory does not exist"
+    [ ! -L "$target" ] || die "target must not be a symbolic link"
+    target=$(cd "$target" && pwd -P)
+    [ "$target" != "/" ] || die "refusing to prepare boot files in the Live root"
+    if command -v mountpoint >/dev/null 2>&1; then
+        mountpoint -q "$target" || die "target is not a mounted filesystem"
+    elif ! awk -v path="$target" '$2 == path { found=1 } END { exit !found }' /proc/mounts; then
+        die "target is not a mounted filesystem"
+    fi
+    [ -f "$kernel" ] && [ -s "$kernel" ] || die "kernel file is missing or empty"
+    [ -f "$initramfs" ] && [ -s "$initramfs" ] || die "initramfs file is missing or empty"
+    case "$root_device" in /dev/*) ;; *) die "root device must be an explicit /dev/... partition path";; esac
+    case "$root_fstype" in ext2|ext3|ext4|xfs|btrfs) ;; *) die "unsupported root filesystem type: $root_fstype";; esac
+    case "$arch" in x86_64|i486) ;; *) die "unsupported boot architecture: $arch";; esac
+    mkdir -p "$target/boot" "$target/boot/grub"
+    cp "$kernel" "$target/boot/vantor-kernel"
+    cp "$initramfs" "$target/boot/vantor-initramfs.cpio.gz"
+    cat > "$target/boot/grub/grub.cfg.tmp" <<EOF
+# VANTOR Linux Minimal — installed system
+set default=0
+set timeout=5
+set timeout_style=menu
+set menu_color_normal="white/black"
+set menu_color_highlight="black/light-cyan"
+terminal_output console
+
+menuentry "VANTOR Linux Minimal — $arch" --class vantor {
+    search --no-floppy --file --set=root /boot/vantor-kernel
+    linux /boot/vantor-kernel root=$root_device rootfstype=$root_fstype rw rootwait console=tty0 loglevel=4
+    initrd /boot/vantor-initramfs.cpio.gz
+}
+
+menuentry "VANTOR Linux Minimal — Diagnostic mode" --class recovery {
+    search --no-floppy --file --set=root /boot/vantor-kernel
+    linux /boot/vantor-kernel root=$root_device rootfstype=$root_fstype rw rootwait console=tty0 loglevel=7 initcall_debug
+    initrd /boot/vantor-initramfs.cpio.gz
+}
+
+menuentry "Reboot" --class reboot { reboot }
+menuentry "Power off" --class shutdown { halt }
+EOF
+    mv "$target/boot/grub/grub.cfg.tmp" "$target/boot/grub/grub.cfg"
+    # Keep an existing fstab's non-root entries; replace only our VANTOR root line.
+    if [ -f "$target/etc/fstab" ]; then
+        grep -v '^# VANTOR installer root' "$target/etc/fstab" | grep -v '^[^#].* / .*' > "$target/etc/fstab.tmp" || true
+    else
+        : > "$target/etc/fstab.tmp"
+    fi
+    {
+        echo "# VANTOR installer root"
+        printf '%s / %s defaults 0 1\n' "$root_device" "$root_fstype"
+        echo "proc /proc proc defaults 0 0"
+        echo "sysfs /sys sysfs defaults 0 0"
+        echo "devtmpfs /dev devtmpfs mode=0755 0 0"
+        echo "tmpfs /run tmpfs mode=0755,nosuid 0 0"
+        echo "tmpfs /tmp tmpfs mode=1777,nosuid 0 0"
+    } >> "$target/etc/fstab.tmp"
+    mv "$target/etc/fstab.tmp" "$target/etc/fstab"
+    info "Kernel, initramfs, GRUB menu and fstab prepared for $root_device."
+    info "GRUB itself is not installed; bootloader installation remains a separate explicit step."
+}
+
 about() {
     message "VANTOR Linux Minimal Installer $VERSION\n\nA modular text interface. It never partitions or formats disks. The target filesystem must already be mounted."
 }
 
 if [ "${1:-}" = "--version" ]; then echo "VANTOR Installer $VERSION"; exit 0; fi
+if [ "${1:-}" = "--prepare-boot" ]; then
+    [ "$#" -eq 7 ] || die "usage: vantor-install --prepare-boot TARGET KERNEL INITRAMFS ROOT_DEVICE ROOT_FSTYPE ARCH"
+    [ "$(id -u)" -eq 0 ] || die "run boot preparation as root"
+    prepare_boot_files "$2" "$3" "$4" "$5" "$6" "$7"
+    exit 0
+fi
 if [ "${1:-}" = "--configure" ]; then
     [ "$#" -eq 4 ] || die "usage: vantor-install --configure TARGET HOSTNAME USERNAME"
     configure_target "$2" "$3" "$4"
