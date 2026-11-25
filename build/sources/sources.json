@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "project": "VANTOR Linux",
+  "target": "x86_64-vantor-linux-gnu",
+  "status": "unpopulated",
+  "policy": "Every source must have an exact upstream version, canonical URL, verified SHA-256, and license before automated download.",
+  "sources": []
+}
