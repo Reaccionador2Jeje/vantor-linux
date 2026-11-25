@@ -67,8 +67,13 @@ install_one() {
   case " $INSTALL_STACK " in *" $name "*) die "dependency cycle detected at $name";; esac
   row=$(package_row "$name")
   [ -n "$row" ] || die "package not found: $name"
-  oldifs=$IFS; IFS="$(printf '\t')"; set -- $row; IFS=$oldifs
-  pkg=$1 version=$2 arch=$3 digest=$4 archive=$5 description=$6 dependencies=${7:-}
+  pkg=$(printf '%s\n' "$row" | cut -f1)
+  version=$(printf '%s\n' "$row" | cut -f2)
+  arch=$(printf '%s\n' "$row" | cut -f3)
+  digest=$(printf '%s\n' "$row" | cut -f4)
+  archive=$(printf '%s\n' "$row" | cut -f5)
+  description=$(printf '%s\n' "$row" | cut -f6)
+  dependencies=$(printf '%s\n' "$row" | cut -f7)
   [ "$arch" = "$NYAN_ARCH" ] || [ "$arch" = all ] || die "package architecture mismatch: $name"
   INSTALL_STACK="$INSTALL_STACK $name"
   oldifs=$IFS; IFS=',' 
@@ -81,8 +86,13 @@ install_one() {
   # Recursive shell functions share ordinary variables; reload this package's row
   # after dependency traversal so child metadata cannot overwrite the parent.
   row=$(package_row "$name")
-  oldifs=$IFS; IFS="$(printf '\\t')"; set -- $row; IFS=$oldifs
-  pkg=$1 version=$2 arch=$3 digest=$4 archive=$5 description=$6 dependencies=${7:-}
+  pkg=$(printf '%s\n' "$row" | cut -f1)
+  version=$(printf '%s\n' "$row" | cut -f2)
+  arch=$(printf '%s\n' "$row" | cut -f3)
+  digest=$(printf '%s\n' "$row" | cut -f4)
+  archive=$(printf '%s\n' "$row" | cut -f5)
+  description=$(printf '%s\n' "$row" | cut -f6)
+  dependencies=$(printf '%s\n' "$row" | cut -f7)
   case "$digest" in *[!0-9a-f]*|'') die "invalid SHA-256 for $name";; esac
   [ "${#digest}" -eq 64 ] || die "invalid SHA-256 length for $name"
   case "$archive" in *[!A-Za-z0-9._+-]*|*..*) die "invalid archive filename";; esac
