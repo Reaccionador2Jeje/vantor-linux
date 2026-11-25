@@ -46,15 +46,17 @@ menu() {
             mirror "Configure Nyan mirror" \
             packages "Install additional packages" \
             prefs "Language, timezone and hostname" \
+            storage "Inspect disks and partitions" \
+            bootloader "Install GRUB bootloader" \
             exit "Exit" 3>&1 1>&2 2>&3
     else
         printf '\n==============================================\n' >/dev/tty
         printf ' VANTOR LINUX — MINIMAL INSTALLER %s\n' "$VERSION" >/dev/tty
         printf ' ONE SYSTEM. EVERY GENERATION.\n' >/dev/tty
         printf '==============================================\n' >/dev/tty
-        printf '1) Install VANTOR Minimal\n2) Configure installed system\n3) Prepare installed boot files\n4) Configure network\n5) Nyan mirror\n6) Additional packages\n7) System preferences\n8) About\n9) Exit\nSelect: ' >/dev/tty
+        printf '1) Install VANTOR Minimal\n2) Configure installed system\n3) Prepare installed boot files\n4) Configure network\n5) Nyan mirror\n6) Additional packages\n7) System preferences\n8) About\n9) Inspect disks\n10) Install GRUB bootloader\n11) Exit\nSelect: ' >/dev/tty
         IFS= read -r choice </dev/tty || return 1
-        case "$choice" in 1) printf install;; 2) printf configure;; 3) printf boot;; 4) printf network;; 5) printf mirror;; 6) printf packages;; 7) printf prefs;; 8) printf about;; *) printf exit;; esac
+        case "$choice" in 1) printf install;; 2) printf configure;; 3) printf boot;; 4) printf network;; 5) printf mirror;; 6) printf packages;; 7) printf prefs;; 8) printf about;; 9) printf storage;; 10) printf bootloader;; *) printf exit;; esac
     fi
 }
 
@@ -296,6 +298,57 @@ prepare_boot_interactive() {
     initramfs=$(ask "Initramfs" "Path to the VANTOR initramfs archive:" "$initramfs_default") || return 0
     prepare_boot_files "$target" "$kernel" "$initramfs" "$arch"
     message "Boot files, GRUB menu and fstab prepared. GRUB still needs to be installed to the selected disk using a dedicated bootloader step."
+}
+
+storage_inspect() {
+    info "Storage inspection is read-only; no partitions or filesystems will be changed."
+    if command -v lsblk >/dev/null 2>&1; then
+        lsblk -o NAME,TYPE,SIZE,FSTYPE,MOUNTPOINT 2>/dev/null || lsblk
+    elif [ -r /proc/partitions ]; then
+        printf '\nBlock devices from /proc/partitions:\n'
+        cat /proc/partitions
+        if command -v blkid >/dev/null 2>&1; then
+            printf '\nDetected filesystem signatures:\n'
+            blkid 2>/dev/null || true
+        fi
+    else
+        message "No block-device inventory is available in this Live image."
+        return 0
+    fi
+    message "Disk inspection complete. This screen did not modify storage. Mount an existing Linux filesystem before installing."
+}
+
+install_bootloader() {
+    target=$(ask "GRUB bootloader" "Mounted installed system directory:" "/mnt") || return 0
+    [ -d "$target" ] && [ ! -L "$target" ] || die "invalid target directory"
+    target=$(cd "$target" && pwd -P)
+    [ "$target" != "/" ] || die "refusing to modify the Live root"
+    if command -v mountpoint >/dev/null 2>&1; then
+        mountpoint -q "$target" || die "target is not a mounted filesystem"
+    else
+        awk -v path="$target" '$2 == path { found=1 } END { exit !found }' "${VANTOR_PROC_MOUNTS:-/proc/mounts}" || die "target is not a mounted filesystem"
+    fi
+    [ -s "$target/boot/grub/grub.cfg" ] || die "GRUB configuration is missing; prepare boot files first"
+    if ! command -v grub-install >/dev/null 2>&1; then
+        message "grub-install is not included in this Live image yet. No disk was changed. A future image must bundle GRUB BIOS tools before this action can run."
+        return 0
+    fi
+    record=$(awk -v path="$target" '$2 == path { print $1; exit }' "${VANTOR_PROC_MOUNTS:-/proc/mounts}")
+    case "$record" in /dev/*) ;; *) die "could not identify the target block device";; esac
+    part_name=${record##*/}
+    sys_entry="/sys/class/block/$part_name"
+    [ -e "$sys_entry" ] || die "target device is not represented in /sys/class/block"
+    resolved=$(readlink -f "$sys_entry" 2>/dev/null || echo "$sys_entry")
+    parent=$(basename "$(dirname "$resolved")")
+    [ -n "$parent" ] && [ "$parent" != block ] || die "could not determine the whole-disk device"
+    disk="/dev/$parent"
+    [ -b "$disk" ] || die "whole-disk device does not exist: $disk"
+    [ ! -e "/sys/class/block/$parent/partition" ] || die "refusing to install GRUB to a partition; whole disk required"
+    message "GRUB will write BIOS boot code to $disk and install files under $target/boot. It will not format or partition the disk."
+    confirmation=$(ask "Confirm bootloader installation" "Type the exact disk path to continue:" "") || return 0
+    [ "$confirmation" = "$disk" ] || die "confirmation did not match; no disk was changed"
+    grub-install --target=i386-pc --boot-directory="$target/boot" --recheck "$disk" || die "GRUB installation failed"
+    message "GRUB BIOS bootloader installed to $disk. Test the virtual disk in Limbo before relying on it."
 }
 
 about() {
