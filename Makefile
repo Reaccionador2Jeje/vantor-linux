@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
-.PHONY: help info check check-shell check-config check-sources check-python sources-ready fetch-sources toolchain rootfs clean
+.PHONY: help info check check-shell check-config check-sources check-python sources-ready fetch-sources toolchain rootfs boot-files iso clean
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
 	  'Targets:' '  make info          Show project configuration' \
@@ -9,12 +9,14 @@ help:
 	  '  make check-sources Validate source manifest structure' '  make check-python  Compile and test Python tools' \
 	  '  make sources-ready Require verified source checksums' '  make fetch-sources Download and verify pinned archives' \
 	  '  make toolchain      Build Binutils and GCC pass 1' '  make rootfs         Assemble the VANTOR rootfs skeleton' \
+	  '  make boot-files     Check bootloader configuration and builder' \
+	  '  make iso            Build a GRUB ISO after kernel and initramfs exist' \
 	  '  make clean         Remove generated build output'
 info:
 	@set -a; source build/config/vantor.conf; set +a; \
 	printf '%s %s (%s)\nTarget: %s\n' \
 	  "$$VANTOR_NAME" "$$VANTOR_VERSION" "$$VANTOR_CODENAME" "$$VANTOR_TARGET"
-check: check-config check-shell check-sources check-python
+check: check-config check-shell check-sources check-python boot-files
 	@python3 -m json.tool assets/branding/theme.json > /dev/null
 	@echo "[OK] VANTOR repository checks passed."
 check-config:
@@ -38,5 +40,11 @@ toolchain:
 	@bash build/scripts/build-toolchain.sh
 rootfs:
 	@python3 tools/prepare-rootfs.py --output build/work/rootfs
+boot-files:
+	@test -s boot/grub/grub.cfg
+	@test -s build/scripts/build-iso.sh
+	@echo "[OK] GRUB configuration and ISO builder are present."
+iso:
+	@bash build/scripts/build-iso.sh
 clean:
 	rm -rf -- build/work build/distfiles output
