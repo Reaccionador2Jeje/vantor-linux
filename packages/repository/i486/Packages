@@ -1,3 +1,3 @@
 # VANTOR-PACKAGES 1
-vantor-base-files	0.1.0	i486	000a34a9d23d882c8df8f0e47865dfcd643dee4fd16cf5e8c7eee39fc2c2b296	vantor-base-files-0.1.0-i486.tar.gz	VANTOR Minimal i486 base files and static 486-compatible BusyBox	
 vantor-profile-minimal	0.1.0	i486	649df867a81ad40aca0ddaf934cd14a7f13fc01695bde4b413a7280cb632dd02	vantor-profile-minimal-0.1.0-i486.tar.gz	VANTOR Minimal profile for 486SX/486DX and later 32-bit PCs	vantor-base-files
+vantor-base-files	0.1.0	i486	0680ff0d878a07449435461686f4993c605529cb27a94c10938322a3c03268da	vantor-base-files-0.1.0-i486.tar.gz	VANTOR Minimal i486 base files and static 486-compatible BusyBox	
