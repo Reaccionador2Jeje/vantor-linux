@@ -8,7 +8,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: vantor-ci-\${{ github.ref }}
+  group: vantor-ci-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   validate:
