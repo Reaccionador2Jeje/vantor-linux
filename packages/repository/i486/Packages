@@ -1,7 +1,6 @@
 # VANTOR-PACKAGES 1
 vantor-base-files	0.1.0	i486	0e036fceb2064d1dba280f79f5fe79eb6c9faff630e738b37a23c35518bba264	vantor-base-files-0.1.0-i486.tar.gz	VANTOR Minimal i486 base files and static 486-compatible BusyBox	
 vantor-profile-minimal	0.1.0	i486	ec16acb27150240debe02105b44991da95565636d41d993c85328a269c845faf	vantor-profile-minimal-0.1.0-i486.tar.gz	VANTOR Minimal profile for 486SX/486DX and later 32-bit PCs	vantor-base-files
-vantor-docs	0.1.0	i486	1510d7cd990ac0a05673ede837de5ab5b41d76beff531fc31814b01fd6bb9dd4	vantor-docs-0.1.0-i486.tar.gz	VANTOR system and Nyan documentation	
 vantor-about	0.1.0	i486	df7270871f161d22ac80ab981046eb266632002eb6af967ced2c1205f28bd5bf	vantor-about-0.1.0-all.tar.gz	VANTOR utility: vantor-about (architecture-independent)	
 vantor-doctor	0.1.0	i486	52702543bed76508546bf62d7e4ed3df5d0d73736c79d697a0ad936a8ebb68c5	vantor-doctor-0.1.0-all.tar.gz	VANTOR utility: vantor-doctor (architecture-independent)	
 vantor-netdiag	0.1.0	i486	9902c4e98756576b244f6f7d19fecec22831ce1d46ff6ca2400dbf85a3e2d72c	vantor-netdiag-0.1.0-all.tar.gz	VANTOR utility: vantor-netdiag (architecture-independent)	
@@ -11,3 +10,4 @@ vantor-mountinfo	0.1.0	i486	41ec5296aeb3d61268c08c054dc047bfec8ae91cb9958b22dba5
 vantor-hardware	0.1.0	i486	d2dd76572977e23adb06319e44c2ce1eb9d8f399bde705e175dcc89fcbf63e26	vantor-hardware-0.1.0-i486.tar.gz	VANTOR read-only hardware inventory utility	
 vantor-installer	0.1.0	i486	b65cc8c15b1846ba01ac8142ee0d4c549543acb4239c952a2394b8fe216dfbfe	vantor-installer-0.1.0-i486.tar.gz	VANTOR text-mode system installer	vantor-base-files
 vantor-branding	0.1.0	i486	af7f0574bd4d3a7a2098f62f6852792318985429dff1ecdfc4f46408e272e088	vantor-branding-0.1.0-i486.tar.gz	Official VANTOR identity assets	
+vantor-docs	0.1.0	i486	1510d7cd990ac0a05673ede837de5ab5b41d76beff531fc31814b01fd6bb9dd4	vantor-docs-0.1.0-i486.tar.gz	VANTOR system and Nyan documentation	
