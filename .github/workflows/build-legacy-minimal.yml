@@ -1,0 +1,85 @@
+name: Build VANTOR Minimal Legacy i486 packages
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "tools/prepare-rootfs.py"
+      - "build/scripts/build-busybox-legacy.sh"
+      - "build/sources/sources.json"
+      - "packages/profiles/minimal/**"
+      - "tools/publish-package.sh"
+      - "Makefile"
+      - ".github/workflows/build-legacy-minimal.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: vantor-nyan-publish
+  cancel-in-progress: false
+
+jobs:
+  build-i486-minimal:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 35
+    steps:
+      - name: Check out VANTOR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install i486 userspace build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential gcc-multilib libc6-dev-i386 bzip2
+      - name: Validate repository and source pins
+        run: |
+          make check
+          python3 tools/validate-sources.py --require-pinned --only busybox
+      - name: Assemble i486 root filesystem
+        run: make rootfs-legacy
+      - name: Build static i486 BusyBox
+        run: make busybox-legacy
+      - name: Package i486 base userspace
+        run: |
+          set -euo pipefail
+          root="$PWD/build/work/rootfs-legacy"
+          test -x "$root/bin/busybox"
+          file "$root/bin/busybox" | grep -q 'ELF 32-bit'
+          find "$root" -type l -delete
+          cp "$root/bin/busybox" "$root/bin/sh"
+          cp "$root/bin/busybox" "$root/sbin/init"
+          mkdir -p build
+          tar -czf build/vantor-base-files-0.1.0-i486.tar.gz -C "$root" .
+          tar -tzf build/vantor-base-files-0.1.0-i486.tar.gz
+      - name: Assemble i486 Minimal metapackage
+        run: |
+          set -euo pipefail
+          root="$PWD/build/package-vantor-profile-minimal-i486"
+          mkdir -p "$root/usr/share/vantor/profiles"
+          cp packages/profiles/minimal/PROFILE.txt "$root/usr/share/vantor/profiles/minimal.txt"
+          tar -czf build/vantor-profile-minimal-0.1.0-i486.tar.gz -C "$root" .
+      - name: Publish i486 base package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bash tools/publish-package.sh \
+            build/vantor-base-files-0.1.0-i486.tar.gz \
+            vantor-base-files 0.1.0 i486 \
+            "VANTOR Minimal i486 base files and static 486-compatible BusyBox"
+      - name: Publish i486 Minimal profile
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bash tools/publish-package.sh \
+            build/vantor-profile-minimal-0.1.0-i486.tar.gz \
+            vantor-profile-minimal 0.1.0 i486 \
+            "VANTOR Minimal profile for 486SX/486DX and later 32-bit PCs" \
+            vantor-base-files
+      - name: Upload i486 package artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vantor-minimal-i486-packages-${{ github.sha }}
+          path: build/*.tar.gz
+          if-no-files-found: error
+          retention-days: 14
