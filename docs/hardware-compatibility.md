@@ -1,0 +1,36 @@
+# VANTOR hardware compatibility
+
+VANTOR Minimal is designed as a small console-first system. Hardware support is split into explicit profiles so a modern kernel is not accidentally shipped to machines it cannot run on.
+
+## Supported development targets
+
+| Profile | CPU baseline | Kernel line | State |
+|---|---|---|---|
+| Minimal x86_64 | AMD64 / Intel 64 | Linux 6.18.y | Main profile; build source still awaits a verified pin |
+| Minimal Legacy i486 | 486SX / 486DX and newer IA-32 | Linux 6.1.y | Legacy kernel builder and source pin added; compile and physical boot validation pending |
+| 386 / 286 / 8086 | 80386 and earlier | Not supported by the selected modern kernel | Out of scope for this Linux build |
+
+Linux 6.18 no longer offers 486 CPU support. VANTOR therefore uses the maintained 6.1.y source line for the 486 profile. The Linux 6.1.193 kernel.org checksum is pinned in build/sources/sources.json; the build is still subject to CI and hardware testing.
+
+The 386 is not supported by current Linux kernels, and a 286/8086 cannot run a normal 32-bit Linux kernel. VANTOR does not claim these machines can boot this edition. Supporting them would require a separate historical kernel and userspace branch, not a compile-time switch.
+
+## 486 profile
+
+The legacy kernel configuration targets the 486SX CPU choice and enables math emulation for machines without an integrated FPU. It also enables a conservative set of legacy PC interfaces:
+- ISA and EISA buses
+- floppy and legacy IDE storage
+- serial console and VGA text console
+- NE2000 and 3Com 3c509 network adapters
+- ext2/ext4, ISO9660 and FAT filesystems
+
+The legacy kernel build is:
+
+    make kernel-legacy
+
+It produces build/work/kernel-legacy/vantor-legacy-kernel and the resolved configuration at kernel/configs/vantor-i486.config.
+
+## Practical hardware expectations
+
+The kernel's CPU floor is not the same as a usable system requirement. Real machines vary widely in RAM, storage, BIOS behavior and peripheral support. A 486 may boot a small console kernel but still lack enough memory or supported storage to run a full package installation comfortably. The first legacy release should therefore be treated as a low-resource console experiment, not a desktop distribution.
+
+No physical 486 machine or Limbo legacy VM has been boot-tested yet. A successful kernel compilation is not proof of boot compatibility.
