@@ -3,9 +3,10 @@ set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "$0")/../.." && pwd)"
 cd "$ROOT"
-ROOTFS="$ROOT/build/work/rootfs"
-OUTPUT_DIR="$ROOT/build/work/initramfs"
-OUTPUT="$OUTPUT_DIR/vantor-initramfs.cpio.gz"
+ROOTFS="${VANTOR_ROOTFS_DIR:-$ROOT/build/work/rootfs}"
+OUTPUT_DIR="${VANTOR_INITRAMFS_DIR:-$ROOT/build/work/initramfs}"
+OUTPUT_NAME="${VANTOR_INITRAMFS_NAME:-vantor-initramfs.cpio.gz}"
+OUTPUT="$OUTPUT_DIR/$OUTPUT_NAME"
 
 for command in cpio gzip; do
     command -v "$command" >/dev/null 2>&1 || {
@@ -32,5 +33,5 @@ mkdir -p "$OUTPUT_DIR"
 
 [[ -s "$OUTPUT" ]] || { echo "[ERROR] Initramfs archive is empty." >&2; exit 1; }
 gzip -t "$OUTPUT"
-echo "[OK] VANTOR initramfs created: build/work/initramfs/vantor-initramfs.cpio.gz"
+echo "[OK] VANTOR initramfs created: $OUTPUT"
 echo "[INFO] This archive is ready for kernel/GRUB integration; it has not yet been boot-tested."
