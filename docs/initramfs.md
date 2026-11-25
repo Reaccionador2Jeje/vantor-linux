@@ -18,10 +18,8 @@ Run:
 4. `make kernel`
 5. `make iso`
 
-The BusyBox build is fail-closed: it requires the BusyBox source entry to have a
-verified upstream checksum in `build/sources/sources.json`. Do not invent or
-copy an unverified checksum. Until it is pinned, `make busybox` must stop before
-downloading or compiling.
+The BusyBox 1.37.0 source entry is pinned in `build/sources/sources.json` using
+its published SHA-256. The fetch helper verifies the archive before extraction.
 
 ## Early userspace contract
 
