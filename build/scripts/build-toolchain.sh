@@ -5,8 +5,8 @@ ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
 echo "[VANTOR] Checking source pins..."
-make sources-ready
-make fetch-sources
+python3 tools/validate-sources.py --require-pinned --only binutils gcc
+python3 tools/fetch-sources.py --only binutils gcc
 
 mkdir -p build/work/sources build/logs
 python3 tools/extract-source.py build/distfiles/binutils-2.47.tar.xz build/work/sources/binutils-2.47
