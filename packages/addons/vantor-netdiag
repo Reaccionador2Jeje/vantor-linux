@@ -1,0 +1,30 @@
+#!/bin/sh
+set -eu
+echo "VANTOR Network Diagnostics"
+echo
+if command -v ip >/dev/null 2>&1; then
+  echo "== Interfaces =="
+  ip -brief address 2>/dev/null || ip address 2>/dev/null || true
+  echo
+  echo "== Routes =="
+  ip route 2>/dev/null || true
+elif [ -d /sys/class/net ]; then
+  echo "Interfaces:"
+  for iface in /sys/class/net/*; do
+    [ -e "$iface" ] || continue
+    name=${iface##*/}
+    state=unknown
+    [ ! -r "$iface/operstate" ] || read -r state < "$iface/operstate"
+    printf '  %-16s %s\n' "$name" "$state"
+  done
+fi
+echo
+echo "== DNS configuration =="
+if [ -r /etc/resolv.conf ]; then cat /etc/resolv.conf; else echo "No resolv.conf"; fi
+echo
+echo "== Default gateway =="
+if [ -r /proc/net/route ]; then
+  awk 'NR>1 && $2=="00000000" {printf "Interface: %s (gateway hex %s)\n",$1,$3; found=1} END{if(!found) print "No default route"}' /proc/net/route
+fi
+echo
+echo "Diagnostic only: no network settings were changed."
