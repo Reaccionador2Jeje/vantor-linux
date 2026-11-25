@@ -1,18 +1,56 @@
 #!/bin/sh
 set -eu
-os=VANTOR
-[ ! -r /etc/os-release ] || { . /etc/os-release; os=${PRETTY_NAME:-VANTOR}; }
+
+os="VANTOR Linux"
+if [ -r /etc/os-release ]; then
+    . /etc/os-release
+    [ -n "${PRETTY_NAME:-}" ] && os=$PRETTY_NAME
+fi
 host=$(hostname 2>/dev/null || echo unknown)
 kernel=$(uname -sr 2>/dev/null || echo unknown)
 arch=$(uname -m 2>/dev/null || echo unknown)
 uptime=unknown
-if [ -r /proc/uptime ]; then uptime=$(awk '{printf "%.0fh %.0fm",int($1/3600),int(($1%3600)/60)}' /proc/uptime); fi
+if [ -r /proc/uptime ]; then
+    uptime=$(awk '{printf "%dh %dm",int($1/3600),int(($1%3600)/60)}' /proc/uptime)
+fi
 mem=unknown
-if [ -r /proc/meminfo ]; then mem=$(awk '/MemTotal:/ {printf "%.0f MiB",$2/1024}' /proc/meminfo); fi
-printf '  \033[1;36m      /\\_/\\\033[0m       \033[1;36m%s\033[0m\n' "$os"
-printf '  \033[1;36m     ( o.o )\033[0m      Host: %s\n' "$host"
-printf '  \033[1;36m      > ^ <\033[0m       Kernel: %s\n' "$kernel"
-printf '                     Architecture: %s\n' "$arch"
-printf '                     Memory: %s\n' "$mem"
-printf '                     Uptime: %s\n' "$uptime"
-printf '                     Shell: %s\n' "${SHELL:-/bin/sh}"
+if [ -r /proc/meminfo ]; then
+    mem=$(awk '/MemTotal:/ {printf "%.0f MiB",$2/1024}' /proc/meminfo)
+fi
+cpu=unknown
+if [ -r /proc/cpuinfo ]; then
+    cpu=$(awk -F: '/model name|Hardware/ {gsub(/^[ \t]+/,"",$2); print $2; exit}' /proc/cpuinfo)
+    [ -n "$cpu" ] || cpu=unknown
+fi
+shell=$SHELL
+[ -n "$shell" ] || shell=/bin/sh
+init=unknown
+[ ! -r /proc/1/comm ] || IFS= read -r init < /proc/1/comm
+
+cyan=''
+blue=''
+metal=''
+muted=''
+reset=''
+if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+    cyan='\033[1;36m'
+    blue='\033[1;34m'
+    metal='\033[1;37m'
+    muted='\033[0;90m'
+    reset='\033[0m'
+fi
+
+# Large VANTOR orbital emblem, aligned beside system information.
+printf '  %b          .-=================-.%b       %bVANTOR LINUX%b\n' "$cyan" "$reset" "$metal" "$reset"
+printf '  %b       .-'''                   '''-.%b       %b%s%b\n' "$cyan" "$reset" "$metal" "$os" "$reset"
+printf '  %b     .'''        %b\\       /%b       '''.%b     %b%s%b\n' "$cyan" "$metal" "$cyan" "$reset" "$blue" "ONE SYSTEM. EVERY GENERATION." "$reset"
+printf '  %b    /           %b\\     /%b           \\%b    Host:         %s\n' "$cyan" "$metal" "$cyan" "$reset" "$host"
+printf '  %b   |             %b\\   /%b             |%b   Kernel:       %s\n' "$cyan" "$metal" "$cyan" "$reset" "$kernel"
+printf '  %b   |              %b\\ /%b              |%b   Architecture: %s\n' "$cyan" "$metal" "$cyan" "$reset" "$arch"
+printf '  %b   |               %bV%b               |%b   CPU:          %s\n' "$cyan" "$metal" "$cyan" "$reset" "$cpu"
+printf '  %b    \\                             /%b    Memory:       %s\n' "$cyan" "$reset" "$mem"
+printf '  %b     '''.                         .'''%b     Uptime:       %s\n' "$cyan" "$reset" "$uptime"
+printf '  %b       '''-._________________.-'%b       Shell:        %s\n' "$cyan" "$reset" "$shell"
+printf '  %b                                      %bInit:          %s%b\n' "$muted" "$muted" "$init" "$reset"
+printf '  %b                                      %bNyan:         native%b\n' "$muted" "$muted" "$reset"
+printf '\n'
