@@ -40,6 +40,10 @@ menu() {
             configure "Configure installed system" \
             boot "Prepare installed boot files" \
             about "About this installer" \
+            network "Configure network" \
+            mirror "Configure Nyan mirror" \
+            packages "Install additional packages" \
+            prefs "Language, timezone and hostname" \
             exit "Exit" 3>&1 1>&2 2>&3
     else
         printf '\n==============================================\n' >/dev/tty
@@ -50,6 +54,69 @@ menu() {
         IFS= read -r choice </dev/tty || return 1
         case "$choice" in 1) printf install;; 2) printf configure;; 3) printf boot;; 4) printf about;; *) printf exit;; esac
     fi
+}
+
+network_setup() {
+ target=$(ask "Network" "Installed root (/mnt) or Live root (/):" "/mnt") || return 0
+ iface=$(ask "Network" "Interface (e.g. eth0):" "eth0") || return 0
+ mode=$(ask "Network" "Mode: dhcp or static:" "dhcp") || return 0
+ case "$iface" in ''|*[!A-Za-z0-9_.:-]*) die "invalid interface";; esac
+ mkdir -p "$target/etc/vantor"
+ if [ "$mode" = dhcp ]; then
+   printf 'MODE=dhcp\nINTERFACE=%s\n' "$iface" > "$target/etc/vantor/network.conf"
+ else
+   [ "$mode" = static ] || die "mode must be dhcp or static"
+   address=$(ask "Static IPv4" "Address/prefix:" "192.168.1.50/24") || return 0
+   gateway=$(ask "Static IPv4" "Gateway:" "192.168.1.1") || return 0
+   dns=$(ask "Static IPv4" "DNS:" "1.1.1.1") || return 0
+   valid_ipv4_cidr "$address" && valid_ipv4 "$gateway" && valid_ipv4 "$dns" || die "invalid IPv4 settings"
+   printf 'MODE=static\nINTERFACE=%s\nADDRESS=%s\nGATEWAY=%s\nDNS=%s\n' "$iface" "$address" "$gateway" "$dns" > "$target/etc/vantor/network.conf"
+ fi
+ message "Network configuration saved. Static settings are applied by VANTOR startup."
+}
+valid_ipv4() {
+ printf '%s\n' "$1" | awk -F. 'NF==4 {for(i=1;i<=4;i++) if($i!~/^[0-9]+$/ || $i>255) exit 1; exit 0} {exit 1}'
+}
+valid_ipv4_cidr() {
+ addr=\${1%/*}; prefix=\${1#*/}
+ case "$prefix" in ''|*[!0-9]*) return 1;; esac
+ [ "$addr" != "$1" ] && [ "$prefix" -ge 1 ] && [ "$prefix" -le 32 ] && valid_ipv4 "$addr"
+}
+mirror_setup() {
+ target=$(ask "Nyan mirror" "Installed system root:" "/mnt") || return 0
+ repo=$(ask "Nyan mirror" "HTTPS repository base URL:" "https://vantor-linux.cristopheriguaran-7.workers.dev") || return 0
+ case "$repo" in https://*) ;; *) die "mirror must use HTTPS";; esac
+ case "$repo" in *[!A-Za-z0-9:/._+-]*) die "invalid URL";; esac
+ mkdir -p "$target/etc"
+ printf '# Nyan repository\nNYAN_REPO=%s\nNYAN_ARCH=%s\n' "$repo" "\${NYAN_ARCH:-x86_64}" > "$target/etc/nyan.conf"
+ message "Nyan mirror saved."
+}
+packages_setup() {
+ target=$(ask "Nyan packages" "Installed system root:" "/mnt") || return 0
+ [ -x "$NYAN_BIN" ] || die "Nyan not found"
+ repo=$(awk -F= '$1=="NYAN_REPO"{print $2}' "$target/etc/nyan.conf" 2>/dev/null || true)
+ arch=$(awk -F= '$1=="NYAN_ARCH"{print $2}' "$target/etc/nyan.conf" 2>/dev/null || true)
+ [ -n "$repo" ] || repo="https://vantor-linux.cristopheriguaran-7.workers.dev"
+ [ -n "$arch" ] || arch=\${NYAN_ARCH:-x86_64}
+ NYAN_ROOT="$target" NYAN_REPO="$repo" NYAN_ARCH="$arch" "$NYAN_BIN" update
+ packages=$(ask "Additional packages" "Package names separated by spaces (blank skips):" "") || return 0
+ for pkg in $packages; do NYAN_ROOT="$target" NYAN_REPO="$repo" NYAN_ARCH="$arch" "$NYAN_BIN" install "$pkg"; done
+ message "Package selection complete."
+}
+preferences_setup() {
+ target=$(ask "System preferences" "Installed system root:" "/mnt") || return 0
+ hostname=$(ask "Hostname" "Computer name:" "vantor") || return 0
+ timezone=$(ask "Timezone" "Timezone (e.g. America/Santiago):" "America/Santiago") || return 0
+ locale=$(ask "Locale" "Locale (e.g. es_CL.UTF-8):" "es_CL.UTF-8") || return 0
+ valid_name "$hostname" || die "invalid hostname"
+ case "$timezone" in ''|*[!A-Za-z0-9_+/-]*) die "invalid timezone";; esac
+ case "$locale" in ''|*[!A-Za-z0-9_.@-]*) die "invalid locale";; esac
+ mkdir -p "$target/etc"
+ printf '%s\n' "$hostname" > "$target/etc/hostname"
+ printf 'LANG=%s\n' "$locale" > "$target/etc/locale.conf"
+ printf '%s\n' "$timezone" > "$target/etc/timezone"
+ [ ! -f "/usr/share/zoneinfo/$timezone" ] || cp "/usr/share/zoneinfo/$timezone" "$target/etc/localtime"
+ message "Hostname, timezone and locale saved."
 }
 
 configure_target() {
@@ -240,6 +307,10 @@ while :; do
             message "System account configuration completed."
             ;;
         boot) prepare_boot_interactive ;;
+        network) network_setup ;;
+        mirror) mirror_setup ;;
+        packages) packages_setup ;;
+        prefs) preferences_setup ;;
         about) about ;;
         exit) clear 2>/dev/null || true; exit 0 ;;
         *) exit 0 ;;
