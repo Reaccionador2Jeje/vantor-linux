@@ -32,7 +32,7 @@ class NyanNativeBuildTests(unittest.TestCase):
         htop = (ROOT / "tools/build-nyan-htop.sh").read_text()
         for value in (
             "x86_64-linux-musl-cross", "i486-linux-musl-cross",
-            "c5d410d9f82a4f24c549fe5d24f988f85b2679b452f2fe7ea",
+            "c5d410d9f82a4f24c549fe5d24f988f85b2679b452413a9f7e5f7b956f2fe7ea",
             "1b7eceb2022f4a664028dd314c5c44332b601bd271e40f0934b4bc8fd3b0fcf5",
             "nano-9.2.tar.xz",
             "05ecb99247b782e8a5b3a25ed4101dd034b0236902f7449bc9795b717642f7e9",
