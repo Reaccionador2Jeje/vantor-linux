@@ -64,6 +64,7 @@ jobs:
           test -f build/scripts/build-kernel.sh
           test -f build/scripts/build-iso.sh
           test -f boot/grub/grub.cfg
+          test -f boot/grub/themes/vantor/theme.txt
           test -f .github/workflows/toolchain.yml
           test -f tests/test_source_tools.py
           test -f tests/test_prepare_rootfs.py
