@@ -7,7 +7,7 @@ OPENBOX_CONFIG="$CONFIG_DIR/openbox/rc.xml"
 OPENBOX_MENU="$CONFIG_DIR/openbox/menu.xml"
 TINT2_CONFIG="$CONFIG_DIR/tint2/tint2rc"
 
-if [ -z "$DISPLAY" ]; then
+if [ -z "${DISPLAY:-}" ]; then
     echo "VANTOR Desktop must be started from an X11 session (DISPLAY is empty)." >&2
     exit 1
 fi
