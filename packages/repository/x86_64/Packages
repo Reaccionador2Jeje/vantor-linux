@@ -14,3 +14,4 @@ vantor-logview	0.1.0	x86_64	910557eed0ae404b2a558b88c59393bc88013f66551122002953
 vantor-config-backup	0.1.0	x86_64	da492a2980e087e71ba22aae042f63a24d2b355fc3a3f974da4f2f5653c841c1	vantor-config-backup-0.1.0-all.tar.gz	VANTOR utility: vantor-config-backup (architecture-independent)	
 vantor-mountinfo	0.1.0	x86_64	41ec5296aeb3d61268c08c054dc047bfec8ae91cb9958b22dba5129aac2913f1	vantor-mountinfo-0.1.0-all.tar.gz	VANTOR utility: vantor-mountinfo (architecture-independent)	
 fastfetch	0.1.0	x86_64	8876a20daa2365acd7e8cb7478743f46b2144006a3a2050adb86bd3b1db42d1f	fastfetch-0.1.0-all.tar.gz	VANTOR terminal utility: fastfetch	
+tree	0.1.0	x86_64	e0559e688ff82f846c514d87dbc5778f383b90f96f9e4ec93fcf4983ad9d1007	tree-0.1.0-all.tar.gz	VANTOR terminal utility: tree	
