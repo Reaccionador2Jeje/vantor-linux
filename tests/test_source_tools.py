@@ -30,7 +30,7 @@ class ExtractSourceTests(unittest.TestCase):
                 capture_output=True, text=True, check=False,
             )
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual((destination / "source" / "README").read_bytes(), b"vantor-test")
+            self.assertEqual((destination / "README").read_bytes(), b"vantor-test")
 
     def test_rejects_path_traversal(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
