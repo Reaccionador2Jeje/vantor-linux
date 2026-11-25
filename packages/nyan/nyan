@@ -150,8 +150,8 @@ case "$cmd" in
     ;;
   catalog)
     [ -r "$NYAN_CATALOG" ] || die "package catalog is not installed"
-    printf "%-24s %-15s %-10s %s\\n" "PACKAGE" "CATEGORY" "STATUS" "DESCRIPTION"
-    awk -F '\\t' '!/^#/ && NF >= 4 {printf "%-24s %-15s %-10s %s\\n",$1,$2,$3,$4}' "$NYAN_CATALOG"
+    printf "%-24s %-15s %-10s %s\n" "PACKAGE" "CATEGORY" "STATUS" "DESCRIPTION"
+    awk -F '\t' '!/^#/ && NF >= 4 {printf "%-24s %-15s %-10s %s\n",$1,$2,$3,$4}' "$NYAN_CATALOG"
     ;;
   languages)
     index=$(index_file); [ -s "$index" ] || die "run 'nyan update' first"
