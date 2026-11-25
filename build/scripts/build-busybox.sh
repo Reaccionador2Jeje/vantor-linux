@@ -45,10 +45,11 @@ set_config CONFIG_VI y
 set_config CONFIG_ASH y
 set_config CONFIG_SH_IS_ASH y
 set_config CONFIG_FEATURE_PREFER_APPLETS y
-for applet in CONFIG_GETTY CONFIG_SU CONFIG_MDEV CONFIG_UDHCPC CONFIG_MOUNT CONFIG_UMOUNT CONFIG_PASSWD CONFIG_CHPASSWD CONFIG_REBOOT CONFIG_HALT CONFIG_POWEROFF CONFIG_DF CONFIG_FREE CONFIG_PS CONFIG_DMESG; do
+for applet in CONFIG_GETTY CONFIG_SU CONFIG_MDEV CONFIG_UDHCPC CONFIG_MOUNT CONFIG_UMOUNT CONFIG_PASSWD CONFIG_CHPASSWD CONFIG_REBOOT CONFIG_HALT CONFIG_POWEROFF CONFIG_DF CONFIG_FREE CONFIG_PS CONFIG_DMESG CONFIG_SWITCH_ROOT; do
     set_config "$applet" y
 done
 set_config CONFIG_FEATURE_SHADOWPASSWDS y
+set_config CONFIG_SWITCH_ROOT y
 
 make -C "$SOURCE_DIR" O="$BUILD_DIR" oldconfig </dev/null
 grep -q '^CONFIG_STATIC=y$' "$BUILD_DIR/.config" || { echo "[ERROR] BusyBox static mode was not selected." >&2; exit 1; }
@@ -59,7 +60,7 @@ make -C "$SOURCE_DIR" O="$BUILD_DIR" CONFIG_PREFIX="$ROOTFS" install
 
 [[ -x "$ROOTFS/bin/busybox" ]] || { echo "[ERROR] BusyBox install did not produce /bin/busybox." >&2; exit 1; }
 "$ROOTFS/bin/busybox" --list > "$BUILD_DIR/applets.txt"
-for applet in vi getty su mdev udhcpc mount umount passwd chpasswd reboot halt poweroff df free ps dmesg; do
+for applet in vi getty su mdev udhcpc mount umount passwd chpasswd reboot halt poweroff df free ps dmesg switch_root; do
     grep -qx "$applet" "$BUILD_DIR/applets.txt" || { echo "[ERROR] BusyBox applet is missing: $applet" >&2; exit 1; }
 done
 echo "[OK] Static BusyBox installed into build/work/rootfs."
