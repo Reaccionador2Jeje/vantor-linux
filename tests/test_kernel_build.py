@@ -14,8 +14,8 @@ class KernelBuildContractTests(unittest.TestCase):
         manifest = json.loads((ROOT / "build/sources/sources.json").read_text())
         linux = next(item for item in manifest["sources"] if item["name"] == "linux")
         self.assertEqual(linux["version"], "6.18.65")
-        self.assertEqual(linux["status"], "candidate")
-        self.assertIsNone(linux["sha256"])
+        self.assertEqual(linux["status"], "pinned")
+        self.assertEqual(linux["sha256"], "c92606f956f09dc50b5a0e2af9e86763fce27ada1647de97f8d1ac8cfc95801d")
         self.assertIsNone(linux["sha512"])
 
     def test_kernel_builder_requires_pinned_source_and_builds_bzimage(self) -> None:
