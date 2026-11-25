@@ -39,7 +39,8 @@ jobs:
       - name: Validate ARM64 userspace
         run: |
           file build/work/rootfs-termux/bin/busybox
-          readelf -h build/work/rootfs-termux/bin/busybox | grep -E 'Class:.*ELF64|Machine:.*AArch64'
+          readelf -h build/work/rootfs-termux/bin/busybox | grep -q 'Class:.*ELF64'
+          readelf -h build/work/rootfs-termux/bin/busybox | grep -q 'Machine:.*AArch64'
           test -x build/work/rootfs-termux/usr/bin/vantor-termux-shell
           test -x build/work/rootfs-termux/bin/sh
           test -s build/work/rootfs-termux/etc/os-release
