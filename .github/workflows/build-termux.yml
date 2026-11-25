@@ -97,38 +97,3 @@ jobs:
           else
             echo "[INFO] Docker Hub credentials not configured; GitHub Release remains the distribution channel."
           fi
- output/SHA256SUMS
-          (cd output && sha256sum -c SHA256SUMS)
-      - name: Upload rootfs artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: vantor-termux-aarch64-${{ github.sha }}
-          path: output/*
-          if-no-files-found: error
-          retention-days: 30
-      - name: Publish Termux rootfs release
-        if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release create termux-aarch64 output/vantor-termux-aarch64-0.1.0.tar.gz output/SHA256SUMS \
-            --repo "${GITHUB_REPOSITORY}" \
-            --title "VANTOR Termux ARM64 0.1.0" \
-            --notes "ARM64 VANTOR userspace for Termux + PRoot. Android supplies the host kernel; this archive is not a bootable OS image." \
-            --prerelease 2>/dev/null || \
-          gh release upload termux-aarch64 output/vantor-termux-aarch64-0.1.0.tar.gz output/SHA256SUMS \
-            --repo "${GITHUB_REPOSITORY}" --clobber
-      - name: Publish Docker Hub image (optional credentials)
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: |
-          if [ -n "$DOCKERHUB_USERNAME" ] && [ -n "$DOCKERHUB_TOKEN" ]; then
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker buildx build --platform linux/arm64 \
-              -f Dockerfile.termux \
-              -t "$DOCKERHUB_USERNAME/vantor-linux:termux-arm64" --push .
-            docker logout
-          else
-            echo "[INFO] Docker Hub credentials not configured; GitHub Release remains the distribution channel."
-          fi
