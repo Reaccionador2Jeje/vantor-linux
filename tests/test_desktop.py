@@ -20,6 +20,15 @@ class DesktopGenesisTests(unittest.TestCase):
             self.assertIn(dependency, source)
         self.assertIn('exec openbox --config-file', source)
         self.assertIn('DISPLAY', source)
+        self.assertIn('menu.xml', source)
+
+    def test_session_fails_cleanly_without_x11(self) -> None:
+        result = subprocess.run(
+            ["sh", str(DESKTOP / "bin/vantor-session")],
+            env={"PATH": "/usr/bin:/bin"}, capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("DISPLAY is empty", result.stderr)
 
     def test_openbox_configuration_is_well_formed_xml(self) -> None:
         for relative in ("openbox/rc.xml", "openbox/menu.xml"):
@@ -39,6 +48,8 @@ class DesktopGenesisTests(unittest.TestCase):
         launcher = (DESKTOP / "applications/vantor-terminal.desktop").read_text()
         self.assertIn("[Desktop Entry]", launcher)
         self.assertIn("Exec=xterm", launcher)
+        session = (DESKTOP / "xsessions/vantor.desktop").read_text()
+        self.assertIn("Exec=/usr/bin/vantor-session", session)
 
 
 if __name__ == "__main__":
