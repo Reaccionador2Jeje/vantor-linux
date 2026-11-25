@@ -11,3 +11,4 @@ vantor-netdiag	0.1.0	i486	9902c4e98756576b244f6f7d19fecec22831ce1d46ff6ca2400dbf
 vantor-logview	0.1.0	i486	910557eed0ae404b2a558b88c59393bc88013f665511220029533b38f307b189	vantor-logview-0.1.0-all.tar.gz	VANTOR utility: vantor-logview (architecture-independent)	
 vantor-config-backup	0.1.0	i486	da492a2980e087e71ba22aae042f63a24d2b355fc3a3f974da4f2f5653c841c1	vantor-config-backup-0.1.0-all.tar.gz	VANTOR utility: vantor-config-backup (architecture-independent)	
 vantor-mountinfo	0.1.0	i486	41ec5296aeb3d61268c08c054dc047bfec8ae91cb9958b22dba5129aac2913f1	vantor-mountinfo-0.1.0-all.tar.gz	VANTOR utility: vantor-mountinfo (architecture-independent)	
+fastfetch	0.1.0	i486	8876a20daa2365acd7e8cb7478743f46b2144006a3a2050adb86bd3b1db42d1f	fastfetch-0.1.0-all.tar.gz	VANTOR terminal utility: fastfetch	
