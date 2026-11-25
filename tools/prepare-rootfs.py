@@ -144,18 +144,26 @@ esac
 virtio_pci
 virtio_blk
 virtio_net
+virtio_scsi
 e1000
 e1000e
 ata_piix
+ahci
 sd_mod
 sr_mod
+cdrom
 usb_storage
 xhci_pci
 ehci_pci
 ohci_pci
+ext2
+ext3
 ext4
 isofs
+fat
 vfat
+nls_cp437
+nls_iso8859-1
 """)
     write(output / "usr/sbin/vantor-modules", """#!/bin/sh
 # Load optional kernel modules listed in /etc/modules.
