@@ -41,7 +41,7 @@ CONFIG="$BUILD_DIR/.config"
 "$SOURCE_DIR/scripts/config" --file "$CONFIG" --disable M686
 "$SOURCE_DIR/scripts/config" --file "$CONFIG" --disable M586
 "$SOURCE_DIR/scripts/config" --file "$CONFIG" --enable M486SX
-"$SOURCE_DIR/scripts/config" --enable MATH_EMULATION
+"$SOURCE_DIR/scripts/config" --file "$CONFIG" --enable MATH_EMULATION
 
 enable=(
   BLK_DEV_INITRD BINFMT_ELF DEVTMPFS DEVTMPFS_MOUNT
