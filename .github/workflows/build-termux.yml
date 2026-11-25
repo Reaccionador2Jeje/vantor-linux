@@ -62,7 +62,8 @@ jobs:
             -czf output/vantor-termux-aarch64-0.1.0.tar.gz -C build/work/rootfs-termux .
           tar -tzf output/vantor-termux-aarch64-0.1.0.tar.gz >/dev/null
           (cd output && sha256sum vantor-termux-aarch64-0.1.0.tar.gz > SHA256SUMS)
-          grep -Eq '^[[:xdigit:]]{64}  vantor-termux-aarch64-0.1.0\.tar\.gz
+          test "$(awk '$2 == "vantor-termux-aarch64-0.1.0.tar.gz" { print $1 }' output/SHA256SUMS | wc -c)" -eq 65
+          (cd output && sha256sum -c SHA256SUMS)
       - name: Upload rootfs artifact
         uses: actions/upload-artifact@v4
         with:
