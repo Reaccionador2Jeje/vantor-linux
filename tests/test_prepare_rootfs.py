@@ -40,6 +40,7 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertIn("/etc/init.d/rcS", inittab)
             self.assertIn("vantor-live-session", inittab)
             self.assertIn("ttyS0", inittab)
+            self.assertIn("/bin/busybox getty", inittab)
             self.assertIn("udhcpc", (output / "etc/init.d/rcS").read_text())
             self.assertIn("/bin/busybox su -s /bin/sh - live", (output / "usr/bin/vantor-live-session").read_text())
             self.assertEqual((output / "etc/fstab").stat().st_mode & 0o777, 0o644)
