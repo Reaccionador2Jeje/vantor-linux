@@ -43,6 +43,7 @@ set_config CONFIG_GETTY y
 set_config CONFIG_SU y
 set_config CONFIG_MDEV y
 set_config CONFIG_UDHCPC y
+set_config CONFIG_IP y
 set_config CONFIG_MOUNT y
 set_config CONFIG_UMOUNT y
 set_config CONFIG_PASSWD y
