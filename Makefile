@@ -80,6 +80,7 @@ core-files:
 
 kernel-files:
 	@test -s build/scripts/build-kernel.sh
+	@test -s .github/workflows/build-kernel.yml
 	@test -s kernel/configs/README.md
 	@test -s docs/kernel.md
 	@test -s build/scripts/build-kernel-legacy.sh
