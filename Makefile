@@ -78,7 +78,7 @@ check-nyan:
 	@test -s .github/workflows/build-nyan-profiles.yml
 	@test -s .github/workflows/build-nyan-minimal.yml
 	@bash -n tools/publish-package.sh
-	@grep -q 'install dependencies' docs/nyan.md
+	@grep -q 'dependency-first installation' docs/nyan.md
 	@grep -q 'Language:' docs/nyan.md
 	@test -s tests/test_nyan.py
 	@grep -Fq 'archive-types-$$' packages/nyan/nyan
