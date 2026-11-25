@@ -88,7 +88,7 @@ CI validates repository structure, configuration, source metadata, safe extracti
 
 ## Nyan package management
 
-VANTOR's native package manager is **Nyan**. The POSIX shell client is included in the generated rootfs. Its GitHub Releases mirror does not depend on Cloudflare R2. The first published language package is Lua 5.4.9 for x86_64. Once VANTOR has its network and TLS tools available, the intended workflow is:
+VANTOR's native package manager is **Nyan**. The POSIX shell client is included in the generated rootfs. Its GitHub Releases mirror does not depend on Cloudflare R2. The initial Minimal profile is built from VANTOR Base Files and static BusyBox; the Nyan catalog distinguishes bundled tools from planned packages such as sudo, nano, Vim and Fastfetch. The first published language package is Lua 5.4.9 for x86_64. Once VANTOR has its network and TLS tools available, the intended workflow is:
 
 ```sh
 nyan update
