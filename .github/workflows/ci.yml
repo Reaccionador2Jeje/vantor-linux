@@ -31,6 +31,8 @@ jobs:
           make rootfs
           test -s build/work/rootfs/etc/os-release
           test -x build/work/rootfs/init
+          test -x build/work/rootfs/usr/bin/vantor-fb-splash
+          file build/work/rootfs/usr/bin/vantor-fb-splash | grep -q 'statically linked'
           test -s build/work/rootfs/usr/share/vantor/branding/vantor-mark.svg
       - name: Check required repository paths
         run: |
