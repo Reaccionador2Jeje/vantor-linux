@@ -116,7 +116,8 @@ packages_setup() {
 }
 preferences_setup() {
  target=$(ask "System preferences" "Installed system root:" "/mnt") || return 0
- hostname=$(ask "Hostname" "Computer name:" "vantor") || return 0
+ current_hostname=$(cat "$target/etc/hostname" 2>/dev/null || echo vantor)
+ hostname=$(ask "Hostname" "Computer name:" "$current_hostname") || return 0
  timezone=$(ask "Timezone" "Timezone (e.g. America/Santiago):" "America/Santiago") || return 0
  locale=$(ask "Locale" "Locale (e.g. es_CL.UTF-8):" "es_CL.UTF-8") || return 0
  valid_name "$hostname" || die "invalid hostname"
