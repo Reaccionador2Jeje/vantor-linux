@@ -10,6 +10,7 @@ on:
       - "README.md"
       - "LICENSE"
       - "docs/nyan.md"
+      - "packages/addons/**"
       - "tools/build-nyan-extras.sh"
       - ".github/workflows/build-nyan-extras.yml"
       - "tools/publish-package.sh"
@@ -29,7 +30,7 @@ jobs:
           fetch-depth: 0
       - name: Build architecture-independent payloads
         run: bash tools/build-nyan-extras.sh
-      - name: Publish eight Nyan packages
+      - name: Publish architecture-specific and universal Nyan packages
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -47,6 +48,9 @@ jobs:
             publish "build/nyan-extras/vantor-installer-0.1.0-$arch.tar.gz" vantor-installer "$arch" "VANTOR text-mode system installer" vantor-base-files
             publish "build/nyan-extras/vantor-branding-0.1.0-$arch.tar.gz" vantor-branding "$arch" "Official VANTOR identity assets"
             publish "build/nyan-extras/vantor-docs-0.1.0-$arch.tar.gz" vantor-docs "$arch" "VANTOR system and Nyan documentation"
+          done
+          for tool in vantor-about vantor-doctor vantor-netdiag vantor-logview vantor-config-backup vantor-mountinfo; do
+            publish "build/nyan-extras/$tool-0.1.0-all.tar.gz" "$tool" all "0.1.0" "VANTOR utility: $tool"
           done
       - name: Upload package archives
         uses: actions/upload-artifact@v4
