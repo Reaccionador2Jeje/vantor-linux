@@ -13,7 +13,7 @@ mkdir -p "$WORK/src" "$WORK/downloads" "$WORK/openssl" "$WORK/stage" "$OUT"
 case "$ARCH" in
   x86_64)
     TOOLCHAIN="x86_64-linux-musl-cross"
-    TOOLCHAIN_SHA="c5d410d9f82a4f24c549fe5d24f988f85b2679b452f2fe7ea"
+    TOOLCHAIN_SHA="c5d410d9f82a4f24c549fe5d24f988f85b2679b452413a9f7e5f7b956f2fe7ea"
     OPENSSL_TARGET="linux-x86_64"
     ARCH_FLAGS=""
     ;;
@@ -41,7 +41,7 @@ echo "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a  $OPENSSL
 tar -xzf "$OPENSSL" -C "$WORK/src"
 (
   cd "$WORK/src/openssl-3.5.9"
-  ./Configure "$OPENSSL_TARGET" --cross-compile-prefix="$TARGET-" no-shared no-tests no-apps no-docs no-dso no-engine no-async no-comp no-legacy no-module no-asm \
+  ./Configure "$OPENSSL_TARGET" no-shared no-tests no-apps no-docs no-dso no-engine no-async no-comp no-legacy no-module no-asm \
     --prefix=/usr/local --openssldir=/etc/ssl
   make -j2
   make install_sw DESTDIR="$WORK/openssl"
