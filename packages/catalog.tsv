@@ -1,0 +1,22 @@
+# package<TAB>category<TAB>status<TAB>description
+vantor-base-files	system	building	VANTOR Minimal identity, accounts, init and core tools
+busybox	system	bundled	Static shell and essential command applets
+root-account	accounts	bundled	Administrative root account
+live-account	accounts	bundled	Standard Live-session account
+wheel-policy	security	bundled	Sudoers policy for wheel members
+nyan	package-manager	bundled	VANTOR native package manager
+vantor-install	installer	bundled	VANTOR text-mode Minimal installer
+vi	editors	bundled	BusyBox vi console editor
+sudo	administration	planned	Privilege elevation for wheel users
+nano	editors	planned	Friendly terminal text editor
+vim	editors	planned	Full Vim editor
+fastfetch	diagnostics	planned	System information and VANTOR branding
+dialog	installer	planned	Full-screen TUI widgets
+curl	network	planned	TLS-capable transfer client
+ca-certificates	network	planned	Trusted certificate bundle
+dhcpcd	network	planned	DHCP client
+xorg-server	desktop	planned	X11 display server
+mesa	desktop	planned	OpenGL graphics stack
+openbox	desktop	planned	Lightweight window manager
+tint2	desktop	planned	Panel and taskbar
+xterm	desktop	planned	Terminal emulator
