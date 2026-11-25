@@ -54,9 +54,13 @@ Run repository checks locally:
 make check
 ```
 
+## Toolchain development
+
+The first x86_64 cross-toolchain plan is documented in [docs/toolchain.md](docs/toolchain.md). Upstream candidates are recorded in `build/sources/sources.json`; they are not build-approved until their SHA-256 digests are verified. `make check` validates the manifest, while `make sources-ready` deliberately fails until every source is pinned. `make fetch-sources` downloads only pinned archives and verifies each digest before saving it.
+
 ## Build status
 
-The current CI validates repository structure and shell scripts. It does **not** yet compile a complete toolchain, kernel, or ISO. Those stages will be added and tested incrementally.
+The current CI validates repository structure, configuration, and the source manifest. It does **not** yet compile the toolchain, kernel, or ISO. The source downloader is implemented but currently refuses downloads because the source digests have not yet been verified. No bootable image is claimed.
 
 ## Licensing
 
@@ -64,4 +68,4 @@ The repository's top-level license applies to original project files where appli
 
 ## Contributing
 
-See [docs/architecture.md](docs/architecture.md) for the initial design and current milestones.
+See [docs/architecture.md](docs/architecture.md) for the initial design and [docs/toolchain.md](docs/toolchain.md) for the cross-toolchain bootstrap plan.
