@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" role="img" aria-labelledby="title">
+  <title id="title">VANTOR Linux — One System. Every Generation.</title>
+  <defs>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f4fbff"/><stop offset=".5" stop-color="#9db6d3"/><stop offset="1" stop-color="#7189a8"/></linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#00d9ff"/><stop offset="1" stop-color="#0877ff"/></linearGradient>
+  </defs>
+  <g transform="translate(18 10) scale(.54)">
+    <ellipse cx="256" cy="256" rx="220" ry="88" fill="none" stroke="url(#cyan)" stroke-width="13" transform="rotate(-24 256 256)"/>
+    <path d="M104 105 L204 105 L256 286 L308 105 L408 105 L282 407 L230 407 Z" fill="url(#metal)" stroke="#d8f5ff" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M256 286 L282 407 L230 407 Z" fill="#00bff3" opacity=".72"/>
+  </g>
+  <text x="315" y="145" fill="#f4f8ff" font-family="Orbitron, Rajdhani, sans-serif" font-size="92" font-weight="700" letter-spacing="8">VANTOR</text>
+  <text x="321" y="205" fill="#00cfff" font-family="Rajdhani, sans-serif" font-size="48" font-weight="600" letter-spacing="18">LINUX</text>
+  <text x="321" y="258" fill="#b8c9df" font-family="Rajdhani, sans-serif" font-size="20" letter-spacing="6">ONE SYSTEM. EVERY GENERATION.</text>
+</svg>
