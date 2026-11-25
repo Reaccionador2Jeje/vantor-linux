@@ -105,6 +105,18 @@ class NyanIntegrationTests(unittest.TestCase):
         self.assertTrue((self.root / "usr/bin/application").exists())
         self.assertTrue((self.root / "var/lib/nyan/installed/runtime").exists())
 
+    def test_installs_published_development_profile(self) -> None:
+        self.add_package("lua", "usr/bin/lua", b"lua-runtime")
+        self.add_package("vantor-profile-development", "usr/share/vantor/profiles/development.txt", b"Development profile", "lua")
+        self.assertEqual(self.run_nyan("update").returncode, 0)
+        profiles = self.run_nyan("profiles")
+        self.assertIn("development", profiles.stdout)
+        self.assertIn("available", profiles.stdout)
+        result = self.run_nyan("install-profile", "development")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue((self.root / "usr/bin/lua").exists())
+        self.assertTrue((self.root / "usr/share/vantor/profiles/development.txt").exists())
+
     def test_rejects_dependency_cycles(self) -> None:
         self.add_package("alpha", "usr/share/alpha", b"a", "beta")
         self.add_package("beta", "usr/share/beta", b"b", "alpha")
