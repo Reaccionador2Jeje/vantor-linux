@@ -87,7 +87,7 @@ TTY=/dev/tty0
 [ -r /proc/cmdline ] || exit 0
 case " $(cat /proc/cmdline) " in *" nosplash "*) exit 0;; esac
 emit() { printf '%b' "$1" > "$TTY"; }
-case "\${1:-start}" in
+case "${1:-start}" in
     start)
         emit '\033[?25l\033[2J\033[H\033[48;2;7;19;33m'
         emit '\033[36m'
