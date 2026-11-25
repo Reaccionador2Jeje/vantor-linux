@@ -54,6 +54,9 @@ core-files:
 	@grep -q 'live:x:1000:1000' tools/prepare-rootfs.py
 	@grep -q 'VANTOR Init' tools/prepare-rootfs.py
 	@grep -q 'VANTOR Control' tools/prepare-rootfs.py
+	@grep -q 'etc/inittab' tools/prepare-rootfs.py
+	@grep -q 'vantor-live-session' tools/prepare-rootfs.py
+	@grep -q 'udhcpc' tools/prepare-rootfs.py
 	@test -s core/hardware/vantor-hw
 	@grep -q 'VANTOR Hardware' core/hardware/vantor-hw
 	@sh -n core/hardware/vantor-hw
@@ -66,9 +69,7 @@ kernel-files:
 	@test -s build/scripts/build-kernel-legacy.sh
 	@grep -q 'M486SX' build/scripts/build-kernel-legacy.sh
 	@grep -q 'linux-legacy' build/sources/sources.json
-	@echo "[INFO] Legacy kernel source is pinned and builder is available."
 	@test -s docs/hardware-compatibility.md
-	@test -s build/scripts/build-kernel-legacy.sh
 	@echo "[OK] VANTOR x86_64 and i486 kernel build files are present."
 
 
