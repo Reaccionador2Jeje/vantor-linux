@@ -49,4 +49,4 @@ cleanup() {
 trap cleanup EXIT HUP INT TERM
 
 # Openbox owns the window lifecycle. Returning to the display manager ends the session.
-exec openbox --config-file "$OPENBOX_CONFIG"
+openbox --config-file "$OPENBOX_CONFIG"
