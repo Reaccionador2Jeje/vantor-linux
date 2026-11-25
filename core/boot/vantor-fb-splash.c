@@ -131,9 +131,14 @@ static int open_fb(void) {
     fd=open("/dev/fb0",O_RDWR);
     if(fd<0) return -1;
     if(ioctl(fd,FBIOGET_FSCREENINFO,&fix)<0 || ioctl(fd,FBIOGET_VSCREENINFO,&var)<0) return -1;
+    if(fix.visual!=FB_VISUAL_TRUECOLOR) return -1;
     if(var.bits_per_pixel!=16 && var.bits_per_pixel!=24 && var.bits_per_pixel!=32) return -1;
-    if(var.red.length==0 || var.green.length==0 || var.blue.length==0) return -1;
-    fb_len=(size_t)fix.line_length*(var.yres+var.yoffset);
+    if(var.red.length==0 || var.green.length==0 || var.blue.length==0 ||
+       var.red.length>8 || var.green.length>8 || var.blue.length>8) return -1;
+    if(var.xres==0 || var.yres==0 || fix.line_length==0) return -1;
+    fb_len=fix.smem_len;
+    if(fb_len==0) fb_len=(size_t)fix.line_length*(var.yres+var.yoffset);
+    if(fb_len<(size_t)fix.line_length*(var.yres+var.yoffset)) return -1;
     fb=mmap(NULL,fb_len,PROT_READ|PROT_WRITE,MAP_SHARED,fd,0);
     return fb==MAP_FAILED ? -1 : 0;
 }
