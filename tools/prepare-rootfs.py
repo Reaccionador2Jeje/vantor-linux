@@ -157,7 +157,6 @@ xhci_pci
 ehci_pci
 ohci_pci
 ext2
-ext3
 ext4
 isofs
 fat
