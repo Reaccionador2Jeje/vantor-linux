@@ -6,3 +6,4 @@ vantor-profile-minimal	0.1.0	x86_64	4a96e939bd33f8ee2feca9bfbf49051db76591fac3e1
 vantor-hardware	0.1.0	x86_64	97b8ae20d22dd1dce138db21376121cc54943fa5253ad89254a0e934d300c517	vantor-hardware-0.1.0-x86_64.tar.gz	VANTOR read-only hardware inventory utility	
 vantor-installer	0.1.0	x86_64	5516729ee078e935082abac44d7d4adfbc010b3008b4dcd70716f5b35e21c0bd	vantor-installer-0.1.0-x86_64.tar.gz	VANTOR text-mode system installer	vantor-base-files
 vantor-branding	0.1.0	x86_64	12440af629d65e52c394e2b5394fbc6b590def7ecb97812a671c42e9682ad235	vantor-branding-0.1.0-x86_64.tar.gz	Official VANTOR identity assets	
+vantor-docs	0.1.0	x86_64	bbb628e7f3a7daba7f949ac382825678baf38c73a228052da72577bd71f4245e	vantor-docs-0.1.0-x86_64.tar.gz	VANTOR system and Nyan documentation	
