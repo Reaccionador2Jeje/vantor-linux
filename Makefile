@@ -79,7 +79,7 @@ check-nyan:
 	@test -s .github/workflows/build-nyan-minimal.yml
 	@bash -n tools/publish-package.sh
 	@grep -q 'dependency-first installation' docs/nyan.md
-	@grep -q 'Language:' docs/nyan.md
+	@grep -q 'Lua 5.4.9' docs/nyan.md
 	@test -s tests/test_nyan.py
 	@grep -Fq 'archive-types-$$' packages/nyan/nyan
 	@grep -q 'refusing to overwrite existing system path' packages/nyan/nyan
