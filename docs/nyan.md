@@ -22,7 +22,7 @@ The tab-separated `Packages` index starts with `# VANTOR-PACKAGES 1`. Each row h
 
 `name<TAB>version<TAB>architecture<TAB>sha256<TAB>archive<TAB>description<TAB>dependency1,dependency2`
 
-The optional seventh field is a comma-separated list of package names. Nyan installs dependencies first and detects dependency cycles. Existing six-field rows remain valid. Dependency installation is not yet transactional: if a later package fails, already installed dependencies remain installed.
+The optional seventh field is a comma-separated list of package names. Nyan installs dependencies first and detects dependency cycles. Published installation profiles are represented by meta-packages named `vantor-profile-PROFILE`; `nyan install-profile development` installs the profile package and its dependencies. Existing six-field rows remain valid. Dependency installation is not yet transactional: if a later package fails, already installed dependencies remain installed.
 
 ## Installation profiles
 
@@ -33,7 +33,7 @@ Nyan exposes four planned profiles:
 - `development` — compilers, build tools, interpreters and headers.
 - `network` — DHCP, DNS, TLS and network diagnostic tools.
 
-These are profile definitions, not claims that those package sets are already downloadable. The profiles remain unavailable until every required binary package is built, published, and tested on VANTOR. The only currently listed language package is Lua 5.4.9 for x86_64.
+The development profile is the first installable profile. Its meta-package depends on Lua 5.4.9 and installs a profile manifest. It is a starter programming environment, not a complete compiler toolchain. Base, desktop and network remain unavailable until their real package sets are built, published and tested.
 
 ## VANTOR Community Mirror
 
