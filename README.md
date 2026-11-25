@@ -76,6 +76,10 @@ make rootfs
 
 The generated tree is placed in \`build/work/rootfs\`. It is not bootable yet because BusyBox, the kernel, and the final initramfs image have not been integrated.
 
+## VANTOR Desktop
+
+The first VANTOR Desktop Genesis shell is under `desktop/`. It uses an intentionally light X11 stack (Openbox, tint2 and xterm) with VANTOR's own session launcher, keyboard shortcuts, menu and navy/cyan panel configuration. The graphical packages are tracked as planned Nyan packages and are not yet included in the Minimal ISO. See [VANTOR Desktop](desktop/README.md).
+
 ## Toolchain and emulator development
 
 The first x86_64 cross-toolchain plan is documented in [docs/toolchain.md](docs/toolchain.md). The initial Linux kernel baseline is 6.18.65, with its build contract and QEMU driver profile documented in [docs/kernel.md](docs/kernel.md). Android VM testing is documented in [docs/testing-limbo.md](docs/testing-limbo.md); Limbo PC Emulator is the selected manual test target. Initial build scripts exist for Binutils pass 1 and GCC pass 1, with a manual [GitHub Actions toolchain workflow](.github/workflows/toolchain.yml).
