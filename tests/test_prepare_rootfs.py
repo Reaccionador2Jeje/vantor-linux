@@ -118,7 +118,7 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertTrue((output / "usr/share/vantor/branding/vantor-mark.svg").is_file())
             brand = json.loads((output / "etc/vantor-brand.json").read_text())
             self.assertEqual(brand["brand"], "VANTOR Linux")
-            self.assertEqual(brand["core"]["init"], "VANTOR Init 0.1.0")
+            self.assertEqual(brand["core"]["init"], "VANTOR Init 0.2.0")
             self.assertEqual(brand["core"]["hardware"], "VANTOR Hardware 0.1.0")
             for script in ("init", "sbin/vantor-init", "usr/sbin/vantor-modules", "usr/sbin/vantor-network", "usr/sbin/vantor-service", "usr/sbin/vantor-storage", "etc/init.d/rcS", "usr/bin/vantor-splash", "usr/bin/vantor-live-session", "usr/bin/vantorctl", "usr/bin/vantor-hw", "usr/bin/nyan", "usr/bin/vantor-install"):
                 check = subprocess.run(["sh", "-n", str(output / script)], capture_output=True, text=True, check=False)
