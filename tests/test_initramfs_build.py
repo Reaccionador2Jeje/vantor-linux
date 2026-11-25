@@ -22,8 +22,17 @@ class InitramfsBuildTests(unittest.TestCase):
     def test_iso_and_initramfs_output_contract_match(self):
         initramfs = (ROOT / "build/scripts/build-initramfs.sh").read_text()
         iso = (ROOT / "build/scripts/build-iso.sh").read_text()
-        self.assertIn("build/work/initramfs/vantor-initramfs.cpio.gz", initramfs)
+        self.assertIn("VANTOR_INITRAMFS_DIR:-$ROOT/build/work/initramfs", initramfs)
+        self.assertIn("VANTOR_INITRAMFS_NAME:-vantor-initramfs.cpio.gz", initramfs)
         self.assertIn('INITRAMFS="$WORK/initramfs/vantor-initramfs.cpio.gz"', iso)
+
+    def test_legacy_image_uses_486_kernel_and_separate_initramfs(self):
+        script = (ROOT / "build/scripts/build-iso-legacy.sh").read_text()
+        grub = (ROOT / "boot/grub/grub-legacy.cfg").read_text()
+        self.assertIn("kernel-legacy/arch/x86/boot/bzImage", script)
+        self.assertIn("initramfs-legacy/vantor-legacy-initramfs.cpio.gz", script)
+        self.assertIn("terminal_output console", grub)
+        self.assertIn("vantor-legacy-kernel", grub)
 
 
 if __name__ == "__main__":
