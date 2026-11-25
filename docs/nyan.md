@@ -100,14 +100,14 @@ All six are POSIX-shell tools installed under `/usr/local/bin`; they do not requ
 
 Native packages are built in a separate workflow so their compiler and library dependencies do not affect kernel, ISO, Legacy, or general build workflows.
 
-The first native package is GNU nano 9.2. Its builder:
+The native package workflow builds multiple packages in a four-job architecture/package matrix. GNU nano 9.2 is published for both x86_64 and i486. Its builder:
 - Uses pinned musl cross-toolchains for x86_64 and i486, each checked against a SHA-256 digest.
 - Builds ncurses 6.6 and nano from pinned source archives with verified SHA-256 digests.
 - Produces statically linked binaries, avoiding a second runtime C library on the target system.
 - Smoke-tests the x86_64 binary directly and the i486 binary under a 486 CPU emulator.
 - Publishes only after the build and binary checks succeed.
 
-The package is listed as `building` until both architecture jobs publish successfully. Dialog, htop, curl with TLS, and full Vim remain planned follow-up native builds; they are not represented as available packages yet.
+GNU nano is available in both architecture indexes. The second native target is htop 3.4.1, built statically against the same pinned ncurses release with optional hwloc support disabled. Its two architecture jobs run independently alongside Nano; htop remains `building` until both package archives are published and verified in the indexes. Dialog, curl with TLS, and full Vim remain planned follow-up native builds; they are not represented as available packages yet.
 
 ## Installed package inspection
 
