@@ -23,6 +23,9 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("bzImage", script)
         self.assertIn("VIRTIO_BLK", script)
         self.assertIn("VIRTIO_NET", script)
+        self.assertIn("FRAMEBUFFER_CONSOLE", script)
+        self.assertIn("DRM_FBDEV_EMULATION", script)
+        self.assertIn("DRM_BOCHS", script)
 
     def test_legacy_linux_source_is_pinned_to_upstream_checksum(self) -> None:
         manifest = json.loads((ROOT / "build/sources/sources.json").read_text())
