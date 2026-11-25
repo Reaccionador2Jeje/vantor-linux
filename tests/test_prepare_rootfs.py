@@ -23,13 +23,43 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertTrue((output / "init").stat().st_mode & 0o111)
             self.assertTrue((output / "sbin/vantor-init").stat().st_mode & 0o111)
             self.assertTrue((output / "usr/bin/vantorctl").stat().st_mode & 0o111)
+            self.assertTrue((output / "usr/bin/vantor-hw").stat().st_mode & 0o111)
             self.assertTrue((output / "usr/share/vantor/branding/vantor-mark.svg").is_file())
             brand = json.loads((output / "etc/vantor-brand.json").read_text())
             self.assertEqual(brand["brand"], "VANTOR Linux")
             self.assertEqual(brand["core"]["init"], "VANTOR Init 0.1.0")
-            for script in ("init", "sbin/vantor-init", "usr/bin/vantorctl"):
+            self.assertEqual(brand["core"]["hardware"], "VANTOR Hardware 0.1.0")
+            for script in ("init", "sbin/vantor-init", "usr/bin/vantorctl", "usr/bin/vantor-hw"):
                 check = subprocess.run(["sh", "-n", str(output / script)], capture_output=True, text=True, check=False)
                 self.assertEqual(check.returncode, 0, f"{script}: {check.stderr}")
+
+
+    def test_hardware_inventory_reads_proc_and_sys_fixtures(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            proc = base / "proc"
+            sysroot = base / "sys"
+            (proc).mkdir()
+            (proc / "cpuinfo").write_text("processor : 0\nmodel name : VANTOR Test CPU\n")
+            (proc / "meminfo").write_text("MemTotal:       2048000 kB\nMemAvailable:   1024000 kB\n")
+            (sysroot / "block" / "vda").mkdir(parents=True)
+            (sysroot / "block" / "vda" / "size").write_text("4096\n")
+            (sysroot / "bus" / "pci" / "devices" / "0000:00:02.0").mkdir(parents=True)
+            pci = sysroot / "bus" / "pci" / "devices" / "0000:00:02.0"
+            (pci / "vendor").write_text("0x1af4\n")
+            (pci / "device").write_text("0x1000\n")
+            (pci / "class").write_text("0x020000\n")
+            (sysroot / "bus" / "virtio" / "devices" / "virtio0").mkdir(parents=True)
+            (sysroot / "bus" / "virtio" / "devices" / "virtio0" / "vendor").write_text("0x1af4\n")
+            (sysroot / "bus" / "virtio" / "devices" / "virtio0" / "device").write_text("0x1000\n")
+            (sysroot / "class" / "net" / "eth0").mkdir(parents=True)
+            (sysroot / "class" / "net" / "eth0" / "operstate").write_text("up\n")
+            (sysroot / "class" / "net" / "eth0" / "address").write_text("02:00:00:00:00:01\n")
+            env = dict(__import__("os").environ, VANTOR_PROC_ROOT=str(proc), VANTOR_SYS_ROOT=str(sysroot))
+            result = subprocess.run([str(ROOT / "core/hardware/vantor-hw")], env=env, capture_output=True, text=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            for expected in ("VANTOR Test CPU", "MemTotal:", "vda: sectors=4096", "vendor=0x1af4", "virtio0", "eth0 state=up"):
+                self.assertIn(expected, result.stdout, expected)
 
     def test_refuses_nonempty_output(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
