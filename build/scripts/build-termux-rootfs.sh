@@ -58,8 +58,6 @@ test -x "$ROOTFS/bin/busybox"
 for applet in sh ash vi mdev udhcpc ip mount umount df free ps; do
   grep -qx "$applet" "$BUILD_DIR/applets.txt" || { echo "[ERROR] Missing BusyBox applet: $applet" >&2; exit 1; }
 done
-cp "$ROOTFS/bin/busybox" "$ROOTFS/bin/sh"
-cp "$ROOTFS/bin/busybox" "$ROOTFS/bin/ash"
 mkdir -p "$ROOTFS/root/.config" "$ROOTFS/run" "$ROOTFS/tmp"
 chmod 700 "$ROOTFS/root"
 chmod 1777 "$ROOTFS/tmp"
