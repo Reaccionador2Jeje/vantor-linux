@@ -15,7 +15,7 @@ die() { echo "nyan: error: $*" >&2; exit 1; }
 say() { printf 'nyan: %s\n' "$*"; }
 fetch() {
   url=$1 output=$2
-  if command -v curl >/dev/null 2>&1; then curl -fL --retry 2 -o "$output" "$url"
+  if command -v curl >/dev/null 2>&1; then curl -fsSL --retry 2 -o "$output" "$url"
   elif command -v wget >/dev/null 2>&1; then wget -q -O "$output" "$url"
   else die "curl or wget is required"
   fi
@@ -107,6 +107,7 @@ case "$cmd" in
     # Refuse package-to-package conflicts and overwrites of existing system files.
     for owned_file in "$NYAN_STATE"/installed/*.files; do
       [ -f "$owned_file" ] || continue
+      [ "$owned_file" = "$NYAN_STATE/installed/$name.files" ] && continue
       while IFS= read -r item; do
         grep -F -x -q "$item" "$owned_file" && die "file conflict: $item is already owned by another package"
       done < "$NYAN_STATE/installed/$name.files"
