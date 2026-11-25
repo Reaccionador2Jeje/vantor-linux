@@ -119,6 +119,7 @@ check-nyan:
 	@sh -n packages/nyan/nyan
 	@grep -q 'VANTOR-PACKAGES 1' packages/repository/x86_64/Packages
 	@grep -q 'VANTOR-PACKAGES 1' packages/repository/i486/Packages
+	@grep -q 'VANTOR-PACKAGES 1' packages/repository/aarch64/Packages
 	@grep -q 'languages)' packages/nyan/nyan
 	@grep -q 'install-profile)' packages/nyan/nyan
 	@grep -q 'dependency cycle detected' packages/nyan/nyan
