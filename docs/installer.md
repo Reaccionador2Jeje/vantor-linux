@@ -55,3 +55,15 @@ The installer now supports a target-only boot-file preparation command:
 The initramfs entry point recognizes root=/dev/... and rootfstype=..., mounts the installed root and uses BusyBox switch_root to hand off to the installed /sbin/init. Without a root device argument, it continues into the Live system as before.
 
 This flow is the boot plumbing; it still requires the Live environment to expose the kernel/initramfs files and a separate GRUB installation step before a target disk can boot independently.
+
+
+## Installer configuration additions
+
+The interactive installer now includes these additional setup actions:
+
+- **Network:** records DHCP or static IPv4 configuration (interface, address/prefix, gateway and DNS) under `/etc/vantor/network.conf`. VANTOR startup applies the saved static configuration with `ip`, or requests a DHCP lease. If no saved network configuration exists, startup falls back to DHCP on detected interfaces.
+- **Nyan mirror:** accepts an HTTPS repository base URL and saves it in `/etc/nyan.conf`. The installation flow asks for the mirror before refreshing the package index.
+- **Additional packages:** refreshes the selected Nyan index and accepts package names separated by spaces. Nyan verifies package checksums and dependency metadata as it installs.
+- **System preferences:** saves hostname, locale (`/etc/locale.conf`) and timezone (`/etc/timezone`); copies the timezone file to `/etc/localtime` when it exists in the Live environment.
+
+These options are also available from the installer menu after installation. The current package selection prompt uses package names rather than a graphical catalog; package availability depends on the selected mirror and architecture. Static networking requires the BusyBox `ip` applet in the image.
