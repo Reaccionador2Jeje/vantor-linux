@@ -20,3 +20,4 @@ vpath	0.1.0	aarch64	8154f45720a59522327ee25e4de7101e44a5b7a2f054e6fb9d6937f30a41
 vusers	0.1.0	aarch64	c59537241f74242270bfe27b9c6385a7199f8f498a601da551260e622a2397c1	vusers-0.1.0-all.tar.gz	VANTOR terminal utility: vusers	
 vtime	0.1.0	aarch64	39f7d560539b09d6aadfc05f02de72989b0c9a9ecf4d220e0afdd534d76f4123	vtime-0.1.0-all.tar.gz	VANTOR terminal utility: vtime	
 vchecksum	0.1.0	aarch64	1ff62d001df4acb516b3c420cd96d206f1db5d3be5277c68779db8d27f1558e1	vchecksum-0.1.0-all.tar.gz	VANTOR terminal utility: vchecksum	
+varchive	0.1.0	aarch64	78381e9aa686714f4e7399f430790b161f697042afa22fe12ad35a6c1c435d68	varchive-0.1.0-all.tar.gz	VANTOR terminal utility: varchive	
