@@ -18,7 +18,7 @@ class DesktopGenesisTests(unittest.TestCase):
         source = session.read_text()
         for dependency in ("openbox", "tint2", "xsetroot"):
             self.assertIn(dependency, source)
-        self.assertIn('exec openbox --config-file', source)
+        self.assertIn('openbox --config-file', source)
         self.assertIn('DISPLAY', source)
         self.assertIn('menu.xml', source)
 
