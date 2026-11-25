@@ -9,7 +9,7 @@ help:
 	  '  make check-shell   Validate shell scripts' '  make check-config  Validate build configuration' \
 	  '  make check-sources Validate source manifest structure' '  make check-python  Compile and test Python tools' '  make check-nyan    Validate Nyan package manager syntax' \
 	  '  make sources-ready Require verified source checksums' '  make fetch-sources Download and verify pinned archives' \
-	  '  make toolchain      Build Binutils and GCC pass 1' '  make kernel         Build VANTOR x86_64 Linux kernel' '  make kernel-legacy  Build 486SX-compatible 32-bit legacy kernel' \
+	  '  make toolchain      Build Binutils and GCC pass 1' '  make kernel         Build VANTOR x86_64 Linux kernel and modules' '  make kernel-legacy  Build 486SX-compatible 32-bit legacy kernel' \
 	  '  make busybox        Build static x86_64 BusyBox userspace' '  make busybox-legacy Build static i486 BusyBox userspace' '  make initramfs      Assemble x86_64 early userspace' '  make initramfs-legacy Assemble i486 early userspace' \
 	  '  make rootfs         Assemble the x86_64 VANTOR rootfs skeleton' '  make rootfs-legacy  Assemble the i486 VANTOR rootfs skeleton' \
 	  '  make boot-files     Check bootloader configuration and builder' \
