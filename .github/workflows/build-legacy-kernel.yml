@@ -9,6 +9,7 @@ on:
       - "build/sources/sources.json"
       - "kernel/configs/**"
       - "tests/test_kernel_build.py"
+      - "Makefile"
       - ".github/workflows/build-legacy-kernel.yml"
 
 permissions:
