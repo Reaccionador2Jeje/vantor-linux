@@ -12,7 +12,7 @@ read_value() {
 section() { printf '\n== %s ==\n' "$1"; }
 case "${1:-}" in
     --version|-V) echo "VANTOR Hardware $VERSION"; exit 0 ;;
-    --help|-h) echo "VANTOR Hardware $VERSION"; echo "Usage: vantor-hw [--help|--version]"; echo "Reports CPU, memory, storage, PCI, VirtIO and network devices."; exit 0 ;;
+    --help|-h) echo "VANTOR Hardware $VERSION"; echo "Usage: vantor-hw [--help|--version]"; echo "Reports CPU, memory, storage, PCI, VirtIO, USB and network devices."; exit 0 ;;
     "") ;;
     *) echo "vantor-hw: unknown option: $1" >&2; exit 2 ;;
 esac
@@ -77,7 +77,7 @@ for dev in "$SYS_ROOT"/bus/usb/devices/*; do
     name="${dev##*/}"
     manufacturer="$(read_value "$dev/manufacturer")"
     product_name="$(read_value "$dev/product")"
-    printf '%s vendor=%s product=%s manufacturer=%s name=%s\\n' "$name" "$vendor" "$product" "$manufacturer" "$product_name"
+    printf '%s vendor=%s product=%s manufacturer=%s name=%s\n' "$name" "$vendor" "$product" "$manufacturer" "$product_name"
 done
 [ "$found" -eq 1 ] || echo "No USB devices found or USB sysfs unavailable."
 section "NETWORK INTERFACES"
