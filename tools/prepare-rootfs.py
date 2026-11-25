@@ -452,7 +452,7 @@ if [ -n "$rootdev" ]; then
     if [ -n "$rootfstype" ]; then
         mount -t "$rootfstype" -o rw "$rootdev" /newroot && mounted=1
     else
-        for fs in ext4 ext3 ext2; do
+        for fs in ext4 ext2; do
             mount -t "$fs" -o rw "$rootdev" /newroot && { rootfstype="$fs"; mounted=1; break; }
         done
     fi
