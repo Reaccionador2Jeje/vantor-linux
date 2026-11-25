@@ -24,10 +24,14 @@ jobs:
       - name: Select source build
         id: source
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "run_id=${{ inputs.artifact_run_id }}" >> "$GITHUB_OUTPUT"
-            echo "sha=manual" >> "$GITHUB_OUTPUT"
+            RUN_ID="${{ inputs.artifact_run_id }}"
+            SHA="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" --jq .head_sha)"
+            echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+            echo "sha=$SHA" >> "$GITHUB_OUTPUT"
           else
             echo "run_id=${{ github.event.workflow_run.id }}" >> "$GITHUB_OUTPUT"
             echo "sha=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
