@@ -72,6 +72,9 @@ core-files:
 	@grep -q 'etc/inittab' tools/prepare-rootfs.py
 	@grep -q 'vantor-live-session' tools/prepare-rootfs.py
 	@grep -q 'udhcpc' tools/prepare-rootfs.py
+	@grep -q 'vantor-service' tools/prepare-rootfs.py
+	@grep -q 'CONFIG_START_STOP_DAEMON' build/scripts/build-busybox.sh
+	@test -s tests/test_prepare_rootfs.py
 	@test -s core/hardware/vantor-hw
 	@test -s core/boot/vantor-fb-splash.c
 	@grep -q 'VANTOR Hardware' core/hardware/vantor-hw
