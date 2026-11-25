@@ -33,16 +33,15 @@ runs `make toolchain`, and uploads build logs and toolchain artifacts.
 | Linux | 6.18.65 | Current 6.18 long-term-support point release |
 | BusyBox | 1.37.0 | Stable baseline; upstream marks 1.38.0 unstable |
 
-These are candidates, not yet build-approved pins. The manifest intentionally
-leaves SHA-256 values empty. The project must verify each digest against an
-upstream checksum or signature before changing an entry to `pinned`.
+Binutils 2.47 is pinned with the SHA-256 published in the upstream release announcement. GCC 16.2.0 is pinned with the SHA-512 published in the official GNU release directory. The validator and downloader accept either SHA-256 or SHA-512. glibc, Linux, and BusyBox remain candidates until their own source integrity metadata is verified.
 
 ## Source integrity
 
 - `tools/validate-sources.py` validates the JSON manifest.
 - `tools/extract-source.py` extracts verified archives with Python's safe `data` filter.
 - `tests/test_source_tools.py` checks normal extraction, path traversal rejection, and existing-directory handling.
-- `make sources-ready` fails until every source has a verified 64-character SHA-256 and status `pinned`.
+- `make sources-ready` fails until every manifest source has a verified SHA-256 or SHA-512 digest and status `pinned`.
+- The bootstrap driver currently validates and downloads only the pinned Binutils and GCC inputs using `--only binutils gcc`; later stages will be enabled as their own sources are pinned.
 - `tools/fetch-sources.py` refuses unpinned entries, downloads over HTTPS,
   verifies SHA-256, and only then moves an archive into `build/distfiles`.
 - Downloads are never extracted automatically.
@@ -60,6 +59,5 @@ successfully. Each stage must publish:
 - a smoke test proving the compiler emits VANTOR-targeted ELF objects;
 - a clean-run reproducibility check where practical.
 
-The initial toolchain workflow is intentionally blocked while any source remains
-unpinned. No bootable ISO is claimed until the kernel and initramfs boot successfully
-in QEMU and the guest reaches a VANTOR login or shell.
+The initial toolchain workflow can build the bootstrap subset (Binutils and GCC) while later component sources remain unpinned. No bootable ISO is claimed until the kernel and initramfs boot successfully
+in Limbo on Android and the guest reaches a VANTOR login or shell. See [testing-limbo.md](testing-limbo.md).
