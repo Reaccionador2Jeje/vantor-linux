@@ -50,7 +50,7 @@ core-files:
 	@test -s docs/installer.md
 	@test -s .github/workflows/build-nyan-minimal.yml
 	@test -s .github/workflows/build-legacy-minimal.yml
-	@test -s .github/workflows/build-legacy-minimal.yml
+	@test -s .github/workflows/build-legacy-image.yml
 	@test -s packages/repository/i486/Packages
 	@test -s packages/profiles/minimal/PROFILE.txt
 	@grep -q 'root:x:0:0:root' tools/prepare-rootfs.py
@@ -132,6 +132,8 @@ initramfs-files:
 	@test -s build/scripts/build-initramfs.sh
 	@test -s docs/initramfs.md
 	@test -s tests/test_initramfs_build.py
+	@test -s build/scripts/build-iso-legacy.sh
+	@test -s boot/grub/grub-legacy.cfg
 	@echo "[OK] BusyBox and initramfs build files are present."
 
 rootfs:
