@@ -28,6 +28,10 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("FRAMEBUFFER_CONSOLE", script)
         self.assertIn("DRM_FBDEV_EMULATION", script)
         self.assertIn("DRM_BOCHS", script)
+        self.assertIn("bzImage modules", script)
+        self.assertIn("modules_install", script)
+        self.assertIn("INSTALL_MOD_PATH", script)
+        self.assertIn("depmod", script)
 
     def test_x86_64_kernel_workflow_builds_and_uploads_kernel(self) -> None:
         workflow = (ROOT / ".github/workflows/build-kernel.yml").read_text()
@@ -35,6 +39,7 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("build/work/kernel/vantor-kernel", workflow)
         self.assertIn("actions/upload-artifact@v4", workflow)
         self.assertIn("CONFIG_FRAMEBUFFER_CONSOLE=y", workflow)
+        self.assertIn("build/work/modules/lib/modules", workflow)
         self.assertIn("make check", workflow)
 
     def test_framebuffer_splash_renderer_is_valid_c(self) -> None:
