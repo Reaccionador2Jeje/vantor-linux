@@ -83,6 +83,7 @@ const SITE_HTML = `<!doctype html>
  </div>
 </div></section>
 
+<!-- ISO en validación de arranque: la compilación ya terminó; falta probar el inicio real. -->
 <section class="section" id="descargas"><div class="wrap">
  <div class="section-head"><div class="kicker">03 / Descargas</div><h2>Prueba VANTOR en tu hardware.</h2><p>Imágenes ISO generadas por CI y publicadas como versiones preliminares. La compilación terminó correctamente; el arranque real todavía debe probarse en Limbo/QEMU o hardware compatible.</p></div>
  <div class="grid two split">
