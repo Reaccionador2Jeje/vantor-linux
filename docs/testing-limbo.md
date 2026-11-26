@@ -25,8 +25,8 @@ Use this profile after the project produces a bootable BIOS-compatible ISO:
 2. Attach the VANTOR ISO as its CD-ROM.
 3. Start with 512 MB RAM and standard VGA.
 4. Confirm the GRUB menu appears.
-5. Select **VANTOR Linux — Genesis**.
-6. Confirm the kernel starts, initramfs unpacks, and VANTOR init reaches a shell.
+5. Select **VANTOR Linux — Live Genesis**.
+6. Confirm the kernel starts, initramfs unpacks, OpenRC starts, and the Live shell displays the VANTOR welcome message.
 7. Record the last visible console output if startup fails.
 
 The initial test target is legacy BIOS boot. UEFI testing is a separate validation step and should only be marked supported after it succeeds.
@@ -37,7 +37,7 @@ After the ISO has been produced by GitHub Actions, use the following checks from
 
 | Area | Command or observation | Expected result |
 |---|---|---|
-| PID 1 | `vantorctl status` | Init PID reports BusyBox init |
+| PID 1 | `vantorctl status` | PID 1 is the real OpenRC `openrc-init` service manager |
 | Hardware | `vantorctl hardware` | CPU, memory, block, PCI, VirtIO, USB and NIC inventory; unavailable buses are reported clearly |
 | Storage | `vantorctl storage scan` | Detected virtual disks and mounted filesystems |
 | Filesystems | `vantorctl storage filesystems` | Kernel filesystem list includes ext2/ext4 and ISO9660 where configured |
@@ -59,7 +59,7 @@ The current installer can prepare the kernel, initramfs, GRUB configuration and 
 - Limbo emulates an x86_64 computer; it does not turn an ARM Android processor into a native x86_64 CPU. Emulation may be slow.
 - Begin with a minimal console image.
 - Do not claim Limbo compatibility until a real VANTOR image has booted there.
-- GitHub Actions can perform repeatable build and automated QEMU smoke tests; Limbo remains the manual Android validation target.
+- GitHub Actions performs a repeatable QEMU boot smoke test and requires the Live shell MOTD (`Welcome to VANTOR Linux Genesis`), not just GRUB branding. It preserves screenshots and logs when the test fails. Limbo remains the manual Android validation target.
 
 
 ## Legacy i486 BIOS test profile
