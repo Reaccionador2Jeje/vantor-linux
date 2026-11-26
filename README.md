@@ -12,7 +12,7 @@ VANTOR is an independent Linux distribution project for universal computing. It 
 
 The official identity uses a metallic V emblem and cyan orbital ring, with a deep-space navy interface palette. The source of truth is [assets/branding/theme.json](assets/branding/theme.json), with reusable CSS tokens in [assets/branding/theme.css](assets/branding/theme.css). Read the [visual identity guide](docs/branding.md).
 
-The rootfs generator installs the official VANTOR identity, root and Live accounts, static sudo 1.9.17p2, a temporary Live-only sudo policy, an authenticated wheel policy, Nyan, VANTOR diagnostics and the native text-mode installer. The primary edition is **VANTOR Minimal**. Its first package build is automated, but the installer remains an early-stage tool: it requires a mounted target and does not partition disks or install a bootloader yet.
+The rootfs generator installs the official VANTOR identity, root and Live accounts, static sudo 1.9.17p2, a password-authenticated Live sudo policy, an authenticated wheel policy, Nyan, VANTOR diagnostics and the native text-mode installer. The primary edition is **VANTOR Minimal**. Its first package build is automated, but the installer remains an early-stage tool: it requires a mounted target and does not partition disks or install a bootloader yet.
 
 ## Project goals
 
