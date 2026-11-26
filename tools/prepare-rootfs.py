@@ -62,7 +62,7 @@ wheel:x:10:live
 users:x:100:
 """)
     write(output / "etc/shadow", """root:!:19000:0:99999:7:::
-live:!:19000:0:99999:7:::
+live:$6$VANTORlive$zCoOwgB64aI0dEmx47Fy12NjvDzSi48K2f6/S4OYWqVNJopzkYD/FXHHPu/s5m2Mrfrrfsi1D3Wq5xzhrcUFR1:19000:0:99999:7:::
 """, 0o600)
     write(output / "etc/gshadow", """root:!::
 wheel:!::live
@@ -74,7 +74,7 @@ users:!::
 Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 #includedir /etc/sudoers.d
 """, 0o440)
-    write(output / "etc/sudoers.d/99-live", "live ALL=(ALL:ALL) NOPASSWD: ALL\n", 0o440)
+    write(output / "etc/sudoers.d/99-live", "live ALL=(ALL:ALL) ALL\n", 0o440)
     write(output / "etc/sudoers.d/10-wheel", "%wheel ALL=(ALL:ALL) ALL\n", 0o440)
     (output / "run/sudo").mkdir(parents=True, exist_ok=True)
     (output / "run/sudo").chmod(0o700)
