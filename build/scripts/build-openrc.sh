@@ -98,10 +98,12 @@ sbin_commands=(
 )
 rc_bin_commands=(
     checkpath service openrc-user rc-depend
-    einfo fstabinfo is_newer_than is_older_than kill_all
+    einfon einfo ewarnn ewarn eerrorn eerror ebegin eend ewend eindent eoutdent esyslog eval_ecolors ewaitfile
+    veinfo vewarn vebegin veend vewend veindent veoutdent
+    fstabinfo is_newer_than is_older_than kill_all
     mountinfo on_ac_power shell_var value
 )
-rc_sbin_commands=(rc-abort mark_service seedrng swclock sysv-initctl)
+rc_sbin_commands=(rc-abort mark_service_starting mark_service_started mark_service_stopping mark_service_stopped mark_service_inactive mark_service_wasinactive mark_service_hotplugged mark_service_failed mark_service_crashed seedrng swclock sysv-initctl)
 
 verify_openrc_binary() {
     local binary="$1" path="$2"
@@ -109,26 +111,27 @@ verify_openrc_binary() {
         echo "[ERROR] OpenRC did not install $binary at $path" >&2
         exit 1
     }
-    readelf -h "$path" >/dev/null 2>&1 || {
-        echo "[ERROR] OpenRC command is not an ELF executable: $path" >&2
-        exit 1
-    }
-    if readelf -l "$path" 2>/dev/null | grep -q 'INTERP'; then
-        echo "[ERROR] OpenRC binary is dynamically linked: $path" >&2
+    if readelf -h "$path" >/dev/null 2>&1; then
+        if readelf -l "$path" 2>/dev/null | grep -q 'INTERP'; then
+            echo "[ERROR] OpenRC binary is dynamically linked: $path" >&2
+            exit 1
+        fi
+        case "$ARCH" in
+            x86_64)
+                readelf -h "$path" | grep -q 'Advanced Micro Devices X86-64' || {
+                    echo "[ERROR] Wrong ELF machine: $path" >&2; exit 1;
+                }
+                ;;
+            i486)
+                readelf -h "$path" | grep -q 'Intel 80386' || {
+                    echo "[ERROR] Wrong ELF machine: $path" >&2; exit 1;
+                }
+                ;;
+        esac
+    elif [[ "$(head -c 2 "$path")" != "#!" ]]; then
+        echo "[ERROR] OpenRC command is neither a valid ELF binary nor a script: $path" >&2
         exit 1
     fi
-    case "$ARCH" in
-        x86_64)
-            readelf -h "$path" | grep -q 'Advanced Micro Devices X86-64' || {
-                echo "[ERROR] Wrong ELF machine: $path" >&2; exit 1;
-            }
-            ;;
-        i486)
-            readelf -h "$path" | grep -q 'Intel 80386' || {
-                echo "[ERROR] Wrong ELF machine: $path" >&2; exit 1;
-            }
-            ;;
-    esac
 }
 
 for binary in "${sbin_commands[@]}"; do
