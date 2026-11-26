@@ -90,61 +90,22 @@ DESTDIR="$ROOTFS" meson install -C "$BUILD_DIR"
 # directories. Keep the upstream layout: public init/admin commands in
 # /usr/sbin, runtime helpers in /usr/lib/rc/bin, and privileged helpers in
 # /usr/lib/rc/sbin. In particular, checkpath is NOT installed in bindir.
+# Keep only the stable public command names here, because VANTOR
+# exposes these traditional /sbin entry points. Every installed OpenRC
+# executable is validated from Meson's own target inventory below; do not
+# maintain a second, version-fragile list of upstream helper binaries.
 sbin_commands=(
     openrc-init openrc openrc-run openrc-shutdown
     rc-service rc-update rc-sstat rc-environ
     start-stop-daemon supervise-daemon
     halt poweroff reboot shutdown
 )
-rc_bin_commands=(
-    checkpath openrc-user rc-depend
-    einfon einfo ewarnn ewarn eerrorn eerror ebegin eend ewend eindent eoutdent esyslog eval_ecolors ewaitfile
-    veinfo vewarn vebegin veend vewend veindent veoutdent
-    fstabinfo is_newer_than is_older_than kill_all
-    mountinfo on_ac_power shell_var value
-)
-rc_sbin_commands=(rc-abort mark_service_starting mark_service_started mark_service_stopping mark_service_stopped mark_service_inactive mark_service_wasinactive mark_service_hotplugged mark_service_failed mark_service_crashed seedrng swclock sysv-initctl)
-
-verify_openrc_binary() {
-    local binary="$1" path="$2"
-    [[ -x "$path" ]] || {
-        echo "[ERROR] OpenRC did not install $binary at $path" >&2
-        exit 1
-    }
-    if readelf -h "$path" >/dev/null 2>&1; then
-        if readelf -l "$path" 2>/dev/null | grep -q 'INTERP'; then
-            echo "[ERROR] OpenRC binary is dynamically linked: $path" >&2
-            exit 1
-        fi
-        case "$ARCH" in
-            x86_64)
-                readelf -h "$path" | grep -q 'Advanced Micro Devices X86-64' || {
-                    echo "[ERROR] Wrong ELF machine: $path" >&2; exit 1;
-                }
-                ;;
-            i486)
-                readelf -h "$path" | grep -q 'Intel 80386' || {
-                    echo "[ERROR] Wrong ELF machine: $path" >&2; exit 1;
-                }
-                ;;
-        esac
-    elif [[ "$(head -c 2 "$path")" != "#!" ]]; then
-        echo "[ERROR] OpenRC command is neither a valid ELF binary nor a script: $path" >&2
-        exit 1
-    fi
-}
-
 for binary in "${sbin_commands[@]}"; do
-    verify_openrc_binary "$binary" "$ROOTFS/usr/sbin/$binary"
-    # VANTOR retains traditional /sbin entry points.
     ln -sfn "/usr/sbin/$binary" "$ROOTFS/sbin/$binary"
 done
-for binary in "${rc_bin_commands[@]}"; do
-    verify_openrc_binary "$binary" "$ROOTFS/usr/lib/rc/bin/$binary"
-done
-for binary in "${rc_sbin_commands[@]}"; do
-    verify_openrc_binary "$binary" "$ROOTFS/usr/lib/rc/sbin/$binary"
-done
+
+python3 tools/validate-openrc-install.py \
+    --build-dir "$BUILD_DIR" --rootfs "$ROOTFS" --arch "$ARCH"
 # Compatibility entry point; OpenRC itself keeps the canonical helper path.
 ln -sfn /usr/lib/rc/bin/checkpath "$ROOTFS/usr/sbin/checkpath"
 ln -sfn /usr/lib/rc/bin/checkpath "$ROOTFS/sbin/checkpath"
