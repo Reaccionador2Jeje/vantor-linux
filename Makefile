@@ -119,6 +119,8 @@ core-files:
 	@test -s tests/test_openrc.py
 	@test -s tests/test_prepare_rootfs.py
 	@test -s build/scripts/build-openrc.sh
+	@test -s tools/validate-openrc-install.py
+	@python3 -m py_compile tools/validate-openrc-install.py
 	@test -s core/openrc/init.d/vantor-early
 	@test -s core/openrc/init.d/vantor-modules
 	@test -s core/openrc/init.d/vantor-network
