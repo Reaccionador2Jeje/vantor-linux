@@ -428,6 +428,7 @@ mkdir -p /proc /sys /dev /run /tmp
 mount_virtual_fs /proc proc proc
 mount_virtual_fs /sys sysfs sysfs
 mount_virtual_fs /dev devtmpfs devtmpfs
+mount_virtual_fs /run tmpfs tmpfs
 chmod 1777 /tmp 2>/dev/null || true
 hostname vantor 2>/dev/null || true
 
@@ -581,7 +582,7 @@ case "${1:-help}" in
     version|--version) echo "VANTOR Control $VERSION" ;;
     info) [ -r /etc/os-release ] && cat /etc/os-release ;;
     hardware) exec /usr/bin/vantor-hw ;;
-    storage) shift; if [ "$#" -gt 0 ]; then exec /usr/sbin/vantor-storage "$@"; else exec /usr/sbin/vantor-storage status; fi ;;\n    service) exec /usr/sbin/vantor-service "${2:-help}" "${3:-}" ;;
+    storage) shift; if [ "$#" -gt 0 ]; then exec /usr/sbin/vantor-storage "$@"; else exec /usr/sbin/vantor-storage status; fi ;;\n    service) shift; exec /usr/sbin/vantor-service "$@" ;;
     doctor) exec /usr/bin/vantor-doctor "$@" ;;
     recovery)
         recovery=0

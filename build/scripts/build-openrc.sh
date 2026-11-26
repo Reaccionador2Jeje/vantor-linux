@@ -79,7 +79,7 @@ meson setup "$BUILD_DIR" "$SOURCE_DIR" "${CROSS_ARGS[@]}" \
     --prefix=/usr --bindir=bin --sbindir=sbin --libdir=lib \
     --libexecdir=lib --sysconfdir=/etc --buildtype=release \
     -Ddefault_library=static -Dprefer_static=true \
-    -Dbranding="VANTOR Linux" -Dnewnet=false -Dpam=false \
+    -Dbranding='"VANTOR Linux"' -Dnewnet=false -Dpam=false \
     -Daudit=disabled -Dselinux=disabled -Dsysvinit=false \
     -Dpkgconfig=false -Dbash-completions=false -Dzsh-completions=false \
     -Dshell=/bin/sh
