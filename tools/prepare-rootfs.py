@@ -730,7 +730,7 @@ exit 0
     print(f"[OK] Prepared VANTOR {args.arch} rootfs skeleton at {output}")
     print(f"[OK] Installed {len(BRAND_FILES)} official branding assets.")
     print("[OK] Added VANTOR Init, Control, Hardware, Nyan and TUI installer.")
-    print("[OK] Added root and live accounts, wheel group and locked-password sudo policy.")
+    print("[OK] Added root and live accounts, wheel group and password-authenticated sudo policy.")
     print("[INFO] OpenRC will provide PID 1 and service management after its pinned build step.")
     return 0
 
