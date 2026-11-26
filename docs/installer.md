@@ -27,7 +27,7 @@ The destination must be an empty mounted filesystem (a `lost+found` directory is
 - It does not edit the host's bootloader.
 - It does not configure filesystems or generate `fstab`.
 - Passwords are locked in the initial account database. Set secure passwords before using the installed system normally.
-- The wheel sudoers policy is prepared, but the `sudo` executable is a separate package and is not yet included in the Minimal payload.
+- BusyBox `su` is enabled for both x86_64 and i486 and its `/bin/su` applet link is recreated during system initialization. It requires a usable target-account password; the initial installer leaves root and the standard user's passwords locked. The wheel sudoers policy is prepared, but the `sudo` executable is not included yet.
 - A bootloader and a complete post-install boot test are still required before calling the installed system production-ready.
 
 ## Non-interactive provisioning test
