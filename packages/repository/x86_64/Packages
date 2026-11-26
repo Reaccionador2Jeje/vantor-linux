@@ -4,7 +4,6 @@ vantor-profile-development	0.1.0	x86_64	64ca831943980061d35d2b0bb02e677bc3498080
 nano	9.2	x86_64	007f0ad700a80617e4ac55bdfb1db20f82336a6d6dfcde0dcedca24d01f5a067	nano-9.2-x86_64.tar.gz	GNU nano 9.2 tiny static editor (musl + ncurses)	
 htop	3.4.1	x86_64	1ecb217ff2f5335e5c30b010d3f54d60841fd2a43384fb20b2446cdda0ed5696	htop-3.4.1-x86_64.tar.gz	htop 3.4.1 static process monitor (musl + ncurses)	
 dialog	1.3-20260721	x86_64	b490eb0e4a06ee16934d97495c0d5a71f995170f72505c60621949409678cbe8	dialog-1.3-20260721-x86_64.tar.gz	Dialog terminal UI widgets, static musl and ncurses	
-vports	0.1.0	x86_64	5bedb29dda9d1b165c0957973ecd8cbe7386f764dae159dc02b5691860b35289	vports-0.1.0-all.tar.gz	VANTOR terminal utility: vports	
 vantor-base-files	0.1.0	x86_64	a632b254ed5bb519fe44523be920d9016ceca37a10004048c53ee29cda22a17c	vantor-base-files-0.1.0-x86_64.tar.gz	VANTOR Minimal base files, BusyBox, init and system accounts	
 vman	0.1.0	x86_64	c173d350d650ea58cbc2d149e76e1cc0ac0eb6565480be123f97628933c4c07c	vman-0.1.0-all.tar.gz	VANTOR terminal utility: vman	
 vantor-profile-minimal	0.1.0	x86_64	8b19fd8821e544b8900dfee7a5f8f5fce8a1e1ce5248fabb062e6fbc13ed27d0	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
@@ -33,3 +32,4 @@ varchive	0.1.0	x86_64	78381e9aa686714f4e7399f430790b161f697042afa22fe12ad35a6c1c
 vps	0.1.0	x86_64	261621aa91ceffd74d3655feb920f1b60291a5707794a898c726b423f575b0b0	vps-0.1.0-all.tar.gz	VANTOR terminal utility: vps	
 vdf	0.1.0	x86_64	3200e7e249e247e62b6de98ecc39bdef531833346463b80308c29af056f96639	vdf-0.1.0-all.tar.gz	VANTOR terminal utility: vdf	
 vdu	0.1.0	x86_64	b78d2864db1a2f7b9975c3007f9757f5da48d2867bce7970c3e0be71f56e7b78	vdu-0.1.0-all.tar.gz	VANTOR terminal utility: vdu	
+vports	0.1.0	x86_64	5bedb29dda9d1b165c0957973ecd8cbe7386f764dae159dc02b5691860b35289	vports-0.1.0-all.tar.gz	VANTOR terminal utility: vports	
