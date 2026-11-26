@@ -26,14 +26,17 @@ class SudoIntegrationTests(unittest.TestCase):
         self.assertIn("VANTOR_SUDO_ARCH", script)
         self.assertIn("-march=i486", script)
 
-    def test_live_sudo_policy_is_removed_by_installer(self) -> None:
+    def test_live_sudo_policy_requires_password_and_is_retained(self) -> None:
         rootfs = (ROOT / "tools/prepare-rootfs.py").read_text()
         installer = (ROOT / "installer/vantor-install").read_text()
         self.assertIn('etc/sudoers.d/99-live', rootfs)
         self.assertIn("live ALL=(ALL:ALL) ALL", rootfs)
         self.assertIn("live:$6$VANTORlive$", rootfs)
         self.assertIn("%wheel ALL=(ALL:ALL) ALL", rootfs)
-        self.assertIn('rm -f "$target/etc/sudoers.d/99-live"', installer)
+        self.assertIn('live ALL=(ALL:ALL) ALL', installer)
+        forbidden = 'rm -f ' + chr(34) + '$target/etc/sudoers.d/99-live' + chr(34)
+        self.assertNotIn(forbidden, installer)
+        self.assertNotIn('NOPASSWD', installer + rootfs)
 
     def test_initramfs_preserves_setuid_root_ownership(self) -> None:
         script = (ROOT / "build/scripts/build-initramfs.sh").read_text()
