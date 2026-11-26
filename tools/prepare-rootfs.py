@@ -408,6 +408,14 @@ set -u
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 VERSION="0.2.0"
 log() { echo "[VANTOR:init] $*"; }
+RECOVERY_MODE=0
+for boot_arg in $(cat /proc/cmdline 2>/dev/null); do
+    case "$boot_arg" in vantor.recovery|recovery|single) RECOVERY_MODE=1 ;; esac
+done
+if [ "$RECOVERY_MODE" -eq 1 ]; then
+    export RC_DEFAULTLEVEL=nonetwork
+    log "Recovery mode: selecting the OpenRC nonetwork runlevel."
+fi
 
 mount_virtual_fs() {
     target="$1"; fstype="$2"; source="$3"
@@ -598,10 +606,8 @@ case "${1:-help}" in
         fi
         ;;
     logs)
-        if [ -r /var/log/vantor-boot.log ]; then
-            if [ "${2:-}" = follow ]; then tail -f /var/log/vantor-boot.log
-            else cat /var/log/vantor-boot.log; fi
-        else echo "VANTOR boot log is not available yet."; exit 1; fi
+        shift
+        exec /usr/sbin/vantor-service logs "$@"
         ;;
     network)
         echo "== Network interfaces =="
@@ -657,7 +663,9 @@ check_file "Kernel release" /proc/sys/kernel/osrelease
 check_file "Memory information" /proc/meminfo
 check_file "CPU information" /proc/cpuinfo
 check_file "VANTOR release" /etc/vantor-release
-check_file "VANTOR init" /sbin/vantor-init
+check_file "VANTOR init handoff" /sbin/vantor-init
+check_file "OpenRC PID 1" /sbin/openrc-init
+check_file "OpenRC service command" /sbin/rc-service
 check_file "BusyBox" /bin/busybox
 check_file "VANTOR control" /usr/bin/vantorctl
 check_file "Nyan package manager" /usr/bin/nyan
