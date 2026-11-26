@@ -35,7 +35,7 @@ VANTOR Minimal is being designed for modern x86_64 computers and a separate 32-b
 | C library | glibc |
 | Toolchain | GNU Binutils + GCC |
 | Minimal userspace | BusyBox |
-| Init | BusyBox init initially; service design remains open |
+| Init and service manager | OpenRC is mandatory for all editions; BusyBox remains for bootstrap and recovery |
 | Build environment | GitHub Actions |
 | Android VM test app | Limbo PC Emulator (QEMU engine) |
 
@@ -96,7 +96,7 @@ Anyone can propose packages through a fork and Pull Request; repository write ac
 
 ## Build status
 
-CI validates repository structure, configuration, source metadata, safe extraction, rootfs generation and rootfs identity files. The first-stage toolchain scripts, GRUB boot menu, kernel build script and initial rootfs generator are implemented. Binutils and GCC bootstrap sources are pinned; glibc, Linux and BusyBox remain unpinned. No completed compiler, kernel, initramfs or bootable image is claimed yet. The kernel source remains unpinned until its official checksum is verified.
+CI validates repository structure, configuration, source metadata, safe extraction, rootfs generation and rootfs identity files. The first-stage toolchain scripts, GRUB boot menu, kernel build script and initial rootfs generator are implemented. OpenRC is the approved mandatory init/service manager; integration is gated on completing the target C library and architecture-specific boot validation. See [OpenRC integration policy](docs/openrc.md). Binutils and GCC bootstrap sources are pinned; glibc, Linux and BusyBox remain unpinned. No completed compiler, kernel, initramfs or bootable image is claimed yet. The kernel source remains unpinned until its official checksum is verified.
 
 ## Nyan package management
 
