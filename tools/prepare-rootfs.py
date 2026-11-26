@@ -675,6 +675,8 @@ check_file "VANTOR init handoff" /sbin/vantor-init
 check_file "OpenRC PID 1" /sbin/openrc-init
 check_file "OpenRC service command" /sbin/rc-service
 check_file "BusyBox" /bin/busybox
+check_file "Sudo privilege manager" /usr/bin/sudo
+check_file "Sudo policy validator" /usr/bin/visudo
 check_file "VANTOR control" /usr/bin/vantorctl
 check_file "Nyan package manager" /usr/bin/nyan
 echo "== Virtual filesystems =="
