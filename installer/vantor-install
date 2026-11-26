@@ -204,6 +204,9 @@ configure_target() {
         printf '\n# VANTOR additional sudo policies\n#includedir /etc/sudoers.d\n' >> "$target/etc/sudoers"
     fi
     chmod 0755 "$target/etc/sudoers.d" 2>/dev/null || true
+    # The rootfs builder ships this policy read-only (0440); make it writable
+    # before replacing it, just as we do for the wheel and live policies below.
+    chmod 0644 "$target/etc/sudoers.d/00-root" 2>/dev/null || true
     printf 'root ALL=(ALL:ALL) ALL\n' > "$target/etc/sudoers.d/00-root"
     chmod 0440 "$target/etc/sudoers.d/00-root"
     chmod 0644 "$target/etc/sudoers.d/10-wheel" 2>/dev/null || true
