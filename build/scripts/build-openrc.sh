@@ -76,7 +76,7 @@ fi
 rm -rf -- "$BUILD_DIR"
 mkdir -p "$BUILD_DIR"
 meson setup "$BUILD_DIR" "$SOURCE_DIR" "${CROSS_ARGS[@]}" \
-    --prefix=/usr --bindir=bin --sbindir=sbin --libdir=lib \
+    --prefix=/usr --bindir=sbin --sbindir=sbin --libdir=lib \
     --libexecdir=lib --sysconfdir=/etc --buildtype=release \
     -Ddefault_library=static -Dprefer_static=true \
     -Dbranding='"VANTOR Linux"' -Dnewnet=false -Dpam=false \
