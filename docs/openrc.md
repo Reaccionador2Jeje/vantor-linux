@@ -18,7 +18,7 @@ For the Legacy target, use `make image-legacy`; it cross-builds 32-bit OpenRC wi
 
 ## Boot ownership
 
-The initramfs `/init` mounts the early virtual filesystems and calls `/sbin/vantor-init`. That VANTOR handoff helper prepares procfs, sysfs, devtmpfs and /run, then executes `/sbin/init`. The OpenRC build sets that symlink to `/sbin/openrc-init`; the initramfs builder refuses to package an image unless this exact target is present. For recovery boot arguments (`vantor.recovery`, `recovery`, or `single`), the handoff helper exports `RC_DEFAULTLEVEL=nonetwork`; that runlevel retains the console while omitting local filesystem mounts and networking.
+The initramfs `/init` mounts the early virtual filesystems and calls `/sbin/vantor-init`. That VANTOR handoff helper prepares procfs, sysfs, devtmpfs and /run, then executes `/sbin/init`. The OpenRC build sets that symlink to `/sbin/openrc-init`; the initramfs builder refuses to package an image unless this exact target is present. For recovery boot arguments (`vantor.recovery`, `recovery`, or `single`), the handoff helper executes `/sbin/init nonetwork`; that runlevel retains the console while omitting local filesystem mounts and networking.
 
 BusyBox remains the static early-userspace and recovery toolbox. Its `init` applet is no longer the normal PID 1. The old VANTOR shell service supervisor is not installed into the rootfs.
 
