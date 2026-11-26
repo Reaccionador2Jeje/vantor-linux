@@ -413,8 +413,7 @@ for boot_arg in $(cat /proc/cmdline 2>/dev/null); do
     case "$boot_arg" in vantor.recovery|recovery|single) RECOVERY_MODE=1 ;; esac
 done
 if [ "$RECOVERY_MODE" -eq 1 ]; then
-    export RC_DEFAULTLEVEL=nonetwork
-    log "Recovery mode: selecting the OpenRC nonetwork runlevel."
+    log "Recovery mode: OpenRC will start the nonetwork runlevel."
 fi
 
 mount_virtual_fs() {
@@ -445,7 +444,11 @@ log "Kernel: $(uname -r 2>/dev/null || echo unknown)"
 log "Userspace initialization complete."
 
 if [ -x /sbin/init ]; then
-    log "Handing control to /sbin/init."
+    if [ "$RECOVERY_MODE" -eq 1 ]; then
+        log "Handing control to OpenRC nonetwork runlevel."
+        exec /sbin/init nonetwork
+    fi
+    log "Handing control to OpenRC default runlevel."
     exec /sbin/init
 fi
 log "No system init is installed; entering emergency shell."
