@@ -6,7 +6,7 @@ on:
     paths:
       - "build/scripts/build-kernel-legacy.sh"
       - "build/scripts/build-busybox-legacy.sh"
-      - "build/scripts/build-openrc.sh"
+      - "build/scripts/build-openrc.sh"\n      - "build/scripts/build-sudo.sh"
       - "core/openrc/**"
       - "build/scripts/build-busybox-legacy.sh"
       - "build/scripts/build-initramfs.sh"
@@ -42,7 +42,7 @@ jobs:
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev libncurses-dev gcc-multilib libc6-dev-i386 libcap-dev:i386 meson ninja-build pkg-config cpio gzip bzip2 grub-pc-bin grub-common xorriso mtools
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev libncurses-dev gcc-multilib libc6-dev-i386 libcap-dev:i386 libcrypt-dev:i386 fakeroot meson ninja-build pkg-config cpio gzip bzip2 grub-pc-bin grub-common xorriso mtools
       - name: Validate source and project contracts
         run: |
           make check
