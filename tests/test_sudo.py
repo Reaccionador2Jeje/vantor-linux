@@ -24,6 +24,9 @@ class SudoIntegrationTests(unittest.TestCase):
             self.assertIn(expected, script)
         self.assertIn("fakeroot -- make DESTDIR=\"$ROOTFS\" install-binaries", script)
         self.assertIn("VANTOR_SUDO_ARCH", script)
+        self.assertIn('export CFLAGS="-Os -fno-ident"', script)
+        self.assertIn('CFLAGS="$BUILD_CFLAGS" LDFLAGS="$BUILD_LDFLAGS"', script)
+        self.assertIn("Keep configure probes dynamically linkable", script)
         self.assertIn("-march=i486", script)
 
     def test_live_sudo_policy_requires_password_and_is_retained(self) -> None:
