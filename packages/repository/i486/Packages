@@ -1,5 +1,4 @@
 # VANTOR-PACKAGES 1
-vantor-profile-minimal	0.1.0	i486	3a7c1329806b3c3124816ceedc24bcf64bdca597c7e62ef2870f2c70aaf6b6a2	vantor-profile-minimal-0.1.0-i486.tar.gz	VANTOR Minimal profile for 486SX/486DX and later 32-bit PCs	vantor-base-files
 vantor-hardware	0.1.0	i486	d2dd76572977e23adb06319e44c2ce1eb9d8f399bde705e175dcc89fcbf63e26	vantor-hardware-0.1.0-i486.tar.gz	VANTOR read-only hardware inventory utility	
 vantor-installer	0.1.0	i486	41a7db777c0130c2006ddeecdd53560230c26d1e6f1d8ebc9f0b55cdbff67d0a	vantor-installer-0.1.0-i486.tar.gz	VANTOR text-mode system installer	vantor-base-files
 vantor-branding	0.1.0	i486	af7f0574bd4d3a7a2098f62f6852792318985429dff1ecdfc4f46408e272e088	vantor-branding-0.1.0-i486.tar.gz	Official VANTOR identity assets	
@@ -31,3 +30,4 @@ vdu	0.1.0	i486	b78d2864db1a2f7b9975c3007f9757f5da48d2867bce7970c3e0be71f56e7b78	
 vports	0.1.0	i486	5bedb29dda9d1b165c0957973ecd8cbe7386f764dae159dc02b5691860b35289	vports-0.1.0-all.tar.gz	VANTOR terminal utility: vports	
 vman	0.1.0	i486	c173d350d650ea58cbc2d149e76e1cc0ac0eb6565480be123f97628933c4c07c	vman-0.1.0-all.tar.gz	VANTOR terminal utility: vman	
 vantor-base-files	0.1.0	i486	2979fe308df896694e40b714baec9677298fc0b011ffeff0cc8287755fc20dea	vantor-base-files-0.1.0-i486.tar.gz	VANTOR Minimal i486 base files and static 486-compatible BusyBox	
+vantor-profile-minimal	0.1.0	i486	3bc537690632f0ae66478fb78fdacb75e6024f3ed11edea041462c76556bf5bb	vantor-profile-minimal-0.1.0-i486.tar.gz	VANTOR Minimal profile for 486SX/486DX and later 32-bit PCs	vantor-base-files
