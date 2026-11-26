@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
-.PHONY: help info check image desktop-files termux-files check-shell check-config check-sources check-python check-nyan openrc-files sources-ready fetch-sources toolchain kernel kernel-legacy busybox busybox-legacy initramfs initramfs-legacy openrc openrc-legacy openrc-files rootfs rootfs-legacy termux-rootfs boot-files iso iso-legacy image-legacy clean kernel-files initramfs-files
+.PHONY: help info check image desktop-files termux-files check-shell check-config check-sources check-python check-nyan openrc-files sources-ready fetch-sources toolchain kernel kernel-legacy busybox busybox-legacy sudo sudo-legacy sudo-files initramfs initramfs-legacy openrc openrc-legacy openrc-files rootfs rootfs-legacy termux-rootfs boot-files iso iso-legacy image-legacy clean kernel-files initramfs-files
 
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
@@ -10,7 +10,7 @@ help:
 	  '  make check-sources Validate source manifest structure' '  make check-python  Compile and test Python tools' '  make check-nyan    Validate Nyan package manager syntax' \
 	  '  make sources-ready Require verified source checksums' '  make fetch-sources Download and verify pinned archives' \
 	  '  make toolchain      Build Binutils and GCC pass 1' '  make kernel         Build VANTOR x86_64 Linux kernel and modules' '  make kernel-legacy  Build 486SX-compatible 32-bit legacy kernel' \
-	  '  make busybox        Build static x86_64 BusyBox userspace' '  make busybox-legacy Build static i486 BusyBox userspace' '  make openrc         Build static x86_64 OpenRC init and services' '  make openrc-legacy  Build static i486 OpenRC init and services' '  make initramfs      Assemble x86_64 early userspace' '  make initramfs-legacy Assemble i486 early userspace' \
+	  '  make busybox        Build static x86_64 BusyBox userspace' '  make busybox-legacy Build static i486 BusyBox userspace' '  make sudo           Build static x86_64 sudo privilege utility' '  make sudo-legacy    Build static i486 sudo privilege utility' '  make openrc         Build static x86_64 OpenRC init and services' '  make openrc-legacy  Build static i486 OpenRC init and services' '  make initramfs      Assemble x86_64 early userspace' '  make initramfs-legacy Assemble i486 early userspace' \
 	  '  make rootfs         Assemble the x86_64 VANTOR rootfs skeleton' '  make rootfs-legacy  Assemble the i486 VANTOR rootfs skeleton' \
 	  '  make boot-files     Check bootloader configuration and builder' \
 	  '  make iso            Build the x86_64 GRUB ISO from existing artifacts' '  make image          Build kernel, userspace, initramfs and x86_64 ISO' '  make iso-legacy     Build the 486 BIOS GRUB ISO' '  make image-legacy   Build the complete i486 ISO pipeline' \
@@ -21,7 +21,7 @@ info:
 	printf '%s %s (%s)\nTarget: %s\nKernel: Linux %s (%s)\n' \
 	  "$$VANTOR_NAME" "$$VANTOR_VERSION" "$$VANTOR_CODENAME" "$$VANTOR_TARGET" "$$VANTOR_KERNEL_VERSION" "$$VANTOR_KERNEL_ARCH"
 
-check: check-config termux-files check-shell check-sources check-python check-nyan desktop-files openrc-files core-files kernel-files initramfs-files boot-files
+check: check-config termux-files check-shell check-sources check-python check-nyan desktop-files openrc-files sudo-files core-files kernel-files initramfs-files boot-files
 	@python3 -m json.tool assets/branding/theme.json > /dev/null
 	@echo "[OK] VANTOR repository checks passed."
 
@@ -71,6 +71,14 @@ check-sources:
 check-python:
 	@python3 -m compileall -q tools tests
 	@python3 -m unittest discover -s tests -p 'test_*.py' -v
+
+sudo-files:
+	@test -s build/scripts/build-sudo.sh
+	@test -s docs/sudo.md
+	@test -s tests/test_sudo.py
+	@bash -n build/scripts/build-sudo.sh
+	@grep -q '"name": "sudo"' build/sources/sources.json
+	@echo "[OK] Sudo build and policy files are present."
 
 core-files:
 	@test -s docs/vantor-core.md
@@ -195,6 +203,12 @@ busybox:
 busybox-legacy:
 	@bash build/scripts/build-busybox-legacy.sh
 
+sudo:
+	@bash build/scripts/build-sudo.sh
+
+sudo-legacy:
+	@VANTOR_SUDO_ARCH=i486 bash build/scripts/build-sudo.sh
+
 openrc:
 	@bash build/scripts/build-openrc.sh
 
@@ -204,7 +218,7 @@ openrc-legacy:
 initramfs:
 	@bash build/scripts/build-initramfs.sh
 
-initramfs-legacy: rootfs-legacy busybox-legacy openrc-legacy
+initramfs-legacy: rootfs-legacy busybox-legacy sudo-legacy openrc-legacy
 	@VANTOR_ROOTFS_DIR=build/work/rootfs-legacy VANTOR_INITRAMFS_DIR=build/work/initramfs-legacy VANTOR_INITRAMFS_NAME=vantor-legacy-initramfs.cpio.gz VANTOR_SKIP_KERNEL_MODULES=1 bash build/scripts/build-initramfs.sh
 
 initramfs-files:
@@ -241,6 +255,7 @@ image:
 	@rm -rf -- build/work/rootfs build/work/busybox build/work/initramfs
 	@$(MAKE) rootfs
 	@$(MAKE) busybox
+	@$(MAKE) sudo
 	@$(MAKE) openrc
 	@bash build/scripts/build-initramfs.sh
 	@bash build/scripts/build-iso.sh
@@ -253,6 +268,7 @@ image-legacy:
 	@rm -rf -- build/work/rootfs-legacy build/work/busybox-legacy build/work/initramfs-legacy
 	@$(MAKE) rootfs-legacy
 	@$(MAKE) busybox-legacy
+	@$(MAKE) sudo-legacy
 	@$(MAKE) openrc-legacy
 	@VANTOR_ROOTFS_DIR=build/work/rootfs-legacy VANTOR_INITRAMFS_DIR=build/work/initramfs-legacy VANTOR_INITRAMFS_NAME=vantor-legacy-initramfs.cpio.gz VANTOR_SKIP_KERNEL_MODULES=1 bash build/scripts/build-initramfs.sh
 	@bash build/scripts/build-iso-legacy.sh
