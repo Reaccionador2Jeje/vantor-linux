@@ -70,6 +70,17 @@
       "role": "Legacy x86 kernel retaining 486SX/486DX CPU support",
       "status": "pinned",
       "sha512": null
+    },
+    {
+      "name": "openrc",
+      "version": "0.64.1",
+      "archive": "openrc-0.64.1.tar.gz",
+      "url": "https://github.com/OpenRC/openrc/archive/0.64.1.tar.gz",
+      "sha256": null,
+      "sha512": "f8d576b8181fb3fb40be1d1e3a437d83492d01d52777a8c12cae918fbda3d30582b57dd4ac693acc6cf514f2156114c7d59c3706dca1fca4c3abb57b4fc430fb",
+      "license": "BSD-2-Clause",
+      "role": "Mandatory init system and dependency-based service manager",
+      "status": "pinned"
     }
   ]
 }
