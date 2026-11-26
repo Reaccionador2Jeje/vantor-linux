@@ -16,7 +16,6 @@ vantor-config-backup	0.1.0	x86_64	da492a2980e087e71ba22aae042f63a24d2b355fc3a3f9
 vantor-mountinfo	0.1.0	x86_64	41ec5296aeb3d61268c08c054dc047bfec8ae91cb9958b22dba5129aac2913f1	vantor-mountinfo-0.1.0-all.tar.gz	VANTOR utility: vantor-mountinfo (architecture-independent)	
 fastfetch	0.1.0	x86_64	18c69f7a8868fd0bb40e3690b5083a52a884acbec805da2f02aab419a3e8a5e7	fastfetch-0.1.0-all.tar.gz	VANTOR terminal utility: fastfetch	
 tree	0.1.0	x86_64	56525330801027e43c88416e1364e7ba58c190e0ca3192e83097ae880440ec78	tree-0.1.0-all.tar.gz	VANTOR terminal utility: tree	
-vantor-profile-minimal	0.1.0	x86_64	39e5b430be7344192345d315188c3d1f256e947357afda0702afa8f63e969161	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
 watch	0.1.0	x86_64	a20d171c86256b4295296bfa42067984472f0356d94cd1349c402ad2f328cd0d	watch-0.1.0-all.tar.gz	VANTOR terminal utility: watch	
 which	0.1.0	x86_64	71e066a4c0840ff9ff1e654c1b0815300cb48b3e889cac3057a4f566e89dbabf	which-0.1.0-all.tar.gz	VANTOR terminal utility: which	
 filetype	0.1.0	x86_64	707fb6392fb407e4115289dab8723c4fa66c78de78314db0c89160e53a949f93	filetype-0.1.0-all.tar.gz	VANTOR terminal utility: filetype	
@@ -33,3 +32,4 @@ vdu	0.1.0	x86_64	b78d2864db1a2f7b9975c3007f9757f5da48d2867bce7970c3e0be71f56e7b7
 vports	0.1.0	x86_64	5bedb29dda9d1b165c0957973ecd8cbe7386f764dae159dc02b5691860b35289	vports-0.1.0-all.tar.gz	VANTOR terminal utility: vports	
 vantor-base-files	0.1.0	x86_64	a632b254ed5bb519fe44523be920d9016ceca37a10004048c53ee29cda22a17c	vantor-base-files-0.1.0-x86_64.tar.gz	VANTOR Minimal base files, BusyBox, init and system accounts	
 vman	0.1.0	x86_64	c173d350d650ea58cbc2d149e76e1cc0ac0eb6565480be123f97628933c4c07c	vman-0.1.0-all.tar.gz	VANTOR terminal utility: vman	
+vantor-profile-minimal	0.1.0	x86_64	8b19fd8821e544b8900dfee7a5f8f5fce8a1e1ce5248fabb062e6fbc13ed27d0	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
