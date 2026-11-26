@@ -203,9 +203,12 @@ configure_target() {
     if ! grep -q '^#includedir /etc/sudoers.d' "$target/etc/sudoers" 2>/dev/null; then
         printf '\n# VANTOR additional sudo policies\n#includedir /etc/sudoers.d\n' >> "$target/etc/sudoers"
     fi
+    chmod 0755 "$target/etc/sudoers.d" 2>/dev/null || true
+    chmod 0644 "$target/etc/sudoers.d/10-wheel" 2>/dev/null || true
     printf '%%wheel ALL=(ALL:ALL) ALL\n' > "$target/etc/sudoers.d/10-wheel"
     chmod 0440 "$target/etc/sudoers.d/10-wheel"
     if grep -q '^live:' "$target/etc/passwd"; then
+        chmod 0644 "$target/etc/sudoers.d/99-live" 2>/dev/null || true
         printf 'live ALL=(ALL:ALL) ALL\n' > "$target/etc/sudoers.d/99-live"
         chmod 0440 "$target/etc/sudoers.d/99-live"
     fi
