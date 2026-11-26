@@ -186,6 +186,18 @@ configure_target() {
     grep -q '^root:' "$target/etc/gshadow" || printf 'root:!::\n' >> "$target/etc/gshadow"
     grep -q '^wheel:' "$target/etc/gshadow" || printf 'wheel:!::%s\n' "$username" >> "$target/etc/gshadow"
     grep -q '^users:' "$target/etc/gshadow" || printf 'users:!::\n' >> "$target/etc/gshadow"
+    # Never carry the public Live identity into an installed system when a
+    # different administrator account was selected.
+    if [ "$username" != "live" ]; then
+        for database in passwd shadow gshadow; do
+            awk -F: '$1 != "live" { print }' "$target/etc/$database" > "$target/etc/$database.tmp"
+            mv "$target/etc/$database.tmp" "$target/etc/$database"
+        done
+        awk -F: 'BEGIN { OFS=":" } $1 == "live" { next } $1 == "wheel" && $4 != "" { n=split($4, members, ","); out=""; for (i=1; i<=n; i++) if (members[i] != "live") out=(out == "" ? members[i] : out "," members[i]); $4=out } { print }' "$target/etc/group" > "$target/etc/group.tmp"
+        mv "$target/etc/group.tmp" "$target/etc/group"
+        rm -rf "$target/home/live"
+        chmod 0600 "$target/etc/shadow" "$target/etc/gshadow" 2>/dev/null || true
+    fi
     if ! grep -q '^#includedir /etc/sudoers.d' "$target/etc/sudoers" 2>/dev/null; then
         printf '\n# VANTOR additional sudo policies\n#includedir /etc/sudoers.d\n' >> "$target/etc/sudoers"
     fi
