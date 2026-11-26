@@ -8,7 +8,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORK="$ROOT/build/less-work-$ARCH"
 OUT="$ROOT/$OUT"
 rm -rf "$WORK" "$OUT/less-710-$ARCH.tar.gz"
-mkdir -p "$WORK/downloads" "$WORK/src" "$WORK/stage" "$OUT"
+mkdir -p "$WORK/downloads" "$WORK/src" "$WORK/sysroot" "$WORK/stage" "$OUT"
 
 case "$ARCH" in
   x86_64)
@@ -37,13 +37,31 @@ export CFLAGS="-Os -ffunction-sections -fdata-sections $ARCH_FLAGS"
 export LDFLAGS="-static -Wl,--gc-sections"
 BUILD_TRIPLET="$(gcc -dumpmachine)"
 
+NCURSES="$WORK/downloads/ncurses-6.6.tar.gz"
+fetch_verify "https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.6.tar.gz" "$NCURSES" "355b4cbbed880b0381a04c46617b7656e362585d52e9cf84a67e2009b749ff11"
+tar -xzf "$NCURSES" -C "$WORK/src"
+mkdir -p "$WORK/build-ncurses"
+(
+  cd "$WORK/build-ncurses"
+  "$WORK/src/ncurses-6.6/configure" --build="$BUILD_TRIPLET" --host="$TARGET" --prefix=/usr/local \\
+    --with-normal --without-shared --without-debug --without-ada --without-cxx \\
+    --without-progs --without-tests --without-manpages --enable-widec \\
+    --disable-db-install --with-termlib --with-build-cc=cc
+  make -j2
+  make install.libs install.includes DESTDIR="$WORK/sysroot"
+)
+ln -sf libtinfow.a "$WORK/sysroot/usr/local/lib/libtinfo.a"
+
 LESS="$WORK/downloads/less-710.tar.gz"
 fetch_verify "https://www.greenwoodsoftware.com/less/less-710.tar.gz" "$LESS" "d1008fb78dcae1323ddab664bcb352a61f022b1b131bd8018548e021d975ec7a"
 tar -xzf "$LESS" -C "$WORK/src"
 mkdir -p "$WORK/build-less"
 (
   cd "$WORK/build-less"
-  "$WORK/src/less-710/configure" --build="$BUILD_TRIPLET" --host="$TARGET" --prefix=/usr/local
+  export CPPFLAGS="-I$WORK/sysroot/usr/local/include/ncursesw -I$WORK/sysroot/usr/local/include"
+  export LIBS="-L$WORK/sysroot/usr/local/lib -lncursesw -ltinfow"
+  export LDFLAGS="-static -L$WORK/sysroot/usr/local/lib -Wl,--gc-sections"
+  "$WORK/src/less-710/configure" --build="$BUILD_TRIPLET" --host="$TARGET" --prefix=/usr/local --with-curses
   make -j2
   make install DESTDIR="$WORK/stage"
 )
