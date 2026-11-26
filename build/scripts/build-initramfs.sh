@@ -23,8 +23,15 @@ done
     echo "[ERROR] VANTOR /init is missing. Run 'make rootfs' first." >&2
     exit 1
 }
-[[ -x "$ROOTFS/sbin/openrc-init" && -L "$ROOTFS/sbin/init" ]] || {
-    echo "[ERROR] Real OpenRC is missing. Run 'make openrc' before building the initramfs." >&2
+# Absolute symlinks inside a target rootfs are interpreted relative to the
+# future system root, not the build runner's /. Test the real payload directly
+# and validate the init symlink text without dereferencing it on the host.
+[[ -x "$ROOTFS/usr/sbin/openrc-init" && -L "$ROOTFS/sbin/openrc-init" && -L "$ROOTFS/sbin/init" ]] || {
+    echo "[ERROR] Real OpenRC payload or /sbin entry points are missing. Run 'make openrc' before building the initramfs." >&2
+    exit 1
+}
+[[ "$(readlink "$ROOTFS/sbin/openrc-init")" == "/usr/sbin/openrc-init" ]] || {
+    echo "[ERROR] /sbin/openrc-init does not point to the installed /usr/sbin/openrc-init." >&2
     exit 1
 }
 [[ "$(readlink "$ROOTFS/sbin/init")" == "/sbin/openrc-init" ]] || {
