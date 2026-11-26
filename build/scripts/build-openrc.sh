@@ -87,8 +87,8 @@ meson compile -C "$BUILD_DIR" -j "$VANTOR_BUILD_JOBS"
 DESTDIR="$ROOTFS" meson install -C "$BUILD_DIR"
 
 for binary in openrc-init openrc openrc-run openrc-shutdown rc-service rc-update rc-status supervise-daemon start-stop-daemon checkpath; do
-    path="$ROOTFS/sbin/$binary"
-    [[ -x "$path" ]] || { echo "[ERROR] OpenRC did not install /sbin/$binary" >&2; exit 1; }
+    path="$ROOTFS/usr/sbin/$binary"
+    [[ -x "$path" ]] || { echo "[ERROR] OpenRC did not install /usr/sbin/$binary" >&2; exit 1; }
     if readelf -h "$path" >/dev/null 2>&1; then
         readelf -l "$path" 2>/dev/null | grep -q 'INTERP' && {
             echo "[ERROR] OpenRC binary is dynamically linked: $path" >&2
@@ -99,6 +99,9 @@ for binary in openrc-init openrc openrc-run openrc-shutdown rc-service rc-update
             i486) readelf -h "$path" | grep -q 'Intel 80386' || { echo "[ERROR] Wrong ELF machine: $path" >&2; exit 1; } ;;
         esac
     fi
+    # VANTOR retains traditional /sbin entry points while OpenRC's Meson
+    # install uses the /usr/sbin FHS location.
+    ln -sfn "/usr/sbin/$binary" "$ROOTFS/sbin/$binary"
 done
 
 install -d "$ROOTFS/etc/init.d" "$ROOTFS/etc/conf.d" "$ROOTFS/etc/runlevels/boot" "$ROOTFS/etc/runlevels/default"
