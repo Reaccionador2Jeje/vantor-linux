@@ -4,7 +4,7 @@ Primary edition: VANTOR Minimal.
 
 The installed Minimal system includes the operational essentials:
 - VANTOR Base Files: OS identity, init scripts, root and live account database, wheel policy, Nyan, VANTOR Control, VANTOR Hardware, network/storage/service/module tools and the TUI installer.
-- Static BusyBox: shell, init, core command applets, networking utilities and the vi editor applet.
+- Static BusyBox: shell, init, core command applets, networking utilities, `su` and the vi editor applet.
 - VANTOR command suite: vantorctl, vantor-hw, vantor-network, vantor-storage, vantor-service, vantor-modules and vantor-install.
 
 Privilege policy:
@@ -21,7 +21,7 @@ Optional Nyan editor packages:
 - vim: planned.
 
 Not included yet:
-- Working sudo executable (integration in progress).
+- Working sudo executable (not yet included; sudoers policy alone does not grant privilege elevation).
 - Nano and full Vim.
 - Fastfetch and optional network tools.
 - Complete partitioning and bootloader installation workflow.
