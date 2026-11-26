@@ -6,7 +6,6 @@ vantor-profile-minimal	0.1.0	x86_64	82348b4a9147519e5b790574bd4ff7205792a6343646
 nano	9.2	x86_64	007f0ad700a80617e4ac55bdfb1db20f82336a6d6dfcde0dcedca24d01f5a067	nano-9.2-x86_64.tar.gz	GNU nano 9.2 tiny static editor (musl + ncurses)	
 htop	3.4.1	x86_64	1ecb217ff2f5335e5c30b010d3f54d60841fd2a43384fb20b2446cdda0ed5696	htop-3.4.1-x86_64.tar.gz	htop 3.4.1 static process monitor (musl + ncurses)	
 dialog	1.3-20260721	x86_64	b490eb0e4a06ee16934d97495c0d5a71f995170f72505c60621949409678cbe8	dialog-1.3-20260721-x86_64.tar.gz	Dialog terminal UI widgets, static musl and ncurses	
-vantor-installer	0.1.0	x86_64	41a7db777c0130c2006ddeecdd53560230c26d1e6f1d8ebc9f0b55cdbff67d0a	vantor-installer-0.1.0-x86_64.tar.gz	VANTOR text-mode system installer	vantor-base-files
 vantor-branding	0.1.0	x86_64	af7f0574bd4d3a7a2098f62f6852792318985429dff1ecdfc4f46408e272e088	vantor-branding-0.1.0-x86_64.tar.gz	Official VANTOR identity assets	
 vantor-docs	0.1.0	x86_64	faf7ce99661deb8a253a89a8f85465ec6908bbfe091f28d5bea0fc11b664ccc4	vantor-docs-0.1.0-x86_64.tar.gz	VANTOR system and Nyan documentation	
 vantor-about	0.1.0	x86_64	df7270871f161d22ac80ab981046eb266632002eb6af967ced2c1205f28bd5bf	vantor-about-0.1.0-all.tar.gz	VANTOR utility: vantor-about (architecture-independent)	
@@ -33,3 +32,4 @@ vdu	0.1.0	x86_64	b78d2864db1a2f7b9975c3007f9757f5da48d2867bce7970c3e0be71f56e7b7
 vports	0.1.0	x86_64	5bedb29dda9d1b165c0957973ecd8cbe7386f764dae159dc02b5691860b35289	vports-0.1.0-all.tar.gz	VANTOR terminal utility: vports	
 vman	0.1.0	x86_64	c173d350d650ea58cbc2d149e76e1cc0ac0eb6565480be123f97628933c4c07c	vman-0.1.0-all.tar.gz	VANTOR terminal utility: vman	
 vantor-hardware	0.1.0	x86_64	d2dd76572977e23adb06319e44c2ce1eb9d8f399bde705e175dcc89fcbf63e26	vantor-hardware-0.1.0-x86_64.tar.gz	VANTOR read-only hardware inventory utility	
+vantor-installer	0.1.0	x86_64	f687d289d5f6775ba45ae07b18953a3101880e379124296631a241ffb3411d79	vantor-installer-0.1.0-x86_64.tar.gz	VANTOR text-mode system installer	vantor-base-files
