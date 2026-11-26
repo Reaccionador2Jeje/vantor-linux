@@ -97,7 +97,7 @@ jobs:
           PY
 
           tesseract "$SCREEN" "$RUNNER_TEMP/vantor-screen" 2>/dev/null
-          tr '\\n' ' ' < "$OCR" > "$RUNNER_TEMP/vantor-screen-normalized.txt"
+          tr '\n' ' ' < "$OCR" > "$RUNNER_TEMP/vantor-screen-normalized.txt"
           cat "$OCR"
           if ! grep -Eiq 'Welcome to VANTOR[[:space:]]+Linux Genesis' "$RUNNER_TEMP/vantor-screen-normalized.txt"; then
             echo "::error::VANTOR Live shell MOTD was not detected; GRUB branding alone is not a successful boot."
