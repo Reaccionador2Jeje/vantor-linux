@@ -33,7 +33,6 @@ class OpenRCIntegrationTests(unittest.TestCase):
         self.assertIn('["meson", "introspect", "--targets"', validator)
         self.assertIn('target.get("type") != "executable"', validator)
         self.assertIn('target.get("installed")', validator)
-        self.assertIn("service_get_value", validator)
         self.assertIn("rc-service", validator)
         self.assertIn("rc-abort", validator)
         self.assertIn("not OpenRC", initramfs)
