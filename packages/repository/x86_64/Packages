@@ -11,7 +11,6 @@ watch	0.1.0	x86_64	a20d171c86256b4295296bfa42067984472f0356d94cd1349c402ad2f328c
 which	0.1.0	x86_64	71e066a4c0840ff9ff1e654c1b0815300cb48b3e889cac3057a4f566e89dbabf	which-0.1.0-all.tar.gz	VANTOR terminal utility: which	
 filetype	0.1.0	x86_64	707fb6392fb407e4115289dab8723c4fa66c78de78314db0c89160e53a949f93	filetype-0.1.0-all.tar.gz	VANTOR terminal utility: filetype	
 vtop	0.1.0	x86_64	4e120837a680b1dc094670cfd19d48c4bbded96f48229b6a61dce669538715ce	vtop-0.1.0-all.tar.gz	VANTOR terminal utility: vtop	
-vantor-profile-minimal	0.1.0	x86_64	16e0131d9ee66dd80a68086d3745c6243a229f6ae504dba965940e84d134cf9b	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
 vram	0.1.0	x86_64	0f9bd3ca02a1a567e64a8ac0bf59fd5bc5f5421ada79db4c2ddb5225b82a3d59	vram-0.1.0-all.tar.gz	VANTOR terminal utility: vram	
 vpath	0.1.0	x86_64	8154f45720a59522327ee25e4de7101e44a5b7a2f054e6fb9d6937f30a41e790	vpath-0.1.0-all.tar.gz	VANTOR terminal utility: vpath	
 vusers	0.1.0	x86_64	c59537241f74242270bfe27b9c6385a7199f8f498a601da551260e622a2397c1	vusers-0.1.0-all.tar.gz	VANTOR terminal utility: vusers	
@@ -33,3 +32,4 @@ vantor-netdiag	0.1.0	x86_64	9902c4e98756576b244f6f7d19fecec22831ce1d46ff6ca2400d
 vantor-logview	0.1.0	x86_64	910557eed0ae404b2a558b88c59393bc88013f665511220029533b38f307b189	vantor-logview-0.1.0-all.tar.gz	VANTOR utility: vantor-logview (architecture-independent)	
 vantor-config-backup	0.1.0	x86_64	da492a2980e087e71ba22aae042f63a24d2b355fc3a3f974da4f2f5653c841c1	vantor-config-backup-0.1.0-all.tar.gz	VANTOR utility: vantor-config-backup (architecture-independent)	
 vantor-base-files	0.1.0	x86_64	16981b536b7d71675f62ca9bdd479068f6b3549545ad4a6b1b2ab4d0a577cd26	vantor-base-files-0.1.0-x86_64.tar.gz	VANTOR Minimal base files, BusyBox, init and system accounts	
+vantor-profile-minimal	0.1.0	x86_64	0d51440019cd64bba10bed4bf7ab9b3616d121168c075c668163c1b26eae06cf	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
