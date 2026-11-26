@@ -85,17 +85,31 @@ jobs:
             --prerelease 2>/dev/null || \
           gh release upload termux-aarch64 output/vantor-termux-aarch64-0.1.0.tar.gz output/SHA256SUMS \
             --repo "${GITHUB_REPOSITORY}" --clobber
-      - name: Publish Docker Hub image (optional credentials)
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: |
-          if [ -n "$DOCKERHUB_USERNAME" ] && [ -n "$DOCKERHUB_TOKEN" ]; then
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker buildx build --platform linux/arm64 \
-              -f Dockerfile.termux \
-              -t "$DOCKERHUB_USERNAME/vantor-linux:termux-arm64" --push .
-            docker logout
-          else
-            echo "[INFO] Docker Hub credentials not configured; GitHub Release remains the distribution channel."
-          fi
+
+      # Docker Hub stores the ARM64 userspace container; bootable ISO images
+      # continue to be distributed separately through GitHub Releases.
+      - name: Set up Docker Buildx
+        if: (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main') && vars.DOCKERHUB_USERNAME != ''
+        uses: docker/setup-buildx-action@v3
+      - name: Log in to Docker Hub
+        if: (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main') && vars.DOCKERHUB_USERNAME != ''
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push VANTOR ARM64 image
+        if: (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main') && vars.DOCKERHUB_USERNAME != ''
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.termux
+          platforms: linux/arm64
+          push: true
+          tags: |
+            ${{ vars.DOCKERHUB_USERNAME }}/vantor-linux:termux-arm64
+            ${{ vars.DOCKERHUB_USERNAME }}/vantor-linux:termux-0.1.0
+          labels: |
+            org.opencontainers.image.title=VANTOR Linux ARM64 Termux userspace
+            org.opencontainers.image.description=VANTOR ARM64 userspace container for Termux and PRoot; not a bootable VM.
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
