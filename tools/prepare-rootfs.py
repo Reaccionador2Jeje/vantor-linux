@@ -623,6 +623,58 @@ case "$action" in
         echo "Kernel filesystem support:"
         cat /proc/filesystems 2>/dev/null || echo "procfs unavailable"
         ;;
+    removable)
+        echo "Removable block devices (read-only inventory):"
+        found=0
+        for entry in /sys/class/block/*; do
+            [ -e "$entry" ] || continue
+            name=${entry##*/}
+            removable=0
+            if [ -r "$entry/removable" ]; then
+                IFS= read -r removable < "$entry/removable"
+            elif [ -r "$entry/../removable" ]; then
+                IFS= read -r removable < "$entry/../removable"
+            fi
+            [ "$removable" = 1 ] || continue
+            found=1
+            printf '/dev/%s\\n' "$name"
+        done
+        [ "$found" -eq 1 ] || echo "No removable block devices detected."
+        ;;
+    mount-removable)
+        device=${2:-}; fstype=${3:-}
+        case "$device" in /dev/*) ;; *) echo "device must be under /dev" >&2; exit 2;; esac
+        [ -b "$device" ] || { echo "device is not a block device" >&2; exit 2; }
+        name=${device##*/}
+        entry="/sys/class/block/$name"
+        [ -e "$entry" ] || { echo "device is not represented in sysfs" >&2; exit 2; }
+        removable=0
+        if [ -r "$entry/removable" ]; then
+            IFS= read -r removable < "$entry/removable"
+        elif [ -r "$entry/../removable" ]; then
+            IFS= read -r removable < "$entry/../removable"
+        fi
+        [ "$removable" = 1 ] || { echo "refusing: device is not marked removable" >&2; exit 2; }
+        case "$fstype" in ext2|ext3|ext4|vfat|exfat|ntfs|iso9660) ;; *) echo "unsupported filesystem type" >&2; exit 2;; esac
+        target="/media/$name"
+        mkdir -p "$target" || exit 1
+        [ ! -L "$target" ] || { echo "mount point must not be a symlink" >&2; exit 2; }
+        if awk -v path="$target" '$2 == path { found=1 } END { exit !found }' /proc/mounts; then
+            echo "mount point is already in use" >&2; exit 2
+        fi
+        echo "Mounting removable media read-only at $target."
+        exec mount -t "$fstype" -o ro,nosuid,nodev,noexec "$device" "$target"
+        ;;
+    umount-removable)
+        device=${2:-}
+        case "$device" in /dev/*) ;; *) echo "device must be under /dev" >&2; exit 2;; esac
+        name=${device##*/}
+        target="/media/$name"
+        if ! awk -v path="$target" '$2 == path { found=1 } END { exit !found }' /proc/mounts; then
+            echo "removable device is not mounted at $target" >&2; exit 2
+        fi
+        exec umount "$target"
+        ;;
     mount)
         device=${2:-}; target=${3:-}; fstype=${4:-}
         case "$device" in /dev/*) ;; *) echo "device must be under /dev" >&2; exit 2;; esac
@@ -655,7 +707,7 @@ case "$action" in
         exec mount -a
         ;;
     *)
-        echo "Usage: vantor-storage {scan|status|filesystems|mount DEVICE TARGET FSTYPE|umount TARGET|fstab-check|mount-all}" >&2
+        echo "Usage: vantor-storage {scan|status|filesystems|removable|mount-removable DEVICE FSTYPE|umount-removable DEVICE|mount DEVICE TARGET FSTYPE|umount TARGET|fstab-check|mount-all}" >&2
         exit 2
         ;;
 esac
