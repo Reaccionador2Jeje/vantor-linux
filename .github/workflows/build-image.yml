@@ -57,7 +57,7 @@ jobs:
       - name: Validate repository and pinned sources
         run: |
           make check
-          python3 tools/validate-sources.py --require-pinned --only linux busybox openrc
+          python3 tools/validate-sources.py --require-pinned --only linux busybox openrc sudo
 
       - name: Build kernel, rootfs, BusyBox, OpenRC, initramfs and ISO
         env:
