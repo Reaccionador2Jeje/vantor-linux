@@ -14,14 +14,14 @@ case "$ARCH" in
         BUILD_DIR="$ROOT/build/work/sudo"
         ROOTFS="${VANTOR_BUILD_ROOTFS_DIR:-$ROOT/build/work/rootfs}"
         export CFLAGS="-Os -static -fno-ident"
-        export LDFLAGS="-static -Wl,-z,relro,-z,now"
+        export LDFLAGS="-all-static -static -Wl,-z,relro,-z,now"
         ;;
     i486)
         BUILD_DIR="$ROOT/build/work/sudo-legacy"
         ROOTFS="${VANTOR_BUILD_ROOTFS_DIR:-$ROOT/build/work/rootfs-legacy}"
         export CC="${CC_LEGACY:-gcc -m32 -march=i486 -mtune=i486}"
         export CFLAGS="-m32 -march=i486 -mtune=i486 -Os -static -fno-ident"
-        export LDFLAGS="-m32 -static -Wl,-z,relro,-z,now"
+        export LDFLAGS="-all-static -m32 -static -Wl,-z,relro,-z,now"
         ;;
     *)
         echo "[ERROR] Unsupported sudo target architecture: $ARCH" >&2
