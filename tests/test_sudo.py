@@ -35,7 +35,10 @@ class SudoIntegrationTests(unittest.TestCase):
         self.assertIn('etc/sudoers.d/99-live', rootfs)
         self.assertIn("live ALL=(ALL:ALL) ALL", rootfs)
         self.assertIn("live:$6$VANTORlive$", rootfs)
+        self.assertIn("root ALL=(ALL:ALL) ALL", rootfs)
         self.assertIn("%wheel ALL=(ALL:ALL) ALL", rootfs)
+        self.assertIn('etc/sudoers.d/00-root', rootfs)
+        self.assertIn('root ALL=(ALL:ALL) ALL', installer)
         self.assertIn('live ALL=(ALL:ALL) ALL', installer)
         forbidden = 'rm -f ' + chr(34) + '$target/etc/sudoers.d/99-live' + chr(34)
         self.assertNotIn(forbidden, installer)
@@ -48,6 +51,10 @@ class SudoIntegrationTests(unittest.TestCase):
         self.assertIn("fakeroot -- sh -c", script)
         self.assertIn('chown -hR 0:0 "$rootfs"', script)
         self.assertIn('chmod 4755 "$rootfs/usr/bin/sudo"', script)
+        for required in ("etc/sudoers.d/00-root", "etc/sudoers.d/10-wheel",
+                         "etc/sudoers.d/99-live", "visudo", "policy is incorrect",
+                         "mode 0440", "Live account is not a member of wheel"):
+            self.assertIn(required, script)
 
     def test_make_and_ci_include_sudo(self) -> None:
         makefile = (ROOT / "Makefile").read_text()
