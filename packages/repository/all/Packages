@@ -1,2 +1,2 @@
 # VANTOR-PACKAGES 1
-vantor-desktop-config	0.1.0	all	36c5df964c70eb3fdaf696514c1cdb565d9e2c48fbcb0a2a5c1281986a215527	vantor-desktop-config-0.1.0-all.tar.gz	VANTOR branded Openbox and tint2 desktop session configuration	xorg-server,openbox,tint2,xsetroot
+vantor-desktop-config	0.1.0	all	d972135a5611d5aa3db6186ac4a04c0d3e441c3af2fba78c972a44780706224e	vantor-desktop-config-0.1.0-all.tar.gz	VANTOR branded Openbox and tint2 desktop session configuration	xorg-server,openbox,tint2,xsetroot
