@@ -29,5 +29,5 @@ vports	0.1.0	i486	5bedb29dda9d1b165c0957973ecd8cbe7386f764dae159dc02b5691860b352
 vman	0.1.0	i486	c173d350d650ea58cbc2d149e76e1cc0ac0eb6565480be123f97628933c4c07c	vman-0.1.0-all.tar.gz	VANTOR terminal utility: vman	
 vantor-base-files	0.1.0	i486	2979fe308df896694e40b714baec9677298fc0b011ffeff0cc8287755fc20dea	vantor-base-files-0.1.0-i486.tar.gz	VANTOR Minimal i486 base files and static 486-compatible BusyBox	
 vantor-profile-minimal	0.1.0	i486	3bc537690632f0ae66478fb78fdacb75e6024f3ed11edea041462c76556bf5bb	vantor-profile-minimal-0.1.0-i486.tar.gz	VANTOR Minimal profile for 486SX/486DX and later 32-bit PCs	vantor-base-files
-nano	9.2	i486	83e23f2b88c23a5a8f5b6b6d2cb3747078e54a86ca58c79f8f13b6473f670145	nano-9.2-i486.tar.gz	GNU nano 9.2 tiny static editor (musl + ncurses)	
 htop	3.4.1	i486	add90701ca435934f353faeb67f9fd7f7eb6f56a92fc7d7afc1e7f07aab3ad82	htop-3.4.1-i486.tar.gz	htop 3.4.1 static process monitor (musl + ncurses)	
+nano	9.2	i486	83e23f2b88c23a5a8f5b6b6d2cb3747078e54a86ca58c79f8f13b6473f670145	nano-9.2-i486.tar.gz	GNU nano 9.2 tiny static editor (musl + ncurses)	
