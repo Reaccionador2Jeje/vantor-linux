@@ -160,35 +160,35 @@ configure_target() {
     valid_name "$username" || die "invalid username"
     mkdir -p "$target/etc" "$target/home/$username" "$target/home/live" "$target/root" "$target/etc/sudoers.d"
     touch "$target/etc/passwd" "$target/etc/group" "$target/etc/shadow" "$target/etc/gshadow"
-    grep -q '^root:' "$target/etc/passwd" || printf 'root:x:0:0:root:/root:/bin/sh\\n' >> "$target/etc/passwd"
+    grep -q '^root:' "$target/etc/passwd" || printf 'root:x:0:0:root:/root:/bin/sh\n' >> "$target/etc/passwd"
     user_created=0
     if ! grep -q "^$username:" "$target/etc/passwd"; then
         uid=$(awk -F: 'BEGIN { max=999 } { if ($3 > max) max=$3 } END { print max+1 }' "$target/etc/passwd")
         gid=$uid
-        printf '%s:x:%s:%s:%s User:/home/%s:/bin/sh\\n' "$username" "$uid" "$gid" "$username" "$username" >> "$target/etc/passwd"
-        printf '%s:x:%s:\\n' "$username" "$gid" >> "$target/etc/group"
-        printf '%s:!::\\n' "$username" >> "$target/etc/gshadow"
+        printf '%s:x:%s:%s:%s User:/home/%s:/bin/sh\n' "$username" "$uid" "$gid" "$username" "$username" >> "$target/etc/passwd"
+        printf '%s:x:%s:\n' "$username" "$gid" >> "$target/etc/group"
+        printf '%s:!::\n' "$username" >> "$target/etc/gshadow"
         user_created=1
     fi
-    grep -q '^root:' "$target/etc/group" || printf 'root:x:0:\\n' >> "$target/etc/group"
-    grep -q '^wheel:' "$target/etc/group" || printf 'wheel:x:10:\\n' >> "$target/etc/group"
+    grep -q '^root:' "$target/etc/group" || printf 'root:x:0:\n' >> "$target/etc/group"
+    grep -q '^wheel:' "$target/etc/group" || printf 'wheel:x:10:\n' >> "$target/etc/group"
     if ! awk -F: -v user="$username" '$1 == "wheel" { n=split($4, members, ","); for (i=1; i<=n; i++) if (members[i] == user) found=1 } END { exit !found }' "$target/etc/group"; then
         awk -F: -v user="$username" 'BEGIN { OFS=":" } $1 == "wheel" { if ($4 == "") $4=user; else $4=$4 "," user } { print }' "$target/etc/group" > "$target/etc/group.tmp"
         mv "$target/etc/group.tmp" "$target/etc/group"
     fi
-    grep -q '^users:' "$target/etc/group" || printf 'users:x:100:\\n' >> "$target/etc/group"
-    grep -q '^root:' "$target/etc/shadow" || printf 'root:!:19000:0:99999:7:::\\n' >> "$target/etc/shadow"
+    grep -q '^users:' "$target/etc/group" || printf 'users:x:100:\n' >> "$target/etc/group"
+    grep -q '^root:' "$target/etc/shadow" || printf 'root:!:19000:0:99999:7:::\n' >> "$target/etc/shadow"
     if [ "$user_created" -eq 1 ]; then
-        printf '%s:!:19000:0:99999:7:::\\n' "$username" >> "$target/etc/shadow"
+        printf '%s:!:19000:0:99999:7:::\n' "$username" >> "$target/etc/shadow"
     fi
     chmod 0600 "$target/etc/shadow"
-    grep -q '^root:' "$target/etc/gshadow" || printf 'root:!::\\n' >> "$target/etc/gshadow"
-    grep -q '^wheel:' "$target/etc/gshadow" || printf 'wheel:!::\\n' >> "$target/etc/gshadow"
+    grep -q '^root:' "$target/etc/gshadow" || printf 'root:!::\n' >> "$target/etc/gshadow"
+    grep -q '^wheel:' "$target/etc/gshadow" || printf 'wheel:!::\n' >> "$target/etc/gshadow"
     if ! awk -F: -v user="$username" '$1 == "wheel" { for (field=3; field<=4; field++) { n=split($field, members, ","); for (i=1; i<=n; i++) if (members[i] == user) found=1 } } END { exit !found }' "$target/etc/gshadow"; then
         awk -F: -v user="$username" 'BEGIN { OFS=":" } $1 == "wheel" { if ($4 == "") $4=user; else $4=$4 "," user } { print }' "$target/etc/gshadow" > "$target/etc/gshadow.tmp"
         mv "$target/etc/gshadow.tmp" "$target/etc/gshadow"
     fi
-    grep -q '^users:' "$target/etc/gshadow" || printf 'users:!::\\n' >> "$target/etc/gshadow"
+    grep -q '^users:' "$target/etc/gshadow" || printf 'users:!::\n' >> "$target/etc/gshadow"
     chmod 0600 "$target/etc/gshadow"
     # Keep the Live account, its password, home directory and wheel membership
     # in installed systems. The Live sudo rule requires password authentication.
@@ -201,18 +201,18 @@ configure_target() {
         fi
     fi
     if ! grep -q '^#includedir /etc/sudoers.d' "$target/etc/sudoers" 2>/dev/null; then
-        printf '\\n# VANTOR additional sudo policies\\n#includedir /etc/sudoers.d\\n' >> "$target/etc/sudoers"
+        printf '\n# VANTOR additional sudo policies\n#includedir /etc/sudoers.d\n' >> "$target/etc/sudoers"
     fi
-    printf '%%wheel ALL=(ALL:ALL) ALL\\n' > "$target/etc/sudoers.d/10-wheel"
+    printf '%%wheel ALL=(ALL:ALL) ALL\n' > "$target/etc/sudoers.d/10-wheel"
     chmod 0440 "$target/etc/sudoers.d/10-wheel"
     if grep -q '^live:' "$target/etc/passwd"; then
-        printf 'live ALL=(ALL:ALL) ALL\\n' > "$target/etc/sudoers.d/99-live"
+        printf 'live ALL=(ALL:ALL) ALL\n' > "$target/etc/sudoers.d/99-live"
         chmod 0440 "$target/etc/sudoers.d/99-live"
     fi
     chmod 0700 "$target/root" "$target/home/$username" 2>/dev/null || true
-    printf '%s\\n' "$hostname" > "$target/etc/hostname"
-    printf '[VANTOR] %s — ONE SYSTEM. EVERY GENERATION.\\n' "$hostname" > "$target/etc/issue"
-    printf 'Live account retained with its existing password. The root password and any newly created standard-user password remain locked until set with passwd.\\n' > "$target/etc/vantor-accounts"
+    printf '%s\n' "$hostname" > "$target/etc/hostname"
+    printf '[VANTOR] %s — ONE SYSTEM. EVERY GENERATION.\n' "$hostname" > "$target/etc/issue"
+    printf 'Live account retained with its existing password. The root password and any newly created standard-user password remain locked until set with passwd.\n' > "$target/etc/vantor-accounts"
     info "Configured root and $username accounts, retained Live access, wheel policy, hostname and home directories."
 }
 
