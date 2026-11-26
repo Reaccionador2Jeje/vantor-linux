@@ -11,6 +11,9 @@ class InitramfsBuildTests(unittest.TestCase):
         self.assertIn('"$ROOTFS/init"', script)
         self.assertIn("cpio", script)
         self.assertIn("gzip -t", script)
+        self.assertIn('"$ROOTFS/usr/bin/sudo"', script)
+        self.assertIn("fakeroot -- sh -c", script)
+        self.assertIn('chmod 4755 "$rootfs/usr/bin/sudo"', script)
 
     def test_initramfs_includes_matching_kernel_modules_when_available(self):
         script = (ROOT / "build/scripts/build-initramfs.sh").read_text()
