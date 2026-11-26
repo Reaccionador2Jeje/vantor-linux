@@ -39,7 +39,7 @@ class OpenRCIntegrationTests(unittest.TestCase):
     def test_openrc_0641_uses_rc_service_not_removed_service_alias(self) -> None:
         builder = (ROOT / "build/scripts/build-openrc.sh").read_text()
         self.assertIn("rc-service", builder)
-        self.assertNotRegex(builder, r"rc_bin_commands=\([^\n]*\\bservice\\b")
+        self.assertNotIn("checkpath service", builder)
         self.assertIn('verify_openrc_binary "$binary" "$ROOTFS/usr/sbin/$binary"', builder)
 
     def test_vantor_services_use_openrc(self) -> None:
