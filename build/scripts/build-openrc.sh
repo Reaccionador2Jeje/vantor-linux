@@ -121,9 +121,15 @@ link_service() {
 }
 link_service boot vantor-early
 link_service boot vantor-modules
+# Mount local filesystems only in the normal default runlevel. Recovery keeps
+# consoles but deliberately skips localmount and network startup.
+rm -f "$ROOTFS/etc/runlevels/boot/localmount"
+link_service default localmount
 link_service default vantor-network
 link_service default vantor-console.tty1
 link_service default vantor-console.ttyS0
+link_service nonetwork vantor-console.tty1
+link_service nonetwork vantor-console.ttyS0
 ln -sfn vantor-console "$ROOTFS/etc/init.d/vantor-console.tty1"
 ln -sfn vantor-console "$ROOTFS/etc/init.d/vantor-console.ttyS0"
 
