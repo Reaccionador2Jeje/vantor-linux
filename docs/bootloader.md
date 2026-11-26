@@ -85,7 +85,7 @@ make iso
 
 Output: \`output/vantor-genesis-0.1.0-x86_64.iso\`
 
-The command deliberately fails instead of creating an incomplete image when the kernel or initramfs is absent. Those artifacts do not exist yet, so ISO creation is not available at this stage.
+The command deliberately fails instead of creating an incomplete image when the kernel or initramfs is absent. The complete image workflow is `make image`; it builds the pinned kernel, rootfs, BusyBox, Sudo, OpenRC, initramfs and ISO in dependency order.
 
 ## Kernel handoff
 
