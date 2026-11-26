@@ -273,3 +273,11 @@ class NyanIntegrationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+    def test_catalog_lists_remote_desktop_roadmap(self) -> None:
+        result = self.run_nyan("catalog")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for package in ("tigervnc", "x11vnc", "wayvnc", "freerdp", "remmina"):
+            self.assertIn(package, result.stdout)
+        self.assertIn("planned", result.stdout)
