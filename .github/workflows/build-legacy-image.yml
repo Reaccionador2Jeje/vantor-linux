@@ -46,7 +46,7 @@ jobs:
       - name: Validate source and project contracts
         run: |
           make check
-          python3 tools/validate-sources.py --require-pinned --only linux-legacy busybox openrc
+          python3 tools/validate-sources.py --require-pinned --only linux-legacy busybox openrc sudo
       - name: Build complete i486 Minimal BIOS image with OpenRC
         run: make image-legacy
       - name: Inspect image
