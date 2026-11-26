@@ -41,13 +41,13 @@ class InitramfsBuildTests(unittest.TestCase):
             self.assertIn("modprobe", script)
             self.assertIn("switch_root", script)
 
-    def test_busybox_pid1_init_and_inittab_are_required(self):
+    def test_busybox_init_applet_remains_available_for_recovery(self):
         script = (ROOT / "build/scripts/build-busybox.sh").read_text()
         self.assertIn("set_config CONFIG_INIT y", script)
         self.assertIn("set_config CONFIG_FEATURE_USE_INITTAB y", script)
         self.assertIn("for applet in init vi", script)
 
-    def test_legacy_busybox_has_init_and_service_control(self):
+    def test_legacy_busybox_keeps_recovery_init_and_service_applets(self):
         script = (ROOT / "build/scripts/build-busybox-legacy.sh").read_text()
         self.assertIn("set_config CONFIG_INIT y", script)
         self.assertIn("set_config CONFIG_FEATURE_USE_INITTAB y", script)
