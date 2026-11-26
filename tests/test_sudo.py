@@ -30,7 +30,8 @@ class SudoIntegrationTests(unittest.TestCase):
         rootfs = (ROOT / "tools/prepare-rootfs.py").read_text()
         installer = (ROOT / "installer/vantor-install").read_text()
         self.assertIn('etc/sudoers.d/99-live', rootfs)
-        self.assertIn("live ALL=(ALL:ALL) NOPASSWD: ALL", rootfs)
+        self.assertIn("live ALL=(ALL:ALL) ALL", rootfs)
+        self.assertIn("live:$6$VANTORlive$", rootfs)
         self.assertIn("%wheel ALL=(ALL:ALL) ALL", rootfs)
         self.assertIn('rm -f "$target/etc/sudoers.d/99-live"', installer)
 
