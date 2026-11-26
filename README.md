@@ -1,5 +1,9 @@
 # VANTOR Linux
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Reaccionador2Jeje/vantor-linux/main/assets/branding/vantor-mark.svg" alt="VANTOR Linux official emblem" width="180" />
+</p>
+
 **ONE SYSTEM. EVERY GENERATION.**
 
 VANTOR is an independent Linux distribution project for universal computing. It is being built from source rather than derived from an existing Linux distribution.
@@ -7,8 +11,6 @@ VANTOR is an independent Linux distribution project for universal computing. It 
 > **Status:** early development — Genesis 0.1.0. This repository does not yet contain a bootable operating-system image.
 
 ## Official identity
-
-![VANTOR Linux emblem](assets/branding/vantor-mark.svg)
 
 The official identity uses a metallic V emblem and cyan orbital ring, with a deep-space navy interface palette. The source of truth is [assets/branding/theme.json](assets/branding/theme.json), with reusable CSS tokens in [assets/branding/theme.css](assets/branding/theme.css). Read the [visual identity guide](docs/branding.md).
 
