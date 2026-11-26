@@ -1,0 +1,26 @@
+#!/sbin/openrc-run
+description="Configure VANTOR network interfaces"
+
+depend() {
+    need localmount
+    after hostname
+}
+
+start() {
+    ebegin "Configuring VANTOR network"
+    /usr/sbin/vantor-network
+    eend $?
+}
+
+stop() {
+    local pidfile pid
+    ebegin "Stopping VANTOR DHCP clients"
+    for pidfile in /run/udhcpc.*.pid; do
+        [ -f "$pidfile" ] || continue
+        IFS= read -r pid < "$pidfile" || continue
+        case "$pid" in ''|*[!0-9]*) continue ;; esac
+        kill "$pid" 2>/dev/null || true
+        rm -f "$pidfile"
+    done
+    eend 0
+}
