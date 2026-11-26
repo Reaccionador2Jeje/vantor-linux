@@ -186,6 +186,8 @@ configure_target() {
     chmod 0644 "$target/etc/sudoers.d/10-wheel" 2>/dev/null || true
     printf '%%wheel ALL=(ALL:ALL) ALL\n' > "$target/etc/sudoers.d/10-wheel"
     chmod 0440 "$target/etc/sudoers.d/10-wheel" 2>/dev/null || true
+    # Do not carry the temporary Live-only passwordless rule into an installed system.
+    rm -f "$target/etc/sudoers.d/99-live"
     chmod 0700 "$target/root" "$target/home/$username" 2>/dev/null || true
     printf '%s\n' "$hostname" > "$target/etc/hostname"
     printf '[VANTOR] %s — ONE SYSTEM. EVERY GENERATION.\n' "$hostname" > "$target/etc/issue"
