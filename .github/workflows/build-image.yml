@@ -6,7 +6,7 @@ on:
     paths:
       - "build/scripts/build-kernel.sh"
       - "build/scripts/build-busybox.sh"
-      - "build/scripts/build-openrc.sh"
+      - "build/scripts/build-openrc.sh"\n      - "build/scripts/build-sudo.sh"
       - "core/openrc/**"
       - "build/scripts/build-initramfs.sh"
       - "build/scripts/build-iso.sh"
@@ -51,7 +51,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             build-essential bc bison flex libssl-dev libelf-dev libncurses-dev \
-            dwarves kmod ccache python3 xz-utils bzip2 cpio gzip meson ninja-build pkg-config libcap-dev psmisc \
+            dwarves kmod ccache python3 xz-utils bzip2 cpio gzip meson ninja-build pkg-config libcap-dev libcrypt-dev fakeroot psmisc \
             grub-pc-bin grub-efi-amd64-bin grub-common xorriso mtools
 
       - name: Validate repository and pinned sources
