@@ -18,6 +18,7 @@ class OpenRCIntegrationTests(unittest.TestCase):
         builder = (ROOT / "build/scripts/build-openrc.sh").read_text()
         initramfs = (ROOT / "build/scripts/build-initramfs.sh").read_text()
         self.assertIn("meson setup", builder)
+        self.assertIn("--prefix=/usr --bindir=sbin --sbindir=sbin", builder)
         self.assertIn("meson compile", builder)
         self.assertIn("openrc-init", builder)
         self.assertIn("ln -sfn /sbin/openrc-init", builder)
