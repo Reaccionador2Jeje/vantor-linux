@@ -22,3 +22,8 @@ The generated tree is written to `build/work/rootfs` (ignored build output). The
 - `/init` — early-userspace mount setup and handoff to `/sbin/init`.
 
 The init script expects BusyBox applets and a shell to be present in the final rootfs. Until BusyBox and the kernel are integrated, this generated skeleton is not independently bootable. The next build stage will install BusyBox, create device nodes or devtmpfs support, assemble the initramfs and perform a QEMU smoke test in CI. Manual Android testing remains Limbo PC Emulator.
+
+
+## Standard filesystem layout
+
+The generated rootfs creates the standard mount points `/mnt` and `/media`, optional software/data locations `/opt` and `/srv`, and the core virtual/runtime and writable directories (`/proc`, `/sys`, `/dev`, `/run`, `/run/lock`, `/tmp`, and selected `/var` subdirectories). `/tmp` and `/var/tmp` use mode `1777`. These are directories only: no disk is mounted or formatted by rootfs generation. The installer mounts an existing target filesystem at `/mnt` (or another chosen mount point) before installation.
