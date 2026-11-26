@@ -97,7 +97,7 @@ core-files:
 	@grep -q 'mount-removable)' tools/prepare-rootfs.py
 	@grep -q 'umount-removable)' tools/prepare-rootfs.py
 	@grep -q 'ro,nosuid,nodev,noexec' tools/prepare-rootfs.py
-	@grep -q 'CONFIG_SU y' build/scripts/build-busybox.sh
+	@grep -q 'set_config CONFIG_SU y' build/scripts/build-busybox.sh
 	@grep -q 'CONFIG_SU y' build/scripts/build-busybox-legacy.sh
 	@grep -q 'grep -qx "$applet"' build/scripts/build-busybox.sh
 	@grep -q 'grep -qx "$applet"' build/scripts/build-busybox-legacy.sh
