@@ -50,7 +50,7 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertIn('exec umount "$target"', storage)
             self.assertIn("mount-removable)", storage)
             self.assertIn("umount-removable)", storage)
-            self.assertIn('removable = 1', storage)
+            self.assertIn('[ "$removable" = 1 ]', storage)
             self.assertIn('ro,nosuid,nodev,noexec', storage)
             self.assertIn('target="/media/$name"', storage)
             self.assertTrue((output / "usr/bin/vantorctl").stat().st_mode & 0o111)
