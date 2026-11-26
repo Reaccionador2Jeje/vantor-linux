@@ -114,3 +114,14 @@ Examples (run as root):
     vantorctl storage fstab-check
 
 These commands do not partition, format, repair or erase filesystems. Filesystem repair tools and automatic removable-media discovery are not included yet. The mount command is explicit: it never guesses a filesystem type or mounts a disk automatically.
+
+
+## Removable storage
+
+The base `vantor-storage` command can list devices the kernel marks as removable and mount a selected device explicitly:
+
+    vantor-storage removable
+    vantor-storage mount-removable /dev/sdb1 vfat
+    vantor-storage umount-removable /dev/sdb1
+
+Removable-media mounts are deliberately read-only and use `nosuid,nodev,noexec`. The tool verifies the device exists in sysfs and is marked removable before mounting it under `/media/DEVICE`. It does not automatically mount USB devices on insertion, infer filesystem types, or write to removable media. The filesystem type must be supplied explicitly. This avoids silently mounting unknown media with write access.
