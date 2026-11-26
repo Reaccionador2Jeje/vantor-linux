@@ -1,0 +1,10 @@
+# VANTOR desktop profile manifest v1
+name=remote
+platform=linux
+architecture=any
+session=none
+display=remote
+mode=remote-access
+required=tigervnc
+optional=x11vnc,wayvnc,freerdp,remmina
+notes=Remote access components only; does not install a desktop environment or expose an unauthenticated public VNC listener.
