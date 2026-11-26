@@ -92,7 +92,7 @@ DESTDIR="$ROOTFS" meson install -C "$BUILD_DIR"
 # /usr/lib/rc/sbin. In particular, checkpath is NOT installed in bindir.
 sbin_commands=(
     openrc-init openrc openrc-run openrc-shutdown
-    rc-service rc-update rc-sstat
+    rc-service rc-update rc-sstat rc-environ
     start-stop-daemon supervise-daemon
     halt poweroff reboot shutdown
 )
@@ -100,7 +100,6 @@ rc_bin_commands=(
     checkpath service openrc-user rc-depend
     einfo fstabinfo is_newer_than is_older_than kill_all
     mountinfo on_ac_power shell_var value
-    rc-environ
 )
 rc_sbin_commands=(rc-abort mark_service seedrng swclock sysv-initctl)
 
