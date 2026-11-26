@@ -25,6 +25,17 @@ def main() -> int:
         parser.error(f"output directory is not empty: {output}")
     output.mkdir(parents=True, exist_ok=True)
 
+    # Standard mount points and writable FHS directories must exist before
+    # the installer or init scripts try to use them.
+    for directory in (
+        "mnt", "media", "opt", "srv", "proc", "sys", "dev", "run",
+        "run/lock", "tmp", "var/cache", "var/lib", "var/log",
+        "var/spool", "var/tmp",
+    ):
+        (output / directory).mkdir(parents=True, exist_ok=True)
+    (output / "tmp").chmod(0o1777)
+    (output / "var/tmp").chmod(0o1777)
+
     theme = json.loads((BRANDING / "theme.json").read_text(encoding="utf-8"))
     brand_dir = output / "usr/share/vantor/branding"
     brand_dir.mkdir(parents=True, exist_ok=True)
