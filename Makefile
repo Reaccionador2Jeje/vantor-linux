@@ -104,8 +104,8 @@ core-files:
 	@grep -q 'ro,nosuid,nodev,noexec' tools/prepare-rootfs.py
 	@grep -q 'CONFIG_SU' build/scripts/build-busybox.sh
 	@grep -q 'CONFIG_SU y' build/scripts/build-busybox-legacy.sh
-	@grep -q 'grep -qx "$applet"' build/scripts/build-busybox.sh
-	@grep -q 'grep -qx "$applet"' build/scripts/build-busybox-legacy.sh
+	@grep -q 'grep -qx "$$applet"' build/scripts/build-busybox.sh
+	@grep -q 'grep -qx "$$applet"' build/scripts/build-busybox-legacy.sh
 	@grep -q 'CONFIG_START_STOP_DAEMON' build/scripts/build-busybox.sh
 	@grep -q 'CONFIG_INIT y' build/scripts/build-busybox-legacy.sh
 	@test -s tests/test_openrc.py
