@@ -7,7 +7,8 @@ ROOT = Path(__file__).resolve().parents[1]
 class BootPipelineTests(unittest.TestCase):
     def test_qemu_smoke_test_requires_live_shell_motd(self):
         workflow = (ROOT / ".github/workflows/test-image-qemu.yml").read_text()
-        self.assertIn("Welcome to VANTOR Linux Genesis", workflow)
+        self.assertIn("Welcome to VANTOR[[:space:]]+Linux Genesis", workflow)
+        self.assertIn("vantor-screen-normalized.txt", workflow)
         self.assertIn("GRUB branding alone is not a successful boot", workflow)
         self.assertIn(r'connection.sendall(f"screendump {screen}\n".encode())', workflow)
 
