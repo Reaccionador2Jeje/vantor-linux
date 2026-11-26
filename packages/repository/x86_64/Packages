@@ -1,7 +1,6 @@
 # VANTOR-PACKAGES 1
 lua	5.4.9	x86_64	a9843346f0ab8e73ad9b9a9993868fe3c16482f2cb01d5f81a5d31c53c6a5fbd	lua-5.4.9-x86_64.tar.gz	Language: Lua 5.4.9 interpreter, compiler and static development library
 vantor-profile-development	0.1.0	x86_64	64ca831943980061d35d2b0bb02e677bc34980808d2d7377cf42e0138ccc5fbe	vantor-profile-development-0.1.0-x86_64.tar.gz	Profile: VANTOR development tools and programming languages	lua
-vtime	0.1.0	x86_64	39f7d560539b09d6aadfc05f02de72989b0c9a9ecf4d220e0afdd534d76f4123	vtime-0.1.0-all.tar.gz	VANTOR terminal utility: vtime	
 vchecksum	0.1.0	x86_64	1ff62d001df4acb516b3c420cd96d206f1db5d3be5277c68779db8d27f1558e1	vchecksum-0.1.0-all.tar.gz	VANTOR terminal utility: vchecksum	
 varchive	0.1.0	x86_64	78381e9aa686714f4e7399f430790b161f697042afa22fe12ad35a6c1c435d68	varchive-0.1.0-all.tar.gz	VANTOR terminal utility: varchive	
 vps	0.1.0	x86_64	261621aa91ceffd74d3655feb920f1b60291a5707794a898c726b423f575b0b0	vps-0.1.0-all.tar.gz	VANTOR terminal utility: vps	
@@ -33,3 +32,4 @@ vtop	0.1.0	x86_64	4e120837a680b1dc094670cfd19d48c4bbded96f48229b6a61dce669538715
 vram	0.1.0	x86_64	0f9bd3ca02a1a567e64a8ac0bf59fd5bc5f5421ada79db4c2ddb5225b82a3d59	vram-0.1.0-all.tar.gz	VANTOR terminal utility: vram	
 vpath	0.1.0	x86_64	8154f45720a59522327ee25e4de7101e44a5b7a2f054e6fb9d6937f30a41e790	vpath-0.1.0-all.tar.gz	VANTOR terminal utility: vpath	
 vusers	0.1.0	x86_64	c59537241f74242270bfe27b9c6385a7199f8f498a601da551260e622a2397c1	vusers-0.1.0-all.tar.gz	VANTOR terminal utility: vusers	
+vtime	0.1.0	x86_64	39f7d560539b09d6aadfc05f02de72989b0c9a9ecf4d220e0afdd534d76f4123	vtime-0.1.0-all.tar.gz	VANTOR terminal utility: vtime	
