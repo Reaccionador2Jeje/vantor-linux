@@ -74,6 +74,10 @@ check-python:
 
 core-files:
 	@test -s docs/vantor-core.md
+	@test -s docs/openrc.md
+	@grep -q 'OpenRC is mandatory' README.md
+	@grep -q 'openrc-init' docs/openrc.md
+	@grep -q 'vantorctl service' docs/openrc.md
 	@test -s installer/vantor-install
 	@test -s docs/installer.md
 	@test -s .github/workflows/build-nyan-minimal.yml
