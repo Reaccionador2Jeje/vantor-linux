@@ -4,14 +4,10 @@ supervisor=supervise-daemon
 command=/bin/busybox
 port="${RC_SVCNAME#*.}"
 pidfile="/run/${RC_SVCNAME}.pid"
-
 case "$port" in
     tty1) baud=0 ;;
     ttyS0) baud=115200 ;;
     *) baud=0 ;;
 esac
 command_args_foreground="getty -L -n -l /usr/bin/vantor-live-session $baud $port vt100"
-
-depend() {
-    need local
-}
+depend() { need local; }

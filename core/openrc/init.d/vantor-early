@@ -1,0 +1,14 @@
+#!/sbin/openrc-run
+description="VANTOR early boot presentation"
+depend() { before hostname localmount; }
+start() {
+    ebegin "Preparing VANTOR console"
+    /usr/bin/vantor-splash start
+    /usr/bin/vantor-splash step "OpenRC service manager"
+    eend $?
+}
+stop() {
+    ebegin "Finishing VANTOR console presentation"
+    /usr/bin/vantor-splash finish
+    eend $?
+}

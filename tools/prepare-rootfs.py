@@ -83,13 +83,6 @@ devtmpfs  /dev    devtmpfs  mode=0755         0 0
 tmpfs     /run    tmpfs     mode=0755,nosuid  0 0
 tmpfs     /tmp    tmpfs     mode=1777,nosuid  0 0
 """)
-    write(output / "etc/inittab", """# BusyBox init is PID 1: it reaps children and supervises respawn entries.\n# VANTOR rcS runs once before the managed console sessions.\n# VANTOR Minimal BusyBox init configuration
-::sysinit:/etc/init.d/rcS
-tty1::respawn:/bin/busybox getty -L -n -l /usr/bin/vantor-live-session 0 tty1 vt100
-ttyS0::respawn:/bin/busybox getty -L -n -l /usr/bin/vantor-live-session 115200 ttyS0 vt100
-::ctrlaltdel:/bin/busybox reboot
-::shutdown:/bin/busybox umount -a -r
-""")
     # The x86_64 image gets a tiny static fbdev renderer. Legacy remains text-only.
     if args.arch == "x86_64":
         splash_source = ROOT / "core/boot/vantor-fb-splash.c"
@@ -262,101 +255,33 @@ fi
 exit 0
 """, 0o755)
 
-    write(output / "usr/sbin/vantor-service-supervisor", (ROOT / "core/services/vantor-service-supervisor").read_text(), 0o755)
-
     write(output / "usr/sbin/vantor-service", """#!/bin/sh
-# VANTOR Service Control: manage foreground daemons with BusyBox start-stop-daemon.
-set -u
+# VANTOR Service Control delegates lifecycle operations to OpenRC.
+set -eu
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
-SERVICE_DIR=/etc/vantor/services
-RUNTIME_DIR=/run/vantor/services
-LOG_DIR=/var/log/vantor-services
-SUPERVISOR=/usr/sbin/vantor-service-supervisor
-usage() {
-    echo "VANTOR Service Control"
-    echo "Usage: vantor-service {list|start|stop|restart|status|logs} SERVICE [follow]"
-}
-valid_name() {
-    case "$1" in ''|*[!A-Za-z0-9_-]*) return 1;; esac
-    [ "${#1}" -le 48 ]
-}
-[ -x /bin/busybox ] || { echo "vantor-service: BusyBox is missing." >&2; exit 1; }
-command -v start-stop-daemon >/dev/null 2>&1 || { echo "vantor-service: start-stop-daemon applet is unavailable." >&2; exit 1; }
-mkdir -p "$RUNTIME_DIR" "$LOG_DIR"
-action=${1:-help}
-name=${2:-}
-if [ "$action" = list ]; then
-    found=0
-    for script in "$SERVICE_DIR"/*.service; do
-        [ -x "$script" ] || continue
-        found=1
-        printf '%s\\n' "${script##*/}" | sed 's/\\.service$//'
-    done
-    [ "$found" -eq 1 ] || echo "No optional services are installed."
-    exit 0
-fi
-case "$action" in start|stop|restart|status|logs) ;; *) usage; exit 2;; esac
-valid_name "$name" || { usage >&2; exit 2; }
-script="$SERVICE_DIR/$name.service"
-pidfile="$RUNTIME_DIR/$name.pid"
-policy_file="$SERVICE_DIR/$name.policy"
-logfile="$LOG_DIR/$name.log"
-[ -x "$script" ] || { echo "vantor-service: service not found: $name" >&2; exit 1; }
-restart_policy=never
-restart_delay=3
-if [ -r "$policy_file" ]; then
-    while IFS='=' read -r key value; do
-        case "$key" in
-            restart) case "$value" in never|on-failure|always) restart_policy=$value;; *) echo "Invalid restart policy in $policy_file" >&2; exit 2;; esac;;
-            restart-delay) case "$value" in ''|*[!0-9]*) echo "Invalid restart delay in $policy_file" >&2; exit 2;; *) [ "$value" -ge 1 ] && [ "$value" -le 60 ] || { echo "Restart delay must be 1..60 seconds." >&2; exit 2; }; restart_delay=$value;; esac;;
-            ''|'#'*) :;;
-            *) echo "Unknown setting '$key' in $policy_file" >&2; exit 2;;
-        esac
-    done < "$policy_file"
-fi
-is_running() {
-    [ -s "$pidfile" ] || return 1
-    pid=$(cat "$pidfile")
-    case "$pid" in ''|*[!0-9]*) return 1;; esac
-    [ -r "/proc/$pid/cmdline" ] || return 1
-    tr '\\000' ' ' < "/proc/$pid/cmdline" | grep -Fq -- "$SUPERVISOR" || return 1
-    kill -0 "$pid" 2>/dev/null
-}
-start_service() {
-    if is_running; then echo "$name is already running."; return 0; fi
-    rm -f "$pidfile"
-    start-stop-daemon --start --background --make-pidfile --pidfile "$pidfile" --exec "$SUPERVISOR" -- "$name" "$script" "$restart_policy" "$restart_delay" "$logfile" || {
-        rm -f "$pidfile"
-        echo "Failed to start $name." >&2
-        return 1
-    }
-    sleep 1
-    if ! is_running; then
-        rm -f "$pidfile"
-        echo "Service supervisor for $name exited during startup; inspect $logfile." >&2
-        return 1
-    fi
-    echo "Started $name (restart=$restart_policy, delay=${restart_delay}s)."
-}
-stop_service() {
-    if ! is_running; then rm -f "$pidfile"; echo "$name is not running."; return 0; fi
-    pid=$(cat "$pidfile")
-    kill -TERM "$pid" 2>/dev/null || true
-    count=0
-    while kill -0 "$pid" 2>/dev/null && [ "$count" -lt 5 ]; do
-        sleep 1
-        count=$((count + 1))
-    done
-    if kill -0 "$pid" 2>/dev/null; then kill -KILL "$pid" 2>/dev/null || true; fi
-    rm -f "$pidfile"
-    echo "Stopped $name."
-}
+action=${1:-list}
+usage() { echo "Usage: vantor-service {list|start|stop|restart|status|enable|disable|runlevels|logs} [SERVICE] [RUNLEVEL]"; }
 case "$action" in
-    start) start_service;;
-    stop) stop_service;;
-    restart) stop_service && start_service;;
-    status) if is_running; then echo "$name is running (supervisor PID $(cat "$pidfile"); restart=$restart_policy)."; else echo "$name is stopped (restart=$restart_policy)."; exit 1; fi;;
-    logs) [ -r "$logfile" ] || { echo "No log exists for $name yet."; exit 1; }; if [ "${3:-}" = follow ]; then tail -f "$logfile"; else cat "$logfile"; fi;;
+    list) exec rc-status -a ;;
+    start|stop|restart|status)
+        shift
+        [ "$#" -ge 1 ] || { usage >&2; exit 2; }
+        exec rc-service "$@"
+        ;;
+    enable|disable)
+        shift
+        [ "$#" -ge 1 ] || { usage >&2; exit 2; }
+        service=$1
+        runlevel=${2:-default}
+        if [ "$action" = enable ]; then exec rc-update add "$service" "$runlevel"; fi
+        exec rc-update del "$service" "$runlevel"
+        ;;
+    runlevels) exec rc-status -r ;;
+    logs)
+        [ -r /var/log/rc.log ] || { echo "OpenRC log is not available."; exit 1; }
+        if [ "${2:-}" = follow ]; then exec tail -f /var/log/rc.log; else exec cat /var/log/rc.log; fi
+        ;;
+    *) usage >&2; exit 2 ;;
 esac
 """, 0o755)
 
@@ -364,79 +289,9 @@ esac
     (output / "etc/vantor/services").chmod(0o755)
 
     write(output / "etc/init.d/rcS", """#!/bin/sh
-# VANTOR early system setup with persistent boot diagnostics.
-export PATH=/bin:/sbin:/usr/bin:/usr/sbin
-mkdir -p /proc /sys /dev /run /tmp /var/log /home/live
-BOOT_LOG=/var/log/vantor-boot.log
-: > "$BOOT_LOG"
-log() {
-    printf '[VANTOR:boot] %s\\n' "$*"
-    printf '[VANTOR:boot] %s\\n' "$*" >> "$BOOT_LOG"
-}
-run_step() {
-    label=$1
-    shift
-    log "START: $label"
-    if "$@" >> "$BOOT_LOG" 2>&1; then
-        log "OK: $label"
-    else
-        result=$?
-        log "WARN: $label (exit $result)"
-    fi
-    return 0
-}
-mount -t proc proc /proc 2>/dev/null || true
-mount -t sysfs sysfs /sys 2>/dev/null || true
-mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
-/usr/bin/vantor-splash start
-/usr/bin/vantor-splash step "Detecting hardware"
-chmod 1777 /tmp 2>/dev/null || true
-if [ -r /etc/hostname ]; then hostname "$(cat /etc/hostname)" 2>/dev/null || true; else hostname vantor 2>/dev/null || true; fi
-log "VANTOR Linux Minimal boot sequence started."
-RECOVERY_MODE=0
-for boot_arg in $(cat /proc/cmdline 2>/dev/null); do
-    case "$boot_arg" in
-        vantor.recovery|recovery|single) RECOVERY_MODE=1 ;;
-    esac
-done
-if [ "$RECOVERY_MODE" -eq 1 ]; then
-    log "RECOVERY MODE enabled by kernel command line."
-    log "Optional services, automatic network setup and fstab mounts are disabled."
-    echo "[VANTOR] RECOVERY MODE — use vantorctl logs and vantorctl doctor."
-else
-    log "Normal boot mode selected."
-fi
-if command -v mdev >/dev/null 2>&1; then
-    echo /bin/mdev > /proc/sys/kernel/hotplug 2>/dev/null || true
-    /bin/busybox mdev -s >> "$BOOT_LOG" 2>&1 || true
-fi
-run_step "Load optional kernel modules" /usr/sbin/vantor-modules
-if [ "$RECOVERY_MODE" -eq 0 ]; then
-    run_step "Mount configured filesystems" /usr/sbin/vantor-storage mount-all
-fi
-mkdir -p /run/vantor-media
-for media_dev in /dev/sr0 /dev/cdrom; do
-    [ -b "$media_dev" ] || continue
-    if mount -t iso9660 -o ro "$media_dev" /run/vantor-media 2>> "$BOOT_LOG"; then
-        log "Installation media mounted at /run/vantor-media."
-        break
-    fi
-done
-if [ "$RECOVERY_MODE" -eq 0 ]; then
-    run_step "Configure network" /usr/sbin/vantor-network
-    for service_file in /etc/vantor/services/*.service; do
-        [ -x "$service_file" ] || continue
-        service_name=${service_file##*/}
-        service_name=${service_name%.service}
-        run_step "Start service $service_name" /usr/sbin/vantor-service start "$service_name"
-    done
-else
-    log "Recovery console ready; automatic network and service startup skipped."
-fi
-/usr/bin/vantor-splash step "VANTOR userspace is ready"
-sleep 1
-/usr/bin/vantor-splash finish
-log "Minimal userspace is ready."
+# Compatibility stub only. OpenRC owns normal startup and shutdown.
+echo "[VANTOR] Legacy rcS hook is disabled; OpenRC runlevels manage services."
+exit 0
 """, 0o755)
     write(output / "usr/share/udhcpc/default.script", """#!/bin/sh
 # Minimal BusyBox udhcpc hook for VANTOR.
@@ -592,7 +447,7 @@ exec /bin/sh
     init_link = output / "sbin/init"
     if init_link.exists() or init_link.is_symlink():
         init_link.unlink()
-    init_link.symlink_to("/bin/busybox")
+    init_link.symlink_to("/sbin/openrc-init")
 
     write(output / "usr/sbin/vantor-storage", """#!/bin/sh
 # VANTOR Storage: non-destructive block/filesystem inspection and fstab mounting.
@@ -851,13 +706,13 @@ exit 0
     write(output / "etc/vantor-brand.json", json.dumps({
         "brand": theme["brand"], "edition": "Minimal", "architecture": args.arch, "version": "0.1.0", "codename": "Genesis",
         "slogan": theme["slogan"], "branding_path": "/usr/share/vantor/branding",
-        "core": {"init": "VANTOR Init 0.2.0", "control": "VANTOR Control 0.1.0", "hardware": "VANTOR Hardware 0.1.0"}
+        "core": {"init": "OpenRC 0.64.1", "bootstrap": "VANTOR Init 0.2.0", "control": "VANTOR Control 0.1.0", "hardware": "VANTOR Hardware 0.1.0"}
     }, indent=2) + "\n")
     print(f"[OK] Prepared VANTOR {args.arch} rootfs skeleton at {output}")
     print(f"[OK] Installed {len(BRAND_FILES)} official branding assets.")
     print("[OK] Added VANTOR Init, Control, Hardware, Nyan and TUI installer.")
     print("[OK] Added root and live accounts, wheel group and locked-password sudo policy.")
-    print("[INFO] BusyBox init supervises PID 1 sessions; VANTOR Service Control manages optional daemons.")
+    print("[INFO] OpenRC will provide PID 1 and service management after its pinned build step.")
     return 0
 
 if __name__ == "__main__":

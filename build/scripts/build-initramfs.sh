@@ -23,6 +23,14 @@ done
     echo "[ERROR] VANTOR /init is missing. Run 'make rootfs' first." >&2
     exit 1
 }
+[[ -x "$ROOTFS/sbin/openrc-init" && -L "$ROOTFS/sbin/init" ]] || {
+    echo "[ERROR] Real OpenRC is missing. Run 'make openrc' before building the initramfs." >&2
+    exit 1
+}
+[[ "$(readlink "$ROOTFS/sbin/init")" == "/sbin/openrc-init" ]] || {
+    echo "[ERROR] Refusing to package an ISO whose /sbin/init is not OpenRC." >&2
+    exit 1
+}
 
 # Include loadable modules from the matching kernel build when available.
 KERNEL_RELEASE_FILE="${VANTOR_KERNEL_RELEASE_FILE:-$ROOT/build/work/kernel/kernelrelease}"

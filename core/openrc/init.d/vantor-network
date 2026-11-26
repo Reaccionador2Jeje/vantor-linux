@@ -1,17 +1,11 @@
 #!/sbin/openrc-run
 description="Configure VANTOR network interfaces"
-
-depend() {
-    need localmount
-    after hostname
-}
-
+depend() { need localmount; after hostname; }
 start() {
     ebegin "Configuring VANTOR network"
     /usr/sbin/vantor-network
     eend $?
 }
-
 stop() {
     local pidfile pid
     ebegin "Stopping VANTOR DHCP clients"

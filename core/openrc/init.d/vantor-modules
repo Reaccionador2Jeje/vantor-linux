@@ -1,0 +1,8 @@
+#!/sbin/openrc-run
+description="Load VANTOR optional kernel modules"
+depend() { need devfs; before localmount; }
+start() {
+    ebegin "Loading VANTOR hardware modules"
+    /usr/sbin/vantor-modules
+    eend $?
+}
