@@ -50,3 +50,14 @@ The Nyan catalog also tracks optional supporting components (currently marked `p
 - **System utilities:** GParted, disk usage tools, QEMU and virt-manager.
 
 The package catalog records component names and intent; it does not mean the binaries, dependency closures or Nyan archives have been built. NetworkManager and VANTOR's current network service also need an explicit ownership/transition design before both can manage interfaces simultaneously.
+
+
+## Platform-specific Nyan profiles
+
+The profile manifests under `desktop/profiles/` now separate three use cases:
+
+- `android-termux`: ARM64 Android userspace, XFCE session on a private TigerVNC `Xvnc` display. It does not assume Android provides a Linux DRM seat, a system display manager, or native Xorg.
+- `pc`: x86_64 VANTOR Genesis with a native Xorg/Xinit session. TigerVNC and display managers are optional, not mandatory.
+- `remote`: remote-access tools only (TigerVNC required; x11vnc, wayvnc, FreeRDP and Remmina optional). It does not install a local desktop session.
+
+These are validated manifests, not installable profile packages yet. Nyan must not offer installation until all required packages and their runtime dependencies have built and been published for the target architecture. Android Termux is an ARM64 target and is separate from the x86_64 PC target.
