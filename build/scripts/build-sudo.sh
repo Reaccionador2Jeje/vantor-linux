@@ -106,6 +106,6 @@ printf '%s\n' "$VERSION" > "$ROOTFS/usr/share/vantor/sudo-version"
 
 # Check policy syntax with the just-built parser; ownership is normalized to
 # root in the fakeroot initramfs packaging step.
-"$VISUDO" -c -f "$ROOTFS/etc/sudoers"
+"$VISUDO" -R "$ROOTFS" -c -f /etc/sudoers
 echo "[OK] Sudo $VERSION installed as static $ARCH binaries."
 echo "[OK] sudo is mode 4755; fakeroot packaging will record root ownership."
