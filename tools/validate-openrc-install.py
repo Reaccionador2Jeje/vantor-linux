@@ -118,11 +118,13 @@ def main() -> int:
             if not link.is_symlink():
                 continue
             target = os.readlink(link)
-            if os.path.isabs(target):
-                problems.append(f"absolute runlevel symlink is not relocatable: {link} -> {target}")
-                continue
             try:
-                link.resolve(strict=True)
+                if os.path.isabs(target):
+                    resolved = (args.rootfs / target.lstrip("/")).resolve(strict=True)
+                else:
+                    resolved = link.resolve(strict=True)
+                if not resolved.is_file():
+                    problems.append(f"runlevel target is not a service file: {link} -> {target}")
             except (OSError, RuntimeError):
                 problems.append(f"broken runlevel service link: {link} -> {target}")
 
