@@ -176,17 +176,20 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertIn("root:x:0:0:", passwd)
             self.assertIn("tester:x:1001:1001:", passwd)
             self.assertIn("tester:x:1001:", (target / "etc/group").read_text())
-            self.assertIn("wheel:x:10:tester", (target / "etc/group").read_text())
-            self.assertNotIn("live:", passwd)
-            self.assertNotIn("live:", (target / "etc/shadow").read_text())
-            self.assertFalse((target / "home/live").exists())
+            self.assertIn("live:x:1000:1000:", passwd)
+            self.assertIn("wheel:x:10:live,tester", (target / "etc/group").read_text())
+            shadow = (target / "etc/shadow").read_text()
+            self.assertRegex(shadow, r"(?m)^live:\\$6\\$VANTORlive\\$")
+            self.assertIn("tester:!", shadow)
+            self.assertTrue((target / "home/live").is_dir())
+            self.assertIn("wheel:!::live,tester", (target / "etc/gshadow").read_text())
             self.assertIn("%wheel ALL=(ALL:ALL) ALL", (target / "etc/sudoers.d/10-wheel").read_text())
-            self.assertFalse((target / "etc/sudoers.d/99-live").exists())
+            self.assertIn("live ALL=(ALL:ALL) ALL", (target / "etc/sudoers.d/99-live").read_text())
             self.assertEqual((target / "etc/hostname").read_text(), "test-vantor\n")
             self.assertTrue((target / "home/tester").is_dir())
             self.assertIn("tester:!", (target / "etc/shadow").read_text())
 
-    def test_installer_locks_reused_live_account(self) -> None:
+    def test_installer_preserves_reused_live_account_password(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             target = Path(temporary) / "target"
             target.mkdir()
@@ -197,9 +200,11 @@ class PrepareRootfsTests(unittest.TestCase):
             )
             self.assertEqual(result.returncode, 0, result.stderr)
             shadow = (target / "etc/shadow").read_text()
-            self.assertRegex(shadow, r"(?m)^live:!:")
-            self.assertFalse((target / "etc/sudoers.d/99-live").exists())
+            self.assertRegex(shadow, r"(?m)^live:\\$6\\$VANTORlive\\$")
+            self.assertTrue((target / "home/live").is_dir())
+            self.assertIn("wheel:x:10:live", (target / "etc/group").read_text())
             self.assertIn("wheel:!::live", (target / "etc/gshadow").read_text())
+            self.assertIn("live ALL=(ALL:ALL) ALL", (target / "etc/sudoers.d/99-live").read_text())
 
     def test_installer_prepares_kernel_initramfs_grub_and_fstab(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
