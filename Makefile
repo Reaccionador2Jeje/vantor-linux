@@ -91,6 +91,10 @@ core-files:
 	@grep -q 'udhcpc' tools/prepare-rootfs.py
 	@grep -q 'vantor-service' tools/prepare-rootfs.py
 	@grep -q 'vantor-storage' tools/prepare-rootfs.py
+	@grep -q 'CONFIG_SU y' build/scripts/build-busybox.sh
+	@grep -q 'CONFIG_SU y' build/scripts/build-busybox-legacy.sh
+	@grep -q 'grep -qx "$applet"' build/scripts/build-busybox.sh
+	@grep -q 'grep -qx "$applet"' build/scripts/build-busybox-legacy.sh
 	@grep -q 'CONFIG_START_STOP_DAEMON' build/scripts/build-busybox.sh
 	@grep -q 'CONFIG_INIT y' build/scripts/build-busybox-legacy.sh
 	@test -s tests/test_prepare_rootfs.py
