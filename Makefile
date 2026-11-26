@@ -91,6 +91,9 @@ core-files:
 	@grep -q 'udhcpc' tools/prepare-rootfs.py
 	@grep -q 'vantor-service' tools/prepare-rootfs.py
 	@grep -q 'vantor-storage' tools/prepare-rootfs.py
+	@grep -q 'fstab-check)' tools/prepare-rootfs.py
+	@grep -q 'umount|unmount)' tools/prepare-rootfs.py
+	@grep -q 'exec mount -t' tools/prepare-rootfs.py
 	@grep -q 'CONFIG_SU y' build/scripts/build-busybox.sh
 	@grep -q 'CONFIG_SU y' build/scripts/build-busybox-legacy.sh
 	@grep -q 'grep -qx "$applet"' build/scripts/build-busybox.sh
