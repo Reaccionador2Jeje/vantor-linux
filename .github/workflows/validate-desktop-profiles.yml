@@ -1,0 +1,28 @@
+name: Validate VANTOR desktop profiles
+on:
+  push:
+    paths:
+      - "desktop/profiles/**"
+      - "packages/catalog.tsv"
+      - "tools/validate-desktop-profiles.py"
+      - ".github/workflows/validate-desktop-profiles.yml"
+  pull_request:
+    paths:
+      - "desktop/profiles/**"
+      - "packages/catalog.tsv"
+      - "tools/validate-desktop-profiles.py"
+      - ".github/workflows/validate-desktop-profiles.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Validate platform-specific package manifests
+        run: python3 tools/validate-desktop-profiles.py
