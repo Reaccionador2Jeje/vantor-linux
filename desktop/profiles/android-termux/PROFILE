@@ -1,0 +1,10 @@
+# VANTOR desktop profile manifest v1
+name=android-termux
+platform=android
+architecture=aarch64
+session=xfce4
+display=tigervnc
+mode=virtual-display
+required=tigervnc,xfce4-session,xfce4-panel,xfwm4,xfce4-settings,xfce4-terminal,thunar,dbus,mesa,gtk3,adwaita-icon-theme,hicolor-icon-theme
+optional=x11vnc,remmina,freerdp
+notes=Run a private Xvnc display inside the Android userspace; no Android-wide display manager or DRM seat is assumed.
