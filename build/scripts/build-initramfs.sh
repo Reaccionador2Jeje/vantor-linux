@@ -141,12 +141,18 @@ grep -qx 'wheel:x:10:live' "$ROOTFS/etc/group" || {
     echo "[ERROR] visudo is required to validate the packaged policy." >&2
     exit 1
 }
-POLICY_CHECK="$(mktemp)"
-trap 'rm -f "$POLICY_CHECK"' EXIT
-sed "s|^#includedir /etc/sudoers.d|#includedir $ROOTFS/etc/sudoers.d|" \
-    "$ROOTFS/etc/sudoers" > "$POLICY_CHECK"
-chmod 0440 "$POLICY_CHECK"
-"$ROOTFS/usr/bin/visudo" -c -f "$POLICY_CHECK"
+fakeroot -- sh -c '
+    set -eu
+    rootfs="$1"
+    policy_check="$(mktemp)"
+    trap "rm -f \"$policy_check\"" EXIT
+    chown -hR 0:0 "$rootfs/etc/sudoers" "$rootfs/etc/sudoers.d"
+    sed "s|^#includedir /etc/sudoers.d|#includedir $rootfs/etc/sudoers.d|" \
+        "$rootfs/etc/sudoers" > "$policy_check"
+    chown 0:0 "$policy_check"
+    chmod 0440 "$policy_check"
+    "$rootfs/usr/bin/visudo" -c -f "$policy_check"
+' sh "$ROOTFS"
 
 # Include loadable modules from the matching kernel build when available.
 KERNEL_RELEASE_FILE="${VANTOR_KERNEL_RELEASE_FILE:-$ROOT/build/work/kernel/kernelrelease}"
