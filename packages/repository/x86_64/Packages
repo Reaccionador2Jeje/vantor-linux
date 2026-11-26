@@ -1,7 +1,6 @@
 # VANTOR-PACKAGES 1
 lua	5.4.9	x86_64	a9843346f0ab8e73ad9b9a9993868fe3c16482f2cb01d5f81a5d31c53c6a5fbd	lua-5.4.9-x86_64.tar.gz	Language: Lua 5.4.9 interpreter, compiler and static development library
 vantor-profile-development	0.1.0	x86_64	64ca831943980061d35d2b0bb02e677bc34980808d2d7377cf42e0138ccc5fbe	vantor-profile-development-0.1.0-x86_64.tar.gz	Profile: VANTOR development tools and programming languages	lua
-filetype	0.1.0	x86_64	707fb6392fb407e4115289dab8723c4fa66c78de78314db0c89160e53a949f93	filetype-0.1.0-all.tar.gz	VANTOR terminal utility: filetype	
 vtop	0.1.0	x86_64	4e120837a680b1dc094670cfd19d48c4bbded96f48229b6a61dce669538715ce	vtop-0.1.0-all.tar.gz	VANTOR terminal utility: vtop	
 vram	0.1.0	x86_64	0f9bd3ca02a1a567e64a8ac0bf59fd5bc5f5421ada79db4c2ddb5225b82a3d59	vram-0.1.0-all.tar.gz	VANTOR terminal utility: vram	
 vpath	0.1.0	x86_64	8154f45720a59522327ee25e4de7101e44a5b7a2f054e6fb9d6937f30a41e790	vpath-0.1.0-all.tar.gz	VANTOR terminal utility: vpath	
@@ -33,3 +32,4 @@ fastfetch	0.1.0	x86_64	18c69f7a8868fd0bb40e3690b5083a52a884acbec805da2f02aab419a
 tree	0.1.0	x86_64	56525330801027e43c88416e1364e7ba58c190e0ca3192e83097ae880440ec78	tree-0.1.0-all.tar.gz	VANTOR terminal utility: tree	
 watch	0.1.0	x86_64	a20d171c86256b4295296bfa42067984472f0356d94cd1349c402ad2f328cd0d	watch-0.1.0-all.tar.gz	VANTOR terminal utility: watch	
 which	0.1.0	x86_64	71e066a4c0840ff9ff1e654c1b0815300cb48b3e889cac3057a4f566e89dbabf	which-0.1.0-all.tar.gz	VANTOR terminal utility: which	
+filetype	0.1.0	x86_64	707fb6392fb407e4115289dab8723c4fa66c78de78314db0c89160e53a949f93	filetype-0.1.0-all.tar.gz	VANTOR terminal utility: filetype	
