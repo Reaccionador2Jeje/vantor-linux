@@ -176,7 +176,13 @@ configure_target() {
     fi
     grep -q '^users:' "$target/etc/group" || printf 'users:x:100:\n' >> "$target/etc/group"
     grep -q '^root:' "$target/etc/shadow" || printf 'root:!:19000:0:99999:7:::\n' >> "$target/etc/shadow"
-    grep -q "^$username:" "$target/etc/shadow" || printf '%s:!:19000:0:99999:7:::\n' "$username" >> "$target/etc/shadow"
+    if grep -q "^$username:" "$target/etc/shadow"; then
+        awk -F: -v user="$username" 'BEGIN { OFS=":" } $1 == user { $2="!" } { print }' "$target/etc/shadow" > "$target/etc/shadow.tmp"
+        mv "$target/etc/shadow.tmp" "$target/etc/shadow"
+    else
+        printf '%s:!:19000:0:99999:7:::\n' "$username" >> "$target/etc/shadow"
+    fi
+    chmod 0600 "$target/etc/shadow"
     grep -q '^root:' "$target/etc/gshadow" || printf 'root:!::\n' >> "$target/etc/gshadow"
     grep -q '^wheel:' "$target/etc/gshadow" || printf 'wheel:!::%s\n' "$username" >> "$target/etc/gshadow"
     grep -q '^users:' "$target/etc/gshadow" || printf 'users:!::\n' >> "$target/etc/gshadow"
