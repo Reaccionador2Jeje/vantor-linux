@@ -195,6 +195,8 @@ configure_target() {
         done
         awk -F: 'BEGIN { OFS=":" } $1 == "live" { next } $1 == "wheel" && $4 != "" { n=split($4, members, ","); out=""; for (i=1; i<=n; i++) if (members[i] != "live") out=(out == "" ? members[i] : out "," members[i]); $4=out } { print }' "$target/etc/group" > "$target/etc/group.tmp"
         mv "$target/etc/group.tmp" "$target/etc/group"
+        awk -F: 'BEGIN { OFS=":" } $1 == "wheel" { for (field=3; field<=4; field++) if ($field != "") { n=split($field, members, ","); out=""; for (i=1; i<=n; i++) if (members[i] != "live") out=(out == "" ? members[i] : out "," members[i]); $field=out } } { print }' "$target/etc/gshadow" > "$target/etc/gshadow.tmp"
+        mv "$target/etc/gshadow.tmp" "$target/etc/gshadow"
         rm -rf "$target/home/live"
         chmod 0600 "$target/etc/shadow" "$target/etc/gshadow" 2>/dev/null || true
     fi
