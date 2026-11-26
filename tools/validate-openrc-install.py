@@ -71,7 +71,13 @@ def main() -> int:
         if isinstance(destinations, str):
             destinations = [destinations]
         for destination in destinations:
+            # Meson's target inventory can include OpenRC's generated
+            # /etc/runlevels symlink entries. They are service registrations,
+            # not executable payloads; validate those links against the final
+            # assembled rootfs below, after VANTOR prunes optional services.
             relative = str(destination).lstrip("/")
+            if not relative.startswith(("usr/bin/", "usr/sbin/", "usr/lib/")):
+                continue
             path = args.rootfs / relative
             installed.add("/" + relative)
             checked += 1
@@ -102,7 +108,23 @@ def main() -> int:
                 problems.append(f"dynamically linked executable: {path}")
 
     if checked == 0:
-        problems.append("Meson reported no installed executable targets")
+        problems.append("Meson reported no installed executable payloads under /usr")
+
+    # Validate the final service graph, not Meson's pre-pruning install plan.
+    # Every relative runlevel link must resolve to a real init script.
+    runlevels = args.rootfs / "etc/runlevels"
+    if runlevels.exists():
+        for link in sorted(runlevels.rglob("*")):
+            if not link.is_symlink():
+                continue
+            target = os.readlink(link)
+            if os.path.isabs(target):
+                problems.append(f"absolute runlevel symlink is not relocatable: {link} -> {target}")
+                continue
+            try:
+                link.resolve(strict=True)
+            except (OSError, RuntimeError):
+                problems.append(f"broken runlevel service link: {link} -> {target}")
 
     for directory, names in REQUIRED[args.arch].items():
         for name in names:
