@@ -674,7 +674,7 @@ case "${1:-help}" in
     version|--version) echo "VANTOR Control $VERSION" ;;
     info) [ -r /etc/os-release ] && cat /etc/os-release ;;
     hardware) exec /usr/bin/vantor-hw ;;
-    storage) exec /usr/sbin/vantor-storage "${2:-status}" ;;\n    service) exec /usr/sbin/vantor-service "${2:-help}" "${3:-}" ;;
+    storage) shift; if [ "$#" -gt 0 ]; then exec /usr/sbin/vantor-storage "$@"; else exec /usr/sbin/vantor-storage status; fi ;;\n    service) exec /usr/sbin/vantor-service "${2:-help}" "${3:-}" ;;
     doctor) exec /usr/bin/vantor-doctor "$@" ;;
     recovery)
         recovery=0
