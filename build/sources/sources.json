@@ -81,6 +81,17 @@
       "license": "BSD-2-Clause",
       "role": "Mandatory init system and dependency-based service manager",
       "status": "pinned"
+    },
+    {
+      "name": "sudo",
+      "version": "1.9.17p2",
+      "archive": "sudo-1.9.17p2.tar.gz",
+      "url": "https://www.sudo.ws/sudo/dist/sudo-1.9.17p2.tar.gz",
+      "sha256": "4a38a1ab3adb1199257edc2a7c4a2bd714665eb605b04368843b06dada2cfcfb",
+      "sha512": null,
+      "license": "ISC and BSD-3-Clause (see upstream LICENSE.md)",
+      "role": "Setuid privilege delegation with sudoers policy and wheel group support",
+      "status": "pinned"
     }
   ]
 }
