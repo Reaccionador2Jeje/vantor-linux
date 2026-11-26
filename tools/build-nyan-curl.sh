@@ -41,7 +41,7 @@ echo "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a  $OPENSSL
 tar -xzf "$OPENSSL" -C "$WORK/src"
 (
   cd "$WORK/src/openssl-3.5.9"
-  ./Configure "$OPENSSL_TARGET" no-shared no-tests no-apps no-docs no-dso no-engine no-async no-comp no-legacy no-module no-asm \
+  ./Configure "$OPENSSL_TARGET" --cross-compile-prefix="$TARGET-" no-shared no-tests no-apps no-docs no-dso no-engine no-async no-comp no-legacy no-module no-asm \
     --prefix=/usr/local --openssldir=/etc/ssl
   make -j2
   make install_sw DESTDIR="$WORK/openssl"
@@ -66,7 +66,7 @@ mkdir -p "$WORK/build-curl"
   cd "$WORK/build-curl"
   export CPPFLAGS="-I$OPENSSL_PREFIX/include"
   export LIBS="-L$OPENSSL_PREFIX/lib -lssl -lcrypto"
-  export LDFLAGS="-static -L$OPENSSL_PREFIX/lib -Wl,--gc-sections"
+  export LDFLAGS="-static -L$OPENSSL_PREFIX/lib -Wl,-Bstatic -Wl,--gc-sections"
   "$WORK/src/curl-8.23.0/configure" --build="$BUILD_TRIPLET" --host="$TARGET" \
     --prefix=/usr/local --with-openssl="$OPENSSL_PREFIX" \
     --disable-shared --enable-static --disable-manual --disable-ldap --disable-ldaps \
