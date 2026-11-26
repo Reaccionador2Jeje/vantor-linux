@@ -22,6 +22,11 @@ class OpenRCIntegrationTests(unittest.TestCase):
         self.assertIn("meson compile", builder)
         self.assertIn("openrc-init", builder)
         self.assertIn("ln -sfn /sbin/openrc-init", builder)
+        self.assertIn("rc_bin_commands=(", builder)
+        self.assertIn("rc_sbin_commands=(", builder)
+        self.assertIn('verify_openrc_binary "$binary" "$ROOTFS/usr/lib/rc/bin/$binary"', builder)
+        self.assertIn('verify_openrc_binary "$binary" "$ROOTFS/usr/lib/rc/sbin/$binary"', builder)
+        self.assertIn("ln -sfn /usr/lib/rc/bin/checkpath", builder)
         self.assertIn("not OpenRC", initramfs)
         self.assertIn("static", builder)
 
