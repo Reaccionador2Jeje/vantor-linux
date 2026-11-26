@@ -1,5 +1,4 @@
 # VANTOR-PACKAGES 1
-vantor-hardware	0.1.0	i486	d2dd76572977e23adb06319e44c2ce1eb9d8f399bde705e175dcc89fcbf63e26	vantor-hardware-0.1.0-i486.tar.gz	VANTOR read-only hardware inventory utility	
 vantor-installer	0.1.0	i486	41a7db777c0130c2006ddeecdd53560230c26d1e6f1d8ebc9f0b55cdbff67d0a	vantor-installer-0.1.0-i486.tar.gz	VANTOR text-mode system installer	vantor-base-files
 vantor-branding	0.1.0	i486	af7f0574bd4d3a7a2098f62f6852792318985429dff1ecdfc4f46408e272e088	vantor-branding-0.1.0-i486.tar.gz	Official VANTOR identity assets	
 vantor-docs	0.1.0	i486	da7a6846e013d75334c81d1d2d2ea51a7f0ee26708af8653d4d0e3a2c7c6a5fd	vantor-docs-0.1.0-i486.tar.gz	VANTOR system and Nyan documentation	
@@ -31,3 +30,4 @@ vantor-base-files	0.1.0	i486	2979fe308df896694e40b714baec9677298fc0b011ffeff0cc8
 vantor-profile-minimal	0.1.0	i486	3bc537690632f0ae66478fb78fdacb75e6024f3ed11edea041462c76556bf5bb	vantor-profile-minimal-0.1.0-i486.tar.gz	VANTOR Minimal profile for 486SX/486DX and later 32-bit PCs	vantor-base-files
 nano	9.2	i486	83e23f2b88c23a5a8f5b6b6d2cb3747078e54a86ca58c79f8f13b6473f670145	nano-9.2-i486.tar.gz	GNU nano 9.2 tiny static editor (musl + ncurses)	
 htop	3.4.1	i486	add90701ca435934f353faeb67f9fd7f7eb6f56a92fc7d7afc1e7f07aab3ad82	htop-3.4.1-i486.tar.gz	htop 3.4.1 static process monitor (musl + ncurses)	
+vantor-hardware	0.1.0	i486	d2dd76572977e23adb06319e44c2ce1eb9d8f399bde705e175dcc89fcbf63e26	vantor-hardware-0.1.0-i486.tar.gz	VANTOR read-only hardware inventory utility	
