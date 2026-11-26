@@ -26,7 +26,7 @@ The destination must be an empty mounted filesystem (a `lost+found` directory is
 - It does not partition, format, resize or erase disks.
 - It does not edit the host's bootloader.
 - It does not configure filesystems or generate `fstab`.
-- The temporary Live account uses the public password `vantor` for sudo authentication; change it with `passwd` if needed. The installer removes the Live sudo policy from the installed target. Installed account passwords must be set independently before normal use.
+- The temporary Live account uses the public password `vantor` for sudo authentication; change it with `passwd` if needed. The installer removes the Live sudo policy from the installed target. When you choose a different username, it also removes the temporary `live` account and its home directory; if you keep the username `live`, its public password is locked. Installed account passwords must be set independently before normal use.
 - BusyBox `su` is enabled for both x86_64 and i486 and its `/bin/su` applet link is recreated during system initialization. It requires a usable target-account password; the initial installer leaves root and the standard user's passwords locked. The wheel sudoers policy and static `sudo` executable are included; sudo requires the account password.
 - A bootloader and a complete post-install boot test are still required before calling the installed system production-ready.
 
