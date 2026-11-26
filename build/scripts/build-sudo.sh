@@ -68,9 +68,10 @@ mkdir -p "$BUILD_DIR"
         --enable-static-sudoers \
         --disable-shared-libutil \
         --without-pam \
+        --disable-openssl \
         --disable-nls
     make -j"${VANTOR_BUILD_JOBS:-2}"
-    make DESTDIR="$ROOTFS" install-binaries
+    fakeroot -- make DESTDIR="$ROOTFS" install-binaries
 )
 
 SUDO="$ROOTFS/usr/bin/sudo"
