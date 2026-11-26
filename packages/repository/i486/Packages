@@ -1,7 +1,6 @@
 # VANTOR-PACKAGES 1
 vantor-base-files	0.1.0	i486	b7f61614bb37843bee393ac42dd68b91277ff48564856f7c5988732043da54e8	vantor-base-files-0.1.0-i486.tar.gz	VANTOR Minimal i486 base files and static 486-compatible BusyBox	
 vantor-profile-minimal	0.1.0	i486	b5773ce0d8f88506cd1e38bb30e1ce3eb2eb500c9e89d30f5e45b7b76b25e5c5	vantor-profile-minimal-0.1.0-i486.tar.gz	VANTOR Minimal profile for 486SX/486DX and later 32-bit PCs	vantor-base-files
-vdf	0.1.0	i486	3200e7e249e247e62b6de98ecc39bdef531833346463b80308c29af056f96639	vdf-0.1.0-all.tar.gz	VANTOR terminal utility: vdf	
 vdu	0.1.0	i486	b78d2864db1a2f7b9975c3007f9757f5da48d2867bce7970c3e0be71f56e7b78	vdu-0.1.0-all.tar.gz	VANTOR terminal utility: vdu	
 vports	0.1.0	i486	5bedb29dda9d1b165c0957973ecd8cbe7386f764dae159dc02b5691860b35289	vports-0.1.0-all.tar.gz	VANTOR terminal utility: vports	
 vman	0.1.0	i486	c173d350d650ea58cbc2d149e76e1cc0ac0eb6565480be123f97628933c4c07c	vman-0.1.0-all.tar.gz	VANTOR terminal utility: vman	
@@ -31,3 +30,4 @@ vtime	0.1.0	i486	39f7d560539b09d6aadfc05f02de72989b0c9a9ecf4d220e0afdd534d76f412
 vchecksum	0.1.0	i486	1ff62d001df4acb516b3c420cd96d206f1db5d3be5277c68779db8d27f1558e1	vchecksum-0.1.0-all.tar.gz	VANTOR terminal utility: vchecksum	
 varchive	0.1.0	i486	78381e9aa686714f4e7399f430790b161f697042afa22fe12ad35a6c1c435d68	varchive-0.1.0-all.tar.gz	VANTOR terminal utility: varchive	
 vps	0.1.0	i486	261621aa91ceffd74d3655feb920f1b60291a5707794a898c726b423f575b0b0	vps-0.1.0-all.tar.gz	VANTOR terminal utility: vps	
+vdf	0.1.0	i486	3200e7e249e247e62b6de98ecc39bdef531833346463b80308c29af056f96639	vdf-0.1.0-all.tar.gz	VANTOR terminal utility: vdf	
