@@ -244,7 +244,9 @@ boot-files:
 	@test -s boot/grub/grub-legacy.cfg
 	@test -s build/scripts/build-iso.sh
 	@test -s build/scripts/build-iso-legacy.sh
-	@echo "[OK] GRUB configuration and ISO builder are present."
+	@test -s .github/workflows/test-image-qemu.yml
+	@test -s tests/test_boot_pipeline.py
+	@echo "[OK] GRUB configuration, ISO builders and QEMU boot validation are present."
 
 iso:
 	@bash build/scripts/build-iso.sh
