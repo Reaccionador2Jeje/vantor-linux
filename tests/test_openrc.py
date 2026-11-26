@@ -21,7 +21,7 @@ class OpenRCIntegrationTests(unittest.TestCase):
         self.assertIn("meson compile", builder)
         self.assertIn("openrc-init", builder)
         self.assertIn("ln -sfn /sbin/openrc-init", builder)
-        self.assertIn("not linked to OpenRC", initramfs)
+        self.assertIn("not OpenRC", initramfs)
         self.assertIn("static", builder)
 
     def test_vantor_services_use_openrc(self) -> None:
