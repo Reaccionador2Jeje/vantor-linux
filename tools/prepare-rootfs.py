@@ -623,12 +623,39 @@ case "$action" in
         echo "Kernel filesystem support:"
         cat /proc/filesystems 2>/dev/null || echo "procfs unavailable"
         ;;
+    mount)
+        device=${2:-}; target=${3:-}; fstype=${4:-}
+        case "$device" in /dev/*) ;; *) echo "device must be under /dev" >&2; exit 2;; esac
+        [ -b "$device" ] || { echo "device is not a block device" >&2; exit 2; }
+        case "$target" in /*) ;; *) echo "mount point must be absolute" >&2; exit 2;; esac
+        [ "$target" != "/" ] || { echo "refusing to mount over /" >&2; exit 2; }
+        case "$fstype" in ext2|ext3|ext4|vfat|exfat|ntfs|iso9660) ;; *) echo "unsupported filesystem type" >&2; exit 2;; esac
+        mkdir -p "$target" || exit 1
+        [ ! -L "$target" ] || { echo "mount point must not be a symlink" >&2; exit 2; }
+        if awk -v path="$target" '$2 == path { found=1 } END { exit !found }' /proc/mounts; then
+            echo "mount point is already in use" >&2; exit 2
+        fi
+        exec mount -t "$fstype" -o nosuid,nodev "$device" "$target"
+        ;;
+    umount|unmount)
+        target=${2:-}
+        case "$target" in /*) ;; *) echo "mount point must be absolute" >&2; exit 2;; esac
+        [ "$target" != "/" ] || { echo "refusing to unmount /" >&2; exit 2; }
+        if ! awk -v path="$target" '$2 == path { found=1 } END { exit !found }' /proc/mounts; then
+            echo "mount point is not mounted" >&2; exit 2
+        fi
+        exec umount "$target"
+        ;;
+    fstab-check)
+        [ -r /etc/fstab ] || { echo "/etc/fstab is missing" >&2; exit 1; }
+        awk 'BEGIN { ok=1 } /^[[:space:]]*#/ || /^[[:space:]]*$/ { next } NF < 4 { printf "invalid fstab line %d\\n", NR; ok=0 } END { if (ok) print "/etc/fstab syntax looks valid"; exit !ok }' /etc/fstab
+        ;;
     mount-all)
         echo "Mounting configured filesystems from /etc/fstab (no formatting or partition changes)."
-        mount -a
+        exec mount -a
         ;;
     *)
-        echo "Usage: vantor-storage {scan|status|filesystems|mount-all}" >&2
+        echo "Usage: vantor-storage {scan|status|filesystems|mount DEVICE TARGET FSTYPE|umount TARGET|fstab-check|mount-all}" >&2
         exit 2
         ;;
 esac
