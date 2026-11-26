@@ -7,7 +7,7 @@ VANTOR Core is the small distribution-owned userspace layer. BusyBox supplies st
 - **VANTOR Init 0.2.0** (`/sbin/vantor-init`): initramfs-to-system handoff helper. It mounts procfs, sysfs, devtmpfs and /run, then executes `/sbin/init`, which is linked to OpenRC's `/sbin/openrc-init`. In recovery mode it executes `/sbin/init nonetwork`.
 - **Early entry point** (`/init`): runs from the initramfs, discovers an optional installed root, and hands control to VANTOR Init.
 - **OpenRC** (`/sbin/openrc-init`, `/sbin/openrc`, `/sbin/rc-service`, `/sbin/rc-update`, `/sbin/rc-status`): PID 1, dependency ordering, runlevels, service control, and shutdown.
-- **VANTOR Control 0.1.0** (`/usr/bin/vantorctl`): dispatches system information and diagnostics. Its service and log commands delegate to OpenRC.
+- **Sudo 1.9.17p2** (`/usr/bin/sudo`, `/usr/bin/visudo`): statically linked privilege delegation with the sudoers policy embedded in the executable. The temporary Live account uses a passwordless rule; the installer removes it, while the general `wheel` rule requires authentication.\n- **VANTOR Control 0.1.0** (`/usr/bin/vantorctl`): dispatches system information and diagnostics. Its service and log commands delegate to OpenRC.
 - **VANTOR Doctor 0.2.0** (`/usr/bin/vantor-doctor`): built-in offline read-only checks for core binaries, virtual filesystem mounts, user environment, Nyan configuration, OpenRC and network-interface presence.
 - **VANTOR Hardware 0.1.0** (`/usr/bin/vantor-hw`): read-only inventory of CPU, memory, block devices, PCI devices and bound drivers, VirtIO devices, USB devices and network interfaces.
 - **VANTOR Modules** (`/usr/sbin/vantor-modules`): loads optional storage, filesystem, VirtIO, USB and network drivers listed in `/etc/modules`.
@@ -51,10 +51,11 @@ The `nonetwork` recovery runlevel keeps the console available but omits local fi
 
 ## Build and test
 
-The x86_64 image pipeline builds the rootfs, BusyBox, static OpenRC, initramfs and ISO in that order. `make image-legacy` performs the same integration with a 32-bit i486 OpenRC build. The initramfs builder refuses to package an image unless `/sbin/openrc-init` exists and `/sbin/init` points to it.
+The x86_64 image pipeline builds the rootfs, BusyBox, static sudo, static OpenRC, initramfs and ISO in that order. `make image-legacy` performs the same integration with 32-bit i486 sudo and OpenRC builds. The initramfs builder refuses to package an image unless `/sbin/openrc-init` exists and `/sbin/init` points to it.
 
-`make check` validates the rootfs generator, OpenRC service scripts, source pins and build contracts. ISO structure checks do not replace boot testing in Limbo/QEMU.
+`make check` validates the rootfs generator, sudo policy and build contract, OpenRC service scripts, source pins and build contracts. ISO structure checks do not replace boot testing in Limbo/QEMU.
 
 ## Current boundaries
 
 Network setup currently supports IPv4 DHCP and static configuration; it is not yet a full network manager and does not include Wi-Fi authentication or IPv6 configuration. Hardware inventory is descriptive, not a driver manager or hardware configuration utility.
+\nSee [Sudo integration](sudo.md) for build commands, policy boundaries and setuid archive ownership.\n
