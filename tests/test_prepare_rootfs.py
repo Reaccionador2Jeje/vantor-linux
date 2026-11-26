@@ -120,7 +120,7 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertTrue((output / "usr/sbin/vantor-modules").stat().st_mode & 0o111)
             self.assertIn("virtio_net", (output / "etc/modules").read_text())
             self.assertIn("/usr/bin/vantor-splash start", rc_s)
-            self.assertIn("storage) exec /usr/sbin/vantor-storage", (output / "usr/bin/vantorctl").read_text())
+            self.assertIn('storage) shift; if [ "$#" -gt 0 ]; then exec /usr/sbin/vantor-storage "$@"; else exec /usr/sbin/vantor-storage status; fi ;;', (output / "usr/bin/vantorctl").read_text())
             self.assertIn('/usr/bin/vantor-splash step "VANTOR userspace is ready"', rc_s)
             self.assertIn("/usr/bin/vantor-splash finish", rc_s)
             self.assertIn("mount -t iso9660 -o ro", (output / "etc/init.d/rcS").read_text())
