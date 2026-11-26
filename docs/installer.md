@@ -79,6 +79,10 @@ The installer menu now provides two additional actions:
 Important: the current Live image does not yet bundle `grub-install` and its BIOS modules. The menu therefore reports that the feature is unavailable and makes no disk changes until those tools are included in a future image. This implementation is a guarded integration point, not proof of a working installed bootloader. The disk inventory is informational only; partitioning and formatting remain manual.
 
 
+## Standard mount points
+
+The Minimal root filesystem creates `/mnt` and `/media` at image-build time, so the installer default `/mnt` exists. `/mnt` is only an empty mount point until an existing partition is mounted there; creating the directory does not mount or format a disk. The installer can also create a custom mount point such as `/mnt/vantor-target` before mounting an existing supported filesystem.
+
 ## Mounting an existing installation partition
 
 The installer menu includes **Mount existing Linux partition**. It accepts an existing block device and an ext2, ext3, or ext4 filesystem, then mounts it at a user-selected absolute mount point (default `/mnt/vantor-target`). It refuses non-`/dev` paths, non-block devices, unsupported filesystem types, symbolic-link mount points, and mount points that are already in use. It does not create partitions, format filesystems, or erase data.
