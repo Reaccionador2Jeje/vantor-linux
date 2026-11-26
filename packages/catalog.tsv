@@ -215,3 +215,6 @@ filelight	storage	planned	KDE graphical disk usage analyzer
 virt-manager	applications	planned	Graphical virtual machine manager
 qemu-system-x86	virtualization	planned	QEMU x86 system emulator
 qemu-system-aarch64	virtualization	planned	QEMU ARM64 system emulator
+mate	desktop	planned	MATE desktop environment meta-package
+mate-session-manager	desktop	planned	MATE graphical session manager
+mate-panel	desktop	planned	MATE panel, application menu and taskbar
