@@ -21,6 +21,7 @@ on:
       - "Makefile"
       - "tests/**"
       - ".github/workflows/build-image.yml"
+      - ".github/workflows/test-image-qemu.yml"
 
 permissions:
   contents: write
