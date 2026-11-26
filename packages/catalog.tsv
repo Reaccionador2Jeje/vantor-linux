@@ -28,6 +28,11 @@ openbox	desktop	planned	Lightweight window manager
 tint2	desktop	planned	Panel and taskbar
 xterm	desktop	planned	Terminal emulator
 xinit	desktop	planned	X11 session launcher for VANTOR Desktop
+tigervnc	remote-desktop	planned	TigerVNC server (Xvnc) and viewer (vncviewer) for remote graphical sessions
+x11vnc	remote-desktop	planned	Share an existing X11 desktop session through the VNC protocol
+wayvnc	remote-desktop	planned	VNC server for wlroots-based Wayland compositors
+freerdp	remote-desktop	planned	FreeRDP client tools for RDP remote desktop connections
+remmina	remote-desktop	planned	Graphical remote desktop client supporting VNC and RDP through plugins
 xsetroot	desktop	planned	Minimal X11 root-window utilities
 pcmanfm	desktop	planned	Optional desktop icons and file manager
 vantor-desktop	desktop	building	VANTOR-branded Openbox and tint2 session configuration
