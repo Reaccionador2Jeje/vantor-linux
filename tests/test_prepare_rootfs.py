@@ -84,7 +84,7 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertNotIn("/usr/sbin/vantor-network", rc_s)
             self.assertIn("logs|status", (output / "usr/bin/vantorctl").read_text())
             self.assertIn('exec /usr/sbin/vantor-service logs "$@"', (output / "usr/bin/vantorctl").read_text())
-            self.assertIn("RC_DEFAULTLEVEL=nonetwork", (output / "sbin/vantor-init").read_text())
+            self.assertIn("exec /sbin/init nonetwork", (output / "sbin/vantor-init").read_text())
             ctl = (output / "usr/bin/vantorctl").read_text()
             self.assertIn("recovery)", ctl)
             self.assertIn("VANTOR recovery mode: ACTIVE", ctl)
