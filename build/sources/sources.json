@@ -58,7 +58,10 @@
       "license": "GPL-2.0-only",
       "role": "Minimal initial userspace",
       "status": "pinned",
-      "sha512": null
+      "sha512": null,
+      "mirrors": [
+        "https://sources.buildroot.net/busybox-1.37.0.tar.bz2"
+      ]
     },
     {
       "name": "linux-legacy",
