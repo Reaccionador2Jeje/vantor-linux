@@ -28,6 +28,7 @@ class OpenRCIntegrationTests(unittest.TestCase):
         self.assertIn("openrc-init", builder)
         self.assertIn("ln -sfn /sbin/openrc-init", builder)
         self.assertIn("tools/validate-openrc-install.py", builder)
+        self.assertGreater(builder.index("tools/validate-openrc-install.py"), builder.index("link_service default localmount"))
         self.assertNotIn("rc_bin_commands=(", builder)
         self.assertNotIn("rc_sbin_commands=(", builder)
         self.assertIn('["meson", "introspect", "--targets"', validator)
@@ -44,7 +45,10 @@ class OpenRCIntegrationTests(unittest.TestCase):
         self.assertIn("Intel 80386", validator)
         self.assertIn('"INTERP" in program.stdout', validator)
         self.assertIn("missing or non-executable installed target", validator)
-        self.assertIn("Meson reported no installed executable targets", validator)
+        self.assertIn("Meson reported no installed executable payloads under /usr", validator)
+        self.assertIn("broken runlevel service link", validator)
+        self.assertIn("runlevels.rglob", validator)
+        self.assertIn("usr/bin/", validator)
 
     def test_vantor_services_use_openrc(self) -> None:
         service = (ROOT / "tools/prepare-rootfs.py").read_text()
