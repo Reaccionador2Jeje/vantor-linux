@@ -91,7 +91,7 @@ fakeroot -- sh -c '
 
 [[ -s "$OUTPUT" ]] || { echo "[ERROR] Initramfs archive is empty." >&2; exit 1; }
 gzip -t "$OUTPUT"
-SUDO_METADATA="$(gzip -dc "$OUTPUT" | cpio --list --verbose 2>/dev/null | awk '$NF == "./usr/bin/sudo" { print $1 " " $3 " " $4; exit }')"
+SUDO_METADATA="$(gzip -dc "$OUTPUT" | cpio --list --verbose 2>/dev/null | awk '$NF ~ /(^|\\/)usr\\/bin\\/sudo$/ { print $1 " " $3 " " $4; exit }')"
 [[ "$SUDO_METADATA" == "-rwsr-xr-x root root" ]] || {
     echo "[ERROR] Initramfs sudo must be root-owned and setuid (4755); got: ${SUDO_METADATA:-missing}" >&2
     exit 1
