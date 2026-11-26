@@ -2,7 +2,6 @@
 dialog	1.3-20260721	i486	224cbf0173d3f68d8fe4a5c9a8184dd8106dc69e2bf6872cff324fb289b47370	dialog-1.3-20260721-i486.tar.gz	Dialog terminal UI widgets, static musl and ncurses	
 nano	9.2	i486	83e23f2b88c23a5a8f5b6b6d2cb3747078e54a86ca58c79f8f13b6473f670145	nano-9.2-i486.tar.gz	GNU nano 9.2 tiny static editor (musl + ncurses)	
 htop	3.4.1	i486	add90701ca435934f353faeb67f9fd7f7eb6f56a92fc7d7afc1e7f07aab3ad82	htop-3.4.1-i486.tar.gz	htop 3.4.1 static process monitor (musl + ncurses)	
-vman	0.1.0	i486	c173d350d650ea58cbc2d149e76e1cc0ac0eb6565480be123f97628933c4c07c	vman-0.1.0-all.tar.gz	VANTOR terminal utility: vman	
 vantor-base-files	0.1.0	i486	b16c5b890f5d1ae44bd1b94cfe0111448f8df285414646278e2988e49b4c136e	vantor-base-files-0.1.0-i486.tar.gz	VANTOR Minimal i486 base files and static 486-compatible BusyBox	
 vantor-profile-minimal	0.1.0	i486	9e22c837c4d2e4f248f6419101297456e3eda6bad667ebd998bb767f7298f81d	vantor-profile-minimal-0.1.0-i486.tar.gz	VANTOR Minimal profile for 486SX/486DX and later 32-bit PCs	vantor-base-files
 vantor-hardware	0.1.0	i486	d2dd76572977e23adb06319e44c2ce1eb9d8f399bde705e175dcc89fcbf63e26	vantor-hardware-0.1.0-i486.tar.gz	VANTOR read-only hardware inventory utility	
@@ -31,3 +30,4 @@ vps	0.1.0	i486	261621aa91ceffd74d3655feb920f1b60291a5707794a898c726b423f575b0b0	
 vdf	0.1.0	i486	3200e7e249e247e62b6de98ecc39bdef531833346463b80308c29af056f96639	vdf-0.1.0-all.tar.gz	VANTOR terminal utility: vdf	
 vdu	0.1.0	i486	b78d2864db1a2f7b9975c3007f9757f5da48d2867bce7970c3e0be71f56e7b78	vdu-0.1.0-all.tar.gz	VANTOR terminal utility: vdu	
 vports	0.1.0	i486	5bedb29dda9d1b165c0957973ecd8cbe7386f764dae159dc02b5691860b35289	vports-0.1.0-all.tar.gz	VANTOR terminal utility: vports	
+vman	0.1.0	i486	c173d350d650ea58cbc2d149e76e1cc0ac0eb6565480be123f97628933c4c07c	vman-0.1.0-all.tar.gz	VANTOR terminal utility: vman	
