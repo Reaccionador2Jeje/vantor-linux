@@ -199,7 +199,7 @@ class PrepareRootfsTests(unittest.TestCase):
             shadow = (target / "etc/shadow").read_text()
             self.assertRegex(shadow, r"(?m)^live:!:")
             self.assertFalse((target / "etc/sudoers.d/99-live").exists())
-            self.assertIn("wheel:!::", (target / "etc/gshadow").read_text())
+            self.assertIn("wheel:!::live", (target / "etc/gshadow").read_text())
 
     def test_installer_prepares_kernel_initramfs_grub_and_fstab(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
