@@ -74,8 +74,8 @@ users:!::
 Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 #includedir /etc/sudoers.d
 """, 0o440)
-    write(output / "etc/sudoers.d/10-live", "live ALL=(ALL:ALL) NOPASSWD: ALL\n", 0o440)
-    write(output / "etc/sudoers.d/20-wheel", "%wheel ALL=(ALL:ALL) ALL\n", 0o440)
+    write(output / "etc/sudoers.d/99-live", "live ALL=(ALL:ALL) NOPASSWD: ALL\n", 0o440)
+    write(output / "etc/sudoers.d/10-wheel", "%wheel ALL=(ALL:ALL) ALL\n", 0o440)
     (output / "run/sudo").mkdir(parents=True, exist_ok=True)
     (output / "run/sudo").chmod(0o700)
     (output / "root").mkdir(parents=True, exist_ok=True)
