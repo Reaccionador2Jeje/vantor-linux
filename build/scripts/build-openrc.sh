@@ -97,7 +97,7 @@ sbin_commands=(
     halt poweroff reboot shutdown
 )
 rc_bin_commands=(
-    checkpath service openrc-user rc-depend
+    checkpath openrc-user rc-depend
     einfon einfo ewarnn ewarn eerrorn eerror ebegin eend ewend eindent eoutdent esyslog eval_ecolors ewaitfile
     veinfo vewarn vebegin veend vewend veindent veoutdent
     fstabinfo is_newer_than is_older_than kill_all
