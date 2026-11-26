@@ -98,8 +98,8 @@ jobs:
 
           tesseract "$SCREEN" "$RUNNER_TEMP/vantor-screen" 2>/dev/null
           cat "$OCR"
-          if ! grep -Eiq 'VANTOR|ONE SYSTEM|Welcome to' "$OCR"; then
-            echo "::error::VANTOR branding or Live console was not detected in the guest display."
+          if ! grep -Eiq 'Welcome to VANTOR Linux Genesis' "$OCR"; then
+            echo "::error::VANTOR Live shell MOTD was not detected; GRUB branding alone is not a successful boot."
             cat "$QEMU_LOG"
             exit 1
           fi
