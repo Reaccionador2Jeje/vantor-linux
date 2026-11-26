@@ -70,7 +70,7 @@ users:!::
 """, 0o600)
     write(output / "etc/sudoers", """# VANTOR Minimal sudo policy
 # The live account is passwordless only in the temporary Live environment.
-# Installed systems must set administrator passwords and remove 10-live.
+# Installed systems must set administrator passwords and remove 99-live.
 Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 #includedir /etc/sudoers.d
 """, 0o440)
