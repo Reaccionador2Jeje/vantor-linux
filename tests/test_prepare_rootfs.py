@@ -54,6 +54,7 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertTrue((output / "usr/share/nyan/catalog.tsv").is_file())
             self.assertIn("fastfetch", (output / "usr/share/nyan/catalog.tsv").read_text())
             self.assertIn("root:x:0:0:", (output / "etc/passwd").read_text())
+            self.assertIn("busybox --install -s /bin", (output / "sbin/vantor-init").read_text())
             self.assertIn("live:x:1000:1000:", (output / "etc/passwd").read_text())
             self.assertIn("wheel:x:10:live", (output / "etc/group").read_text())
             self.assertIn("%wheel ALL=(ALL:ALL) ALL", (output / "etc/sudoers.d/10-wheel").read_text())
