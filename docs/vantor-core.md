@@ -4,7 +4,7 @@ VANTOR Core is the small distribution-owned userspace layer. BusyBox supplies st
 
 ## Components
 
-- **VANTOR Init 0.2.0** (`/sbin/vantor-init`): initramfs-to-system handoff helper. It mounts procfs, sysfs, devtmpfs and /run, then executes `/sbin/init`, which is linked to OpenRC's `/sbin/openrc-init`. In recovery mode it exports `RC_DEFAULTLEVEL=nonetwork`.
+- **VANTOR Init 0.2.0** (`/sbin/vantor-init`): initramfs-to-system handoff helper. It mounts procfs, sysfs, devtmpfs and /run, then executes `/sbin/init`, which is linked to OpenRC's `/sbin/openrc-init`. In recovery mode it executes `/sbin/init nonetwork`.
 - **Early entry point** (`/init`): runs from the initramfs, discovers an optional installed root, and hands control to VANTOR Init.
 - **OpenRC** (`/sbin/openrc-init`, `/sbin/openrc`, `/sbin/rc-service`, `/sbin/rc-update`, `/sbin/rc-status`): PID 1, dependency ordering, runlevels, service control, and shutdown.
 - **VANTOR Control 0.1.0** (`/usr/bin/vantorctl`): dispatches system information and diagnostics. Its service and log commands delegate to OpenRC.
