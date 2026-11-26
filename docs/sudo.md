@@ -16,7 +16,7 @@ The build disables PAM and dynamic plugin loading, embeds the sudoers policy plu
 
 The temporary Live account belongs to `wheel` and uses the documented Live password `vantor`. Both `/etc/sudoers.d/99-live` and the general `wheel` rule in `/etc/sudoers.d/10-wheel` require authentication. Run `passwd` in the Live session to change the password for that session.
 
-The installer removes `99-live` when configuring a target system, so the Live exception is not copied into an installed system. The Live password is a public convenience credential, not a secret; never reuse it on an installed system. The installer removes `99-live`, and installed accounts must be assigned their own passwords.
+The installer retains the `live` account, its existing password hash, `/home/live`, wheel membership and `99-live` policy in the installed system. The policy is `live ALL=(ALL:ALL) ALL`, so sudo always asks for the account password; there is no `NOPASSWD` exception. The initial Live password is public (`vantor`), so change it with `passwd` after installation. Newly created accounts still need their own passwords assigned with `passwd` before they can authenticate.
 
 ## Setuid and archive ownership
 
