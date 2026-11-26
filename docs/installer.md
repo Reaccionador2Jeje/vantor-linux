@@ -93,3 +93,24 @@ After mounting, choose **Install VANTOR Minimal** and enter that exact mount poi
 ## Nyan package catalog and batch installation
 
 Installer 0.4.0 refreshes the selected architecture's Nyan index and displays every package published for that architecture. Enter one or more package names separated by spaces to install them in one Nyan invocation; enter `search:TERM` to search the catalog and then choose package names from the results. The installer uses the target root, repository mirror and architecture selected for that installation. Nyan validates each package name and resolves dependencies. During interactive terminal installs, Nyan displays a small animated Nyan Cat-style progress indicator for resolving, downloading, verifying and unpacking each package. Non-interactive output remains clean and machine-readable. The catalog only contains packages actually published for the selected architecture; it does not imply that every planned package exists yet.
+
+
+## VANTOR Storage Manager
+
+The installed base image includes `/usr/sbin/vantor-storage`:
+
+- `scan` / `status`: lists block devices from sysfs and currently mounted filesystems.
+- `filesystems`: displays filesystem drivers registered by the running kernel.
+- `mount DEVICE TARGET FSTYPE`: mounts an existing block device at an absolute mount point. It accepts ext2/3/4, vfat, exfat, ntfs and iso9660, refuses non-block devices, symlink targets, an already-used mount point and `/`, and applies `nosuid,nodev`.
+- `umount TARGET`: unmounts an exact mounted target, refusing `/` and targets not present in `/proc/mounts`.
+- `fstab-check`: performs a basic structural check that each non-comment entry has at least four fields.
+- `mount-all`: delegates to `mount -a` using the installed `/etc/fstab`.
+
+Examples (run as root):
+
+    vantorctl storage scan
+    vantor-storage mount /dev/sdb1 /media/usb vfat
+    vantor-storage umount /media/usb
+    vantorctl storage fstab-check
+
+These commands do not partition, format, repair or erase filesystems. Filesystem repair tools and automatic removable-media discovery are not included yet. The mount command is explicit: it never guesses a filesystem type or mounts a disk automatically.
