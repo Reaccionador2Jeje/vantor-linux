@@ -89,7 +89,7 @@ jobs:
               raise SystemExit("QEMU monitor did not become available")
           connection.settimeout(2)
           time.sleep(65)
-          connection.sendall(f"screendump {screen}\\n".encode())
+          connection.sendall(f"screendump {screen}\n".encode())
           time.sleep(2)
           connection.close()
           if not os.path.isfile(screen) or os.path.getsize(screen) < 1024:
