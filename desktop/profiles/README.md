@@ -32,3 +32,14 @@ Required foundation: `wayland`, `wayland-protocols`, `mesa`, `dbus`, `seatd`, `x
 - Package symlinks, shared libraries, desktop entries, fonts, icons, D-Bus service files and systemd/OpenRC integration must be audited against VANTOR's init and Nyan archive policy.
 - Verify session start, keyboard/mouse, framebuffer/DRM, networking, logout, and fallback to TTY in Limbo/QEMU.
 - First release target: x86_64. i486 and aarch64 stay unavailable until their packages are built and tested.
+
+
+## Runtime-specific profiles
+
+Three machine-readable `PROFILE` manifests define platform boundaries:
+
+- `android-termux/PROFILE`: XFCE over TigerVNC's virtual X server in an ARM64 Android userspace. This is intended for a local VNC viewer connection; it does not claim native Android display integration.
+- `pc/PROFILE`: native Xorg/Xinit XFCE on x86_64 Genesis; remote access is optional.
+- `remote/PROFILE`: TigerVNC plus optional X11/Wayland sharing and RDP clients, without selecting a local desktop.
+
+Run `python3 tools/validate-desktop-profiles.py` to verify manifest fields and ensure every referenced package exists in the Nyan catalog. The validation workflow runs independently. All profile components remain planned until their actual archives and dependency closures are published.
