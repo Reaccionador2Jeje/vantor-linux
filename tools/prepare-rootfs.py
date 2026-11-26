@@ -75,7 +75,7 @@ Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/b
 #includedir /etc/sudoers.d
 """, 0o440)
     # Preserve the conventional root sudo rule for root-shell compatibility.
-    write(output / "etc/sudoers.d/00-root", "root ALL=(ALL:ALL) ALL\\n", 0o440)
+    write(output / "etc/sudoers.d/00-root", "root ALL=(ALL:ALL) ALL\n", 0o440)
     write(output / "etc/sudoers.d/99-live", "live ALL=(ALL:ALL) ALL\n", 0o440)
     write(output / "etc/sudoers.d/10-wheel", "%wheel ALL=(ALL:ALL) ALL\n", 0o440)
     (output / "run/sudo").mkdir(parents=True, exist_ok=True)
