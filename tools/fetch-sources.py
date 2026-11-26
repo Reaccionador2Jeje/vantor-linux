@@ -9,6 +9,7 @@ import os
 import re
 import sys
 import tempfile
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -84,25 +85,45 @@ def main() -> int:
         fd, temporary_name = tempfile.mkstemp(prefix=f".{archive}.", dir=DESTINATION)
         os.close(fd)
         temporary = Path(temporary_name)
-        hasher = hashlib.new(algorithm)
+        urls = [url, *entry.get("mirrors", [])]
+        last_error: Exception | None = None
+        downloaded = False
         try:
-            request = urllib.request.Request(url, headers={"User-Agent": "VANTOR-source-fetch/0.2"})
-            with urllib.request.urlopen(request, timeout=90) as response, temporary.open("wb") as output:
-                if urlparse(response.geturl()).scheme != "https":
-                    abort(f"{name}: upstream redirected to non-HTTPS")
-                while True:
-                    chunk = response.read(CHUNK_SIZE)
-                    if not chunk:
+            for candidate in urls:
+                if urlparse(candidate).scheme != "https":
+                    abort(f"{name}: refusing non-HTTPS mirror")
+                for attempt in range(1, 4):
+                    hasher = hashlib.new(algorithm)
+                    try:
+                        request = urllib.request.Request(
+                            candidate, headers={"User-Agent": "VANTOR-source-fetch/0.3"}
+                        )
+                        with urllib.request.urlopen(request, timeout=60) as response, temporary.open("wb") as output:
+                            if urlparse(response.geturl()).scheme != "https":
+                                abort(f"{name}: upstream redirected to non-HTTPS")
+                            while True:
+                                chunk = response.read(CHUNK_SIZE)
+                                if not chunk:
+                                    break
+                                hasher.update(chunk)
+                                output.write(chunk)
+                        actual = hasher.hexdigest()
+                        if actual != expected:
+                            abort(f"{name}: {algorithm} mismatch from {candidate} (expected {expected}, got {actual})")
+                        temporary.replace(target)
+                        print(f"[OK] Downloaded and verified: {archive} ({algorithm}) from {candidate}")
+                        downloaded = True
                         break
-                    hasher.update(chunk)
-                    output.write(chunk)
-            actual = hasher.hexdigest()
-            if actual != expected:
-                abort(f"{name}: {algorithm} mismatch (expected {expected}, got {actual})")
-            temporary.replace(target)
-            print(f"[OK] Downloaded and verified: {archive} ({algorithm})")
-        except (OSError, urllib.error.URLError, TimeoutError) as exc:
-            abort(f"{name}: download failed: {exc}")
+                    except (OSError, urllib.error.URLError, TimeoutError) as exc:
+                        last_error = exc
+                        if attempt < 3:
+                            delay = 2 ** attempt
+                            print(f"[WARN] {name}: download attempt {attempt}/3 failed; retrying in {delay}s: {exc}", file=sys.stderr)
+                            time.sleep(delay)
+                if downloaded:
+                    break
+            if not downloaded:
+                abort(f"{name}: all pinned-source URLs failed after retries: {last_error}")
         finally:
             temporary.unlink(missing_ok=True)
 
