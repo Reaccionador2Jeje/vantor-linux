@@ -80,7 +80,7 @@ meson setup "$BUILD_DIR" "$SOURCE_DIR" "${CROSS_ARGS[@]}" \
     --libexecdir=lib --sysconfdir=/etc --buildtype=release \
     -Ddefault_library=static -Dprefer_static=true \
     -Dbranding='"VANTOR Linux"' -Dnewnet=false -Dpam=false \
-    -Daudit=disabled -Dselinux=disabled -Dsysvinit=false \
+    -Daudit=disabled -Dselinux=disabled -Dsysvinit=true \
     -Dpkgconfig=false -Dbash-completions=false -Dzsh-completions=false \
     -Dshell=/bin/sh
 meson compile -C "$BUILD_DIR" -j "$VANTOR_BUILD_JOBS"
