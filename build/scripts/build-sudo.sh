@@ -29,7 +29,7 @@ case "$ARCH" in
         ;;
 esac
 
-for command in make readelf file; do
+for command in make readelf file fakeroot; do
     command -v "$command" >/dev/null 2>&1 || {
         echo "[ERROR] Missing sudo build dependency: $command" >&2
         exit 1
@@ -107,6 +107,17 @@ printf '%s\n' "$VERSION" > "$ROOTFS/usr/share/vantor/sudo-version"
 
 # Check policy syntax with the just-built parser; ownership is normalized to
 # root in the fakeroot initramfs packaging step.
-"$VISUDO" -R "$ROOTFS" -c -f /etc/sudoers
+fakeroot -- sh -c '
+    set -eu
+    rootfs="$1"
+    visudo="$2"
+    chown -hR 0:0 "$rootfs"
+    validation_file="$(mktemp)"
+    trap "rm -f \"$validation_file\"" EXIT
+    sed "s|^#includedir /etc/sudoers.d|#includedir $rootfs/etc/sudoers.d|" "$rootfs/etc/sudoers" > "$validation_file"
+    chown 0:0 "$validation_file"
+    chmod 0440 "$validation_file"
+    "$visudo" -c -f "$validation_file"
+' sh "$ROOTFS" "$VISUDO"
 echo "[OK] Sudo $VERSION installed as static $ARCH binaries."
 echo "[OK] sudo is mode 4755; fakeroot packaging will record root ownership."
