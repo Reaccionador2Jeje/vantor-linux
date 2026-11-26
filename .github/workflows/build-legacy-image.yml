@@ -6,7 +6,8 @@ on:
     paths:
       - "build/scripts/build-kernel-legacy.sh"
       - "build/scripts/build-busybox-legacy.sh"
-      - "build/scripts/build-openrc.sh"\n      - "build/scripts/build-sudo.sh"
+      - "build/scripts/build-openrc.sh"
+      - "build/scripts/build-sudo.sh"
       - "core/openrc/**"
       - "build/scripts/build-busybox-legacy.sh"
       - "build/scripts/build-initramfs.sh"
