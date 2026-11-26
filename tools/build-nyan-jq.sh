@@ -34,7 +34,7 @@ tar -xzf "$WORK/downloads/$TOOLCHAIN.tgz" -C "$WORK/toolchain" --strip-component
 export PATH="$WORK/toolchain/bin:$PATH"
 export CC="$TARGET-gcc" AR="$TARGET-ar" RANLIB="$TARGET-ranlib" STRIP="$TARGET-strip"
 export CFLAGS="-Os -std=c99 -ffunction-sections -fdata-sections $ARCH_FLAGS"
-export LDFLAGS="-static -Wl,--gc-sections"
+export LDFLAGS="-static -Wl,-Bstatic -Wl,--gc-sections"
 BUILD_TRIPLET="$(gcc -dumpmachine)"
 
 JQ="$WORK/downloads/jq-1.8.1.tar.gz"
