@@ -35,6 +35,7 @@ Nyan exposes five profile names:
 - `wayland` — Wayland foundation and compositor packages; planned.
 - `xfce4`, `gnome`, `kde-plasma`, `lxqt`, `lxde` — optional desktop profiles; planned and not installable yet. See [desktop profile definitions](../desktop/profiles/README.md).
 - `development` — Lua 5.4.9 starter language environment.
+- `remote-desktop` — optional remote graphical access tools: TigerVNC, x11vnc, wayvnc, FreeRDP and Remmina. These are catalog entries only; none is installable until its build and repository publication are complete.
 - `network` — DHCP, DNS, TLS and network diagnostic tools; not yet published.
 
 The local package catalog is maintained in `packages/catalog.tsv` and is installed at `/usr/share/nyan/catalog.tsv`. It distinguishes bundled tools from packages that are still building or planned; only packages present in the architecture-specific repository index can be installed with Nyan. Core VANTOR commands (`vantorctl`, `vantor-hw`, `vantor-network`, `vantor-storage`, `vantor-service`, `vantor-modules`, `vantor-install`) and BusyBox `vi` belong to the base system and must be present before the first normal login. They are not optional add-ons. The `sudoers` wheel policy is already generated in the rootfs, but the actual `sudo` executable is still being integrated; do not treat the policy file as a working sudo installation. `nano` and full `vim` remain optional editor packages, while BusyBox `vi` is available immediately.
@@ -143,3 +144,16 @@ Run the workflow manually from GitHub Actions, or let its path-filtered push tri
 ## JSON processing: jq
 
 The native Nyan workflow builds jq 1.8.1 for x86_64 and i486 using pinned musl cross-toolchains and the verified upstream source archive. The bundled Oniguruma engine is built into the static executable. Each target binary is checked for a dynamic interpreter and smoke-tested on its own CPU target (i486 through QEMU user-mode) before publication. jq remains marked `building` in the local catalog until both architecture artifacts are published successfully. The package is not advertised for aarch64 yet; that architecture needs a separately validated toolchain and build.
+
+
+## Remote desktop roadmap
+
+The local catalog includes these planned packages:
+
+- `tigervnc` — VNC server (`Xvnc`) and viewer (`vncviewer`); first implementation target.
+- `x11vnc` — share an already-running X11 desktop session.
+- `wayvnc` — VNC server for compatible wlroots-based Wayland sessions.
+- `freerdp` — RDP client utilities.
+- `remmina` — graphical VNC/RDP client frontend.
+
+They are intentionally absent from published repository indexes until builds, runtime dependencies, archive contents and supported architectures have been verified. Remote access should be protected with SSH tunneling or a VPN rather than exposing plain VNC to the public internet.
