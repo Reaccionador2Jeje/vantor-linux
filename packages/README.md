@@ -22,3 +22,10 @@ The isolated Nyan extras workflow also builds six POSIX-shell add-ons for x86_64
 
 
 The current utility batch adds `fastfetch` (a VANTOR-branded shell implementation), `tree`, `watch`, `which`, `filetype`, and `vtop`. They are architecture-independent POSIX-shell packages published separately into both architecture indexes. Native Nano, Dialog, htop and curl packages remain planned until their runtime dependencies and x86_64/i486 builds are verified.
+
+
+## Remote desktop packages
+
+The remote-desktop catalog now tracks TigerVNC (VNC server and viewer), x11vnc (sharing an existing X11 session), wayvnc (Wayland/wlroots), FreeRDP (RDP client tools), and Remmina (graphical multi-protocol client). These entries are **planned**, not installable yet: each needs a pinned source, dependency closure, architecture-specific build, tested archive and published Nyan index entry. TigerVNC is the first target; it belongs to the optional graphical stack and must not be pulled into Minimal.
+
+VNC should be used over a trusted LAN or protected by an SSH tunnel/VPN. Do not expose an unencrypted VNC service directly to the public internet.
