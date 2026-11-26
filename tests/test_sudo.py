@@ -18,10 +18,11 @@ class SudoIntegrationTests(unittest.TestCase):
 
     def test_builds_static_sudo_for_both_architectures(self) -> None:
         script = (ROOT / "build/scripts/build-sudo.sh").read_text()
-        for expected in ("--without-pam", "--disable-shared", "--enable-static-sudoers",
+        for expected in ("--without-pam", "--disable-openssl", "--disable-shared", "--enable-static-sudoers",
                          "--disable-shared-libutil", "--with-rundir=/run/sudo",
                          "chmod 4755", "visudo", "readelf -l"):
             self.assertIn(expected, script)
+        self.assertIn("fakeroot -- make DESTDIR=\"$ROOTFS\" install-binaries", script)
         self.assertIn("VANTOR_SUDO_ARCH", script)
         self.assertIn("-march=i486", script)
 
