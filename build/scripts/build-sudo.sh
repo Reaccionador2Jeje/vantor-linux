@@ -100,7 +100,8 @@ done
 
 chmod 4755 "$SUDO"
 chmod 0755 "$VISUDO"
-install -d "$ROOTFS/run/sudo" "$ROOTFS/usr/share/vantor"
+install -d "$ROOTFS/run/sudo" "$ROOTFS/usr/share/vantor" "$ROOTFS/usr/share/licenses/sudo"
+install -m 0644 "$SOURCE_DIR/LICENSE.md" "$ROOTFS/usr/share/licenses/sudo/LICENSE.md"
 chmod 0700 "$ROOTFS/run/sudo"
 printf '%s\n' "$VERSION" > "$ROOTFS/usr/share/vantor/sudo-version"
 
