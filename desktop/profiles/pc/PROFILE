@@ -1,0 +1,10 @@
+# VANTOR desktop profile manifest v1
+name=pc
+platform=linux
+architecture=x86_64
+session=xfce4
+display=xorg
+mode=native-display
+required=xorg-server,xinit,xfce4-session,xfce4-panel,xfwm4,xfce4-settings,xfce4-terminal,thunar,dbus,mesa,gtk3,adwaita-icon-theme,hicolor-icon-theme
+optional=lightdm,tigervnc,x11vnc,remmina,freerdp
+notes=Native Xorg session for VANTOR Genesis PCs; display manager and remote access remain opt-in.
