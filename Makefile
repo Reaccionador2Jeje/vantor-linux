@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
-.PHONY: help info check image desktop-files termux-files check-shell check-config check-sources check-python check-nyan sources-ready fetch-sources toolchain kernel kernel-legacy busybox busybox-legacy initramfs initramfs-legacy rootfs rootfs-legacy termux-rootfs boot-files iso iso-legacy image-legacy clean kernel-files initramfs-files
+.PHONY: help info check image desktop-files termux-files check-shell check-config check-sources check-python check-nyan openrc-files sources-ready fetch-sources toolchain kernel kernel-legacy busybox busybox-legacy initramfs initramfs-legacy openrc openrc-legacy openrc-files rootfs rootfs-legacy termux-rootfs boot-files iso iso-legacy image-legacy clean kernel-files initramfs-files
 
 help:
 	@printf '%s\n' 'VANTOR Linux — Genesis' '' \
@@ -10,7 +10,7 @@ help:
 	  '  make check-sources Validate source manifest structure' '  make check-python  Compile and test Python tools' '  make check-nyan    Validate Nyan package manager syntax' \
 	  '  make sources-ready Require verified source checksums' '  make fetch-sources Download and verify pinned archives' \
 	  '  make toolchain      Build Binutils and GCC pass 1' '  make kernel         Build VANTOR x86_64 Linux kernel and modules' '  make kernel-legacy  Build 486SX-compatible 32-bit legacy kernel' \
-	  '  make busybox        Build static x86_64 BusyBox userspace' '  make busybox-legacy Build static i486 BusyBox userspace' '  make initramfs      Assemble x86_64 early userspace' '  make initramfs-legacy Assemble i486 early userspace' \
+	  '  make busybox        Build static x86_64 BusyBox userspace' '  make busybox-legacy Build static i486 BusyBox userspace' '  make openrc         Build static x86_64 OpenRC init and services' '  make openrc-legacy  Build static i486 OpenRC init and services' '  make initramfs      Assemble x86_64 early userspace' '  make initramfs-legacy Assemble i486 early userspace' \
 	  '  make rootfs         Assemble the x86_64 VANTOR rootfs skeleton' '  make rootfs-legacy  Assemble the i486 VANTOR rootfs skeleton' \
 	  '  make boot-files     Check bootloader configuration and builder' \
 	  '  make iso            Build the x86_64 GRUB ISO from existing artifacts' '  make image          Build kernel, userspace, initramfs and x86_64 ISO' '  make iso-legacy     Build the 486 BIOS GRUB ISO' '  make image-legacy   Build the complete i486 ISO pipeline' \
@@ -21,7 +21,7 @@ info:
 	printf '%s %s (%s)\nTarget: %s\nKernel: Linux %s (%s)\n' \
 	  "$$VANTOR_NAME" "$$VANTOR_VERSION" "$$VANTOR_CODENAME" "$$VANTOR_TARGET" "$$VANTOR_KERNEL_VERSION" "$$VANTOR_KERNEL_ARCH"
 
-check: check-config termux-files check-shell check-sources check-python check-nyan desktop-files core-files kernel-files initramfs-files boot-files
+check: check-config termux-files check-shell check-sources check-python check-nyan desktop-files openrc-files core-files kernel-files initramfs-files boot-files
 	@python3 -m json.tool assets/branding/theme.json > /dev/null
 	@echo "[OK] VANTOR repository checks passed."
 
@@ -90,7 +90,8 @@ core-files:
 	@grep -q 'live:x:1000:1000' tools/prepare-rootfs.py
 	@grep -q 'VANTOR Init' tools/prepare-rootfs.py
 	@grep -q 'VANTOR Control' tools/prepare-rootfs.py
-	@grep -q 'etc/inittab' tools/prepare-rootfs.py
+	@grep -q 'sbin/openrc-init' tools/prepare-rootfs.py
+	@grep -q 'rc-service' tools/prepare-rootfs.py
 	@grep -q 'vantor-live-session' tools/prepare-rootfs.py
 	@grep -q 'udhcpc' tools/prepare-rootfs.py
 	@grep -q 'vantor-service' tools/prepare-rootfs.py
@@ -107,12 +108,33 @@ core-files:
 	@grep -q 'grep -qx "$applet"' build/scripts/build-busybox-legacy.sh
 	@grep -q 'CONFIG_START_STOP_DAEMON' build/scripts/build-busybox.sh
 	@grep -q 'CONFIG_INIT y' build/scripts/build-busybox-legacy.sh
+	@test -s tests/test_openrc.py
 	@test -s tests/test_prepare_rootfs.py
+	@test -s build/scripts/build-openrc.sh
+	@test -s core/openrc/init.d/vantor-early
+	@test -s core/openrc/init.d/vantor-modules
+	@test -s core/openrc/init.d/vantor-network
+	@test -s core/openrc/init.d/vantor-console
 	@test -s core/hardware/vantor-hw
 	@test -s core/boot/vantor-fb-splash.c
 	@grep -q 'VANTOR Hardware' core/hardware/vantor-hw
 	@sh -n core/hardware/vantor-hw
 	@echo "[OK] VANTOR Core bootstrap components are present."
+
+
+openrc-files:
+	@test -s build/scripts/build-openrc.sh
+	@test -s core/openrc/init.d/vantor-early
+	@test -s core/openrc/init.d/vantor-modules
+	@test -s core/openrc/init.d/vantor-network
+	@test -s core/openrc/init.d/vantor-console
+	@test -s core/openrc/rc.conf
+	@test -s core/openrc/conf.d/hostname
+	@bash -n build/scripts/build-openrc.sh
+	@for script in core/openrc/init.d/*; do sh -n "$$script"; done
+	@grep -q 'openrc-init' build/scripts/build-openrc.sh
+	@grep -q 'rc-service' tools/prepare-rootfs.py
+	@echo "[OK] OpenRC integration files are valid."
 
 kernel-files:
 	@test -s build/scripts/build-kernel.sh
@@ -173,10 +195,16 @@ busybox:
 busybox-legacy:
 	@bash build/scripts/build-busybox-legacy.sh
 
+openrc:
+	@bash build/scripts/build-openrc.sh
+
+openrc-legacy:
+	@VANTOR_OPENRC_ARCH=i486 bash build/scripts/build-openrc.sh
+
 initramfs:
 	@bash build/scripts/build-initramfs.sh
 
-initramfs-legacy: rootfs-legacy busybox-legacy
+initramfs-legacy: rootfs-legacy busybox-legacy openrc-legacy
 	@VANTOR_ROOTFS_DIR=build/work/rootfs-legacy VANTOR_INITRAMFS_DIR=build/work/initramfs-legacy VANTOR_INITRAMFS_NAME=vantor-legacy-initramfs.cpio.gz VANTOR_SKIP_KERNEL_MODULES=1 bash build/scripts/build-initramfs.sh
 
 initramfs-files:
@@ -213,6 +241,7 @@ image:
 	@rm -rf -- build/work/rootfs build/work/busybox build/work/initramfs
 	@$(MAKE) rootfs
 	@$(MAKE) busybox
+	@$(MAKE) openrc
 	@bash build/scripts/build-initramfs.sh
 	@bash build/scripts/build-iso.sh
 
@@ -224,6 +253,7 @@ image-legacy:
 	@rm -rf -- build/work/rootfs-legacy build/work/busybox-legacy build/work/initramfs-legacy
 	@$(MAKE) rootfs-legacy
 	@$(MAKE) busybox-legacy
+	@$(MAKE) openrc-legacy
 	@VANTOR_ROOTFS_DIR=build/work/rootfs-legacy VANTOR_INITRAMFS_DIR=build/work/initramfs-legacy VANTOR_INITRAMFS_NAME=vantor-legacy-initramfs.cpio.gz VANTOR_SKIP_KERNEL_MODULES=1 bash build/scripts/build-initramfs.sh
 	@bash build/scripts/build-iso-legacy.sh
 

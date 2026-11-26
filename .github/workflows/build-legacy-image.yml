@@ -6,6 +6,8 @@ on:
     paths:
       - "build/scripts/build-kernel-legacy.sh"
       - "build/scripts/build-busybox-legacy.sh"
+      - "build/scripts/build-openrc.sh"
+      - "core/openrc/**"
       - "build/scripts/build-busybox-legacy.sh"
       - "build/scripts/build-initramfs.sh"
       - "build/scripts/build-iso-legacy.sh"
@@ -38,13 +40,14 @@ jobs:
         uses: actions/checkout@v4
       - name: Install legacy image build dependencies
         run: |
+          sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev libncurses-dev gcc-multilib libc6-dev-i386 cpio gzip bzip2 grub-pc-bin grub-common xorriso mtools
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev libncurses-dev gcc-multilib libc6-dev-i386 libcap-dev:i386 meson ninja-build pkg-config cpio gzip bzip2 grub-pc-bin grub-common xorriso mtools
       - name: Validate source and project contracts
         run: |
           make check
-          python3 tools/validate-sources.py --require-pinned --only linux-legacy busybox
-      - name: Build complete i486 Minimal BIOS image
+          python3 tools/validate-sources.py --require-pinned --only linux-legacy busybox openrc
+      - name: Build complete i486 Minimal BIOS image with OpenRC
         run: make image-legacy
       - name: Inspect image
         run: |
@@ -52,6 +55,9 @@ jobs:
           test -s output/vantor-minimal-0.1.0-i486.iso
           test -s build/work/kernel-legacy/arch/x86/boot/bzImage
           gzip -t build/work/initramfs-legacy/vantor-legacy-initramfs.cpio.gz
+          readelf -h build/work/rootfs-legacy/sbin/openrc-init | grep -q "Intel 80386"
+          readelf -l build/work/rootfs-legacy/sbin/openrc-init | grep -qv INTERP
+          test "$(readlink build/work/rootfs-legacy/sbin/init)" = "/sbin/openrc-init"
           grep -q '^CONFIG_M486SX=y$' kernel/configs/vantor-i486.config
       - name: Generate ISO checksum
         run: sha256sum output/vantor-minimal-0.1.0-i486.iso > output/vantor-minimal-0.1.0-i486.iso.sha256
