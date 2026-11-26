@@ -9,7 +9,7 @@ class BootPipelineTests(unittest.TestCase):
         workflow = (ROOT / ".github/workflows/test-image-qemu.yml").read_text()
         self.assertIn("Welcome to VANTOR Linux Genesis", workflow)
         self.assertIn("GRUB branding alone is not a successful boot", workflow)
-        self.assertIn(r'connection.sendall(f"screendump {screen}\\n".encode())', workflow)
+        self.assertIn(r'connection.sendall(f"screendump {screen}\n".encode())', workflow)
 
     def test_qemu_smoke_test_preserves_failure_diagnostics(self):
         workflow = (ROOT / ".github/workflows/test-image-qemu.yml").read_text()
