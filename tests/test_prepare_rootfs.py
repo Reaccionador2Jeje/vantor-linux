@@ -186,6 +186,21 @@ class PrepareRootfsTests(unittest.TestCase):
             self.assertTrue((target / "home/tester").is_dir())
             self.assertIn("tester:!", (target / "etc/shadow").read_text())
 
+    def test_installer_locks_reused_live_account(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            target = Path(temporary) / "target"
+            target.mkdir()
+            self.build_rootfs(target)
+            result = subprocess.run(
+                ["sh", str(ROOT / "installer/vantor-install"), "--configure", str(target), "vantor", "live"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            shadow = (target / "etc/shadow").read_text()
+            self.assertRegex(shadow, r"(?m)^live:!:")
+            self.assertFalse((target / "etc/sudoers.d/99-live").exists())
+            self.assertIn("wheel:!::", (target / "etc/gshadow").read_text())
+
     def test_installer_prepares_kernel_initramfs_grub_and_fstab(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             base = Path(temporary)
