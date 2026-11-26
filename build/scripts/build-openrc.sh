@@ -86,23 +86,66 @@ meson setup "$BUILD_DIR" "$SOURCE_DIR" "${CROSS_ARGS[@]}" \
 meson compile -C "$BUILD_DIR" -j "$VANTOR_BUILD_JOBS"
 DESTDIR="$ROOTFS" meson install -C "$BUILD_DIR"
 
-for binary in openrc-init openrc openrc-run openrc-shutdown rc-service rc-update rc-status supervise-daemon start-stop-daemon checkpath; do
-    path="$ROOTFS/usr/sbin/$binary"
-    [[ -x "$path" ]] || { echo "[ERROR] OpenRC did not install /usr/sbin/$binary" >&2; exit 1; }
-    if readelf -h "$path" >/dev/null 2>&1; then
-        readelf -l "$path" 2>/dev/null | grep -q 'INTERP' && {
-            echo "[ERROR] OpenRC binary is dynamically linked: $path" >&2
-            exit 1
-        }
-        case "$ARCH" in
-            x86_64) readelf -h "$path" | grep -q 'Advanced Micro Devices X86-64' || { echo "[ERROR] Wrong ELF machine: $path" >&2; exit 1; } ;;
-            i486) readelf -h "$path" | grep -q 'Intel 80386' || { echo "[ERROR] Wrong ELF machine: $path" >&2; exit 1; } ;;
-        esac
+# OpenRC deliberately installs its executables into three different
+# directories. Keep the upstream layout: public init/admin commands in
+# /usr/sbin, runtime helpers in /usr/lib/rc/bin, and privileged helpers in
+# /usr/lib/rc/sbin. In particular, checkpath is NOT installed in bindir.
+sbin_commands=(
+    openrc-init openrc openrc-run openrc-shutdown
+    rc-service rc-update rc-sstat
+    start-stop-daemon supervise-daemon
+    halt poweroff reboot shutdown
+)
+rc_bin_commands=(
+    checkpath service openrc-user rc-depend
+    einfo fstabinfo is_newer_than is_older_than kill_all
+    mountinfo on_ac_power shell_var value
+    rc-environ
+)
+rc_sbin_commands=(rc-abort mark_service seedrng swclock sysv-initctl)
+
+verify_openrc_binary() {
+    local binary="$1" path="$2"
+    [[ -x "$path" ]] || {
+        echo "[ERROR] OpenRC did not install $binary at $path" >&2
+        exit 1
+    }
+    readelf -h "$path" >/dev/null 2>&1 || {
+        echo "[ERROR] OpenRC command is not an ELF executable: $path" >&2
+        exit 1
+    }
+    if readelf -l "$path" 2>/dev/null | grep -q 'INTERP'; then
+        echo "[ERROR] OpenRC binary is dynamically linked: $path" >&2
+        exit 1
     fi
-    # VANTOR retains traditional /sbin entry points while OpenRC's Meson
-    # install uses the /usr/sbin FHS location.
+    case "$ARCH" in
+        x86_64)
+            readelf -h "$path" | grep -q 'Advanced Micro Devices X86-64' || {
+                echo "[ERROR] Wrong ELF machine: $path" >&2; exit 1;
+            }
+            ;;
+        i486)
+            readelf -h "$path" | grep -q 'Intel 80386' || {
+                echo "[ERROR] Wrong ELF machine: $path" >&2; exit 1;
+            }
+            ;;
+    esac
+}
+
+for binary in "${sbin_commands[@]}"; do
+    verify_openrc_binary "$binary" "$ROOTFS/usr/sbin/$binary"
+    # VANTOR retains traditional /sbin entry points.
     ln -sfn "/usr/sbin/$binary" "$ROOTFS/sbin/$binary"
 done
+for binary in "${rc_bin_commands[@]}"; do
+    verify_openrc_binary "$binary" "$ROOTFS/usr/lib/rc/bin/$binary"
+done
+for binary in "${rc_sbin_commands[@]}"; do
+    verify_openrc_binary "$binary" "$ROOTFS/usr/lib/rc/sbin/$binary"
+done
+# Compatibility entry point; OpenRC itself keeps the canonical helper path.
+ln -sfn /usr/lib/rc/bin/checkpath "$ROOTFS/usr/sbin/checkpath"
+ln -sfn /usr/lib/rc/bin/checkpath "$ROOTFS/sbin/checkpath"
 
 install -d "$ROOTFS/etc/init.d" "$ROOTFS/etc/conf.d" "$ROOTFS/etc/runlevels/boot" "$ROOTFS/etc/runlevels/default"
 install -m 0755 core/openrc/init.d/vantor-early "$ROOTFS/etc/init.d/vantor-early"
