@@ -21,7 +21,6 @@ vantor-branding	0.1.0	x86_64	af7f0574bd4d3a7a2098f62f6852792318985429dff1ecdfc4f
 vantor-docs	0.1.0	x86_64	12c3db55d1d00f01de3bf60895f36398491f0c55d8f2f3d33745eb95eaaa4bf0	vantor-docs-0.1.0-x86_64.tar.gz	VANTOR system and Nyan documentation	
 vantor-about	0.1.0	x86_64	df7270871f161d22ac80ab981046eb266632002eb6af967ced2c1205f28bd5bf	vantor-about-0.1.0-all.tar.gz	VANTOR utility: vantor-about (architecture-independent)	
 vantor-doctor	0.1.0	x86_64	52702543bed76508546bf62d7e4ed3df5d0d73736c79d697a0ad936a8ebb68c5	vantor-doctor-0.1.0-all.tar.gz	VANTOR utility: vantor-doctor (architecture-independent)	
-vantor-base-files	0.1.0	x86_64	55beb1664b068fda0d1dc0fc77d9c21bf4a20aa9e6d52b796d3ecd6223729671	vantor-base-files-0.1.0-x86_64.tar.gz	VANTOR Minimal base files, BusyBox, init and system accounts	
 vantor-profile-minimal	0.1.0	x86_64	13fab9887e95f873a76035233ee3e462323ec27c8083476d0c5bef5586ae0681	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
 vantor-netdiag	0.1.0	x86_64	9902c4e98756576b244f6f7d19fecec22831ce1d46ff6ca2400dbf85a3e2d72c	vantor-netdiag-0.1.0-all.tar.gz	VANTOR utility: vantor-netdiag (architecture-independent)	
 vantor-logview	0.1.0	x86_64	910557eed0ae404b2a558b88c59393bc88013f665511220029533b38f307b189	vantor-logview-0.1.0-all.tar.gz	VANTOR utility: vantor-logview (architecture-independent)	
@@ -33,3 +32,4 @@ watch	0.1.0	x86_64	a20d171c86256b4295296bfa42067984472f0356d94cd1349c402ad2f328c
 which	0.1.0	x86_64	71e066a4c0840ff9ff1e654c1b0815300cb48b3e889cac3057a4f566e89dbabf	which-0.1.0-all.tar.gz	VANTOR terminal utility: which	
 filetype	0.1.0	x86_64	707fb6392fb407e4115289dab8723c4fa66c78de78314db0c89160e53a949f93	filetype-0.1.0-all.tar.gz	VANTOR terminal utility: filetype	
 vtop	0.1.0	x86_64	4e120837a680b1dc094670cfd19d48c4bbded96f48229b6a61dce669538715ce	vtop-0.1.0-all.tar.gz	VANTOR terminal utility: vtop	
+vantor-base-files	0.1.0	x86_64	a7674910b674de411a504f9c8d0617beeafae215fbed85ba6897256089e1e8e6	vantor-base-files-0.1.0-x86_64.tar.gz	VANTOR Minimal base files, BusyBox, init and system accounts	
