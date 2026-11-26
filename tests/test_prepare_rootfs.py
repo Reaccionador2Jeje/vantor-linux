@@ -20,6 +20,11 @@ class PrepareRootfsTests(unittest.TestCase):
             output = Path(temporary) / "rootfs"
             self.build_rootfs(output)
             self.assertIn("ID=vantor", (output / "etc/os-release").read_text())
+            for directory in ("mnt", "media", "opt", "srv", "proc", "sys", "dev", "run", "run/lock", "tmp", "var/cache", "var/lib", "var/log", "var/spool", "var/tmp"):
+                self.assertTrue((output / directory).is_dir(), f"missing standard directory: /{directory}")
+            self.assertEqual((output / "mnt").stat().st_mode & 0o777, 0o755)
+            self.assertEqual((output / "tmp").stat().st_mode & 0o777, 0o1777)
+            self.assertEqual((output / "var/tmp").stat().st_mode & 0o777, 0o1777)
             self.assertIn("ONE SYSTEM. EVERY GENERATION.", (output / "etc/motd").read_text())
             self.assertTrue((output / "init").stat().st_mode & 0o111)
             initramfs_init = (output / "init").read_text()
