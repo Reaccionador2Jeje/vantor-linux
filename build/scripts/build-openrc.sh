@@ -104,12 +104,6 @@ for binary in "${sbin_commands[@]}"; do
     ln -sfn "/usr/sbin/$binary" "$ROOTFS/sbin/$binary"
 done
 
-python3 tools/validate-openrc-install.py \
-    --build-dir "$BUILD_DIR" --rootfs "$ROOTFS" --arch "$ARCH"
-# Compatibility entry point; OpenRC itself keeps the canonical helper path.
-ln -sfn /usr/lib/rc/bin/checkpath "$ROOTFS/usr/sbin/checkpath"
-ln -sfn /usr/lib/rc/bin/checkpath "$ROOTFS/sbin/checkpath"
-
 install -d "$ROOTFS/etc/init.d" "$ROOTFS/etc/conf.d" "$ROOTFS/etc/runlevels/boot" "$ROOTFS/etc/runlevels/default"
 install -m 0755 core/openrc/init.d/vantor-early "$ROOTFS/etc/init.d/vantor-early"
 install -m 0755 core/openrc/init.d/vantor-modules "$ROOTFS/etc/init.d/vantor-modules"
@@ -141,6 +135,15 @@ link_service nonetwork vantor-console.tty1
 link_service nonetwork vantor-console.ttyS0
 ln -sfn vantor-console "$ROOTFS/etc/init.d/vantor-console.tty1"
 ln -sfn vantor-console "$ROOTFS/etc/init.d/vantor-console.ttyS0"
+
+# Compatibility entry point; OpenRC itself keeps the canonical helper path.
+ln -sfn /usr/lib/rc/bin/checkpath "$ROOTFS/usr/sbin/checkpath"
+ln -sfn /usr/lib/rc/bin/checkpath "$ROOTFS/sbin/checkpath"
+
+# Validate executable payloads and the final, pruned service graph only after
+# VANTOR has removed unsupported upstream runlevel registrations.
+python3 tools/validate-openrc-install.py \
+    --build-dir "$BUILD_DIR" --rootfs "$ROOTFS" --arch "$ARCH"
 
 ln -sfn /sbin/openrc-init "$ROOTFS/sbin/init"
 [[ "$(readlink "$ROOTFS/sbin/init")" == "/sbin/openrc-init" ]] || {
