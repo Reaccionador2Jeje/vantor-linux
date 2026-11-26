@@ -12,7 +12,7 @@ VANTOR is an independent Linux distribution project for universal computing. It 
 
 The official identity uses a metallic V emblem and cyan orbital ring, with a deep-space navy interface palette. The source of truth is [assets/branding/theme.json](assets/branding/theme.json), with reusable CSS tokens in [assets/branding/theme.css](assets/branding/theme.css). Read the [visual identity guide](docs/branding.md).
 
-The rootfs generator installs the official VANTOR identity, root and Live accounts, a wheel sudoers policy, Nyan, VANTOR diagnostics and the native text-mode installer. The primary edition is **VANTOR Minimal**. Its first package build is automated, but the installer remains an early-stage tool: it requires a mounted target and does not partition disks or install a bootloader yet.
+The rootfs generator installs the official VANTOR identity, root and Live accounts, static sudo 1.9.17p2, a temporary Live-only sudo policy, an authenticated wheel policy, Nyan, VANTOR diagnostics and the native text-mode installer. The primary edition is **VANTOR Minimal**. Its first package build is automated, but the installer remains an early-stage tool: it requires a mounted target and does not partition disks or install a bootloader yet.
 
 ## Project goals
 
@@ -35,7 +35,7 @@ VANTOR Minimal is being designed for modern x86_64 computers and a separate 32-b
 | C library | glibc |
 | Toolchain | GNU Binutils + GCC |
 | Minimal userspace | BusyBox |
-| Init and service manager | OpenRC is mandatory for all editions; BusyBox remains for bootstrap and recovery |
+| Init and service manager | OpenRC is mandatory for all editions; BusyBox remains for bootstrap and recovery |\n| Privilege delegation | Upstream sudo 1.9.17p2, statically linked for x86_64 and i486 |
 | Build environment | GitHub Actions |
 | Android VM test app | Limbo PC Emulator (QEMU engine) |
 
@@ -100,7 +100,7 @@ CI validates repository structure, configuration, source metadata, safe extracti
 
 ## Nyan package management
 
-VANTOR's native package manager is **Nyan**. The POSIX shell client is included in the generated rootfs. Its GitHub Releases mirror does not depend on Cloudflare R2. The initial Minimal profile is built from VANTOR Base Files and static BusyBox; the Nyan catalog distinguishes bundled tools from planned packages such as sudo, nano, Vim and Fastfetch. The first published language package is Lua 5.4.9 for x86_64. Once VANTOR has its network and TLS tools available, the intended workflow is:
+VANTOR's native package manager is **Nyan**. The POSIX shell client is included in the generated rootfs. Its GitHub Releases mirror does not depend on Cloudflare R2. The initial Minimal profile is built from VANTOR Base Files and static BusyBox; the Nyan catalog distinguishes bundled tools from planned packages such as nano, Vim and Fastfetch. Sudo is built directly into the base images. The first published language package is Lua 5.4.9 for x86_64. Once VANTOR has its network and TLS tools available, the intended workflow is:
 
 ```sh
 nyan update
