@@ -47,6 +47,107 @@ done
     exit 1
 }
 
+# Refuse to package an image with incomplete or unsafe sudo policy files.
+for policy in "$ROOTFS/etc/sudoers" "$ROOTFS/etc/sudoers.d/00-root" \
+              "$ROOTFS/etc/sudoers.d/10-wheel" "$ROOTFS/etc/sudoers.d/99-live"; do
+    [[ -s "$policy" ]] || {
+        echo "[ERROR] Required sudo policy is missing or empty: $policy" >&2
+        exit 1
+    }
+done
+for policy in "$ROOTFS/etc/sudoers" "$ROOTFS/etc/sudoers.d/00-root" \
+              "$ROOTFS/etc/sudoers.d/10-wheel" "$ROOTFS/etc/sudoers.d/99-live"; do
+    [[ "$(stat -c '%a' "$policy")" == "440" ]] || {
+        echo "[ERROR] Sudo policy must be mode 0440: $policy" >&2
+        exit 1
+    }
+done
+grep -q '^#includedir /etc/sudoers.d from the matching kernel build when available.
+KERNEL_RELEASE_FILE="${VANTOR_KERNEL_RELEASE_FILE:-$ROOT/build/work/kernel/kernelrelease}"
+MODULES_ROOT="${VANTOR_MODULES_ROOT:-$ROOT/build/work/modules}/lib/modules"
+if [[ "${VANTOR_SKIP_KERNEL_MODULES:-0}" == "1" ]]; then
+    echo "[INFO] Loadable modules skipped for this image target; required legacy drivers are built into its kernel."
+elif [[ -s "$KERNEL_RELEASE_FILE" ]]; then
+    KERNEL_RELEASE="$(cat "$KERNEL_RELEASE_FILE")"
+    [[ "$KERNEL_RELEASE" =~ ^[A-Za-z0-9._+-]+$ ]] || {
+        echo "[ERROR] Invalid kernel release string: $KERNEL_RELEASE" >&2
+        exit 1
+    }
+    MODULES_SOURCE="$MODULES_ROOT/$KERNEL_RELEASE"
+    if [[ -d "$MODULES_SOURCE" ]]; then
+        MODULES_DEST="$ROOTFS/lib/modules/$KERNEL_RELEASE"
+        mkdir -p "$ROOTFS/lib/modules"
+        rm -rf -- "$MODULES_DEST"
+        cp -a "$MODULES_SOURCE" "$MODULES_DEST"
+        if command -v depmod >/dev/null 2>&1; then
+            depmod -b "$ROOTFS" "$KERNEL_RELEASE"
+        fi
+        echo "[OK] Matching kernel modules included: $KERNEL_RELEASE"
+    else
+        echo "[ERROR] Kernel release is recorded but modules are missing: $MODULES_SOURCE" >&2
+        exit 1
+    fi
+else
+    echo "[WARN] No kernel release metadata found; creating a modules-free bootstrap initramfs."
+fi
+
+mkdir -p "$OUTPUT_DIR"
+# The build runner is not root. fakeroot records root ownership for system
+# files and preserves sudo's setuid bit in the initramfs.
+# Stable ordering and gzip -n keep the archive reproducible.
+fakeroot -- sh -c '
+    set -eu
+    rootfs="$1"
+    chown -hR 0:0 "$rootfs"
+    chmod 4755 "$rootfs/usr/bin/sudo"
+    cd "$rootfs"
+    find . -print0 | sort -z | cpio --null --create --format=newc --quiet
+' sh "$ROOTFS" | gzip -9n > "$OUTPUT"
+
+[[ -s "$OUTPUT" ]] || { echo "[ERROR] Initramfs archive is empty." >&2; exit 1; }
+gzip -t "$OUTPUT"
+SUDO_METADATA="$(gzip -dc "$OUTPUT" | cpio --list --verbose 2>/dev/null | awk '$NF ~ /(^|\/)usr\/bin\/sudo$/ { print $1 " " $3 " " $4; exit }')"
+[[ "$SUDO_METADATA" == "-rwsr-xr-x root root" ]] || {
+    echo "[ERROR] Initramfs sudo must be root-owned and setuid (4755); got: ${SUDO_METADATA:-missing}" >&2
+    exit 1
+}
+echo "[OK] VANTOR initramfs created: $OUTPUT"
+echo "[INFO] This archive is ready for kernel/GRUB integration; it has not yet been boot-tested."
+ "$ROOTFS/etc/sudoers" || {
+    echo "[ERROR] /etc/sudoers does not include /etc/sudoers.d." >&2
+    exit 1
+}
+grep -qx 'root ALL=(ALL:ALL) ALL' "$ROOTFS/etc/sudoers.d/00-root" || {
+    echo "[ERROR] Root sudo policy is incorrect." >&2
+    exit 1
+}
+grep -qx 'live ALL=(ALL:ALL) ALL' "$ROOTFS/etc/sudoers.d/99-live" || {
+    echo "[ERROR] Live sudo policy is incorrect." >&2
+    exit 1
+}
+grep -qx '%wheel ALL=(ALL:ALL) ALL' "$ROOTFS/etc/sudoers.d/10-wheel" || {
+    echo "[ERROR] Wheel sudo policy is incorrect." >&2
+    exit 1
+}
+[[ "$(awk -F: '$1 == "live" { print $3 ":" $4 }' "$ROOTFS/etc/passwd")" == "1000:1000" ]] || {
+    echo "[ERROR] Live account identity is missing or invalid." >&2
+    exit 1
+}
+grep -qx 'wheel:x:10:live' "$ROOTFS/etc/group" || {
+    echo "[ERROR] Live account is not a member of wheel." >&2
+    exit 1
+}
+[[ -x "$ROOTFS/usr/bin/visudo" ]] || {
+    echo "[ERROR] visudo is required to validate the packaged policy." >&2
+    exit 1
+}
+POLICY_CHECK="$(mktemp)"
+trap 'rm -f "$POLICY_CHECK"' EXIT
+sed "s|^#includedir /etc/sudoers.d|#includedir $ROOTFS/etc/sudoers.d|" \
+    "$ROOTFS/etc/sudoers" > "$POLICY_CHECK"
+chmod 0440 "$POLICY_CHECK"
+"$ROOTFS/usr/bin/visudo" -c -f "$POLICY_CHECK"
+
 # Include loadable modules from the matching kernel build when available.
 KERNEL_RELEASE_FILE="${VANTOR_KERNEL_RELEASE_FILE:-$ROOT/build/work/kernel/kernelrelease}"
 MODULES_ROOT="${VANTOR_MODULES_ROOT:-$ROOT/build/work/modules}/lib/modules"
