@@ -96,7 +96,7 @@ Anyone can propose packages through a fork and Pull Request; repository write ac
 
 ## Build status
 
-CI validates repository structure, configuration, source metadata, safe extraction, rootfs generation and rootfs identity files. The first-stage toolchain scripts, GRUB boot menu, kernel build script and initial rootfs generator are implemented. OpenRC is the approved mandatory init/service manager; integration is gated on completing the target C library and architecture-specific boot validation. See [OpenRC integration policy](docs/openrc.md). Binutils and GCC bootstrap sources are pinned; glibc, Linux and BusyBox remain unpinned. No completed compiler, kernel, initramfs or bootable image is claimed yet. The kernel source remains unpinned until its official checksum is verified.
+CI validates repository structure, configuration, source metadata, safe extraction, rootfs generation and rootfs identity files. The first-stage toolchain scripts, GRUB boot menu, kernel build script and initial rootfs generator are implemented. OpenRC 0.64.1 is pinned and integrated into both x86_64 and i486 ISO build pipelines as the intended PID 1 and service manager. Its static binaries, VANTOR service scripts, runlevels and initramfs guard are built by GitHub Actions; successful compilation and boot compatibility remain subject to those workflow results and Limbo/QEMU testing. See [OpenRC integration](docs/openrc.md).
 
 ## Nyan package management
 
