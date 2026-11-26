@@ -13,15 +13,21 @@ case "$ARCH" in
     x86_64)
         BUILD_DIR="$ROOT/build/work/sudo"
         ROOTFS="${VANTOR_BUILD_ROOTFS_DIR:-$ROOT/build/work/rootfs}"
-        export CFLAGS="-Os -static -fno-ident"
-        export LDFLAGS="-all-static -static -Wl,-z,relro,-z,now"
+        BUILD_CFLAGS="-Os -static -fno-ident"
+        BUILD_LDFLAGS="-all-static -static -Wl,-z,relro,-z,now"
+        # Keep configure probes dynamically linkable; static-only flags belong
+        # on the actual build, otherwise its compiler sanity check fails on CI.
+        export CFLAGS="-Os -fno-ident"
+        export LDFLAGS="-Wl,-z,relro,-z,now"
         ;;
     i486)
         BUILD_DIR="$ROOT/build/work/sudo-legacy"
         ROOTFS="${VANTOR_BUILD_ROOTFS_DIR:-$ROOT/build/work/rootfs-legacy}"
         export CC="${CC_LEGACY:-gcc -m32 -march=i486 -mtune=i486}"
-        export CFLAGS="-m32 -march=i486 -mtune=i486 -Os -static -fno-ident"
-        export LDFLAGS="-all-static -m32 -static -Wl,-z,relro,-z,now"
+        BUILD_CFLAGS="-m32 -march=i486 -mtune=i486 -Os -static -fno-ident"
+        BUILD_LDFLAGS="-all-static -m32 -static -Wl,-z,relro,-z,now"
+        export CFLAGS="-m32 -march=i486 -mtune=i486 -Os -fno-ident"
+        export LDFLAGS="-m32 -Wl,-z,relro,-z,now"
         ;;
     *)
         echo "[ERROR] Unsupported sudo target architecture: $ARCH" >&2
@@ -70,7 +76,7 @@ mkdir -p "$BUILD_DIR"
         --without-pam \
         --disable-openssl \
         --disable-nls
-    make -j"${VANTOR_BUILD_JOBS:-2}"
+    make -j"${VANTOR_BUILD_JOBS:-2}" CFLAGS="$BUILD_CFLAGS" LDFLAGS="$BUILD_LDFLAGS"
     fakeroot -- make DESTDIR="$ROOTFS" install-binaries
 )
 
