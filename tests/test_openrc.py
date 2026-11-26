@@ -26,11 +26,21 @@ class OpenRCIntegrationTests(unittest.TestCase):
         self.assertIn("ln -sfn /sbin/openrc-init", builder)
         self.assertIn("rc_bin_commands=(", builder)
         self.assertIn("rc_sbin_commands=(", builder)
+        self.assertIn("checkpath openrc-user rc-depend", builder)
+        self.assertNotIn("checkpath service openrc-user", builder)
+        self.assertIn("rc-service rc-update rc-sstat rc-environ", builder)
+        self.assertIn("rc-abort", builder)
         self.assertIn('verify_openrc_binary "$binary" "$ROOTFS/usr/lib/rc/bin/$binary"', builder)
         self.assertIn('verify_openrc_binary "$binary" "$ROOTFS/usr/lib/rc/sbin/$binary"', builder)
         self.assertIn("ln -sfn /usr/lib/rc/bin/checkpath", builder)
         self.assertIn("not OpenRC", initramfs)
         self.assertIn("static", builder)
+
+    def test_openrc_0641_uses_rc_service_not_removed_service_alias(self) -> None:
+        builder = (ROOT / "build/scripts/build-openrc.sh").read_text()
+        self.assertIn("rc-service", builder)
+        self.assertNotRegex(builder, r"rc_bin_commands=\([^\n]*\\bservice\\b")
+        self.assertIn('verify_openrc_binary "$binary" "$ROOTFS/usr/sbin/$binary"', builder)
 
     def test_vantor_services_use_openrc(self) -> None:
         service = (ROOT / "tools/prepare-rootfs.py").read_text()
