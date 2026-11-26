@@ -11,7 +11,7 @@ SOURCE_DIR="$ROOT/build/work/sources/openrc-$VERSION"
 case "$ARCH" in
     x86_64)
         BUILD_DIR="$ROOT/build/work/openrc"
-        ROOTFS="${VANTOR_ROOTFS_DIR:-$ROOT/build/work/rootfs}"
+        ROOTFS="${VANTOR_BUILD_ROOTFS_DIR:-$ROOT/build/work/rootfs}"
         export CFLAGS="-Os -static -fno-ident"
         export LDFLAGS="-static"
         export PKG_CONFIG_LIBDIR="/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig"
@@ -19,7 +19,7 @@ case "$ARCH" in
         ;;
     i486)
         BUILD_DIR="$ROOT/build/work/openrc-legacy"
-        ROOTFS="${VANTOR_ROOTFS_DIR:-$ROOT/build/work/rootfs-legacy}"
+        ROOTFS="${VANTOR_BUILD_ROOTFS_DIR:-$ROOT/build/work/rootfs-legacy}"
         export CFLAGS="-m32 -march=i486 -mtune=i486 -Os -static -fno-ident"
         export LDFLAGS="-m32 -static"
         export PKG_CONFIG_LIBDIR="/usr/lib/i386-linux-gnu/pkgconfig:/usr/share/pkgconfig"
