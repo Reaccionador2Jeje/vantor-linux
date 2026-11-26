@@ -8,7 +8,7 @@ OUTPUT_DIR="${VANTOR_INITRAMFS_DIR:-$ROOT/build/work/initramfs}"
 OUTPUT_NAME="${VANTOR_INITRAMFS_NAME:-vantor-initramfs.cpio.gz}"
 OUTPUT="$OUTPUT_DIR/$OUTPUT_NAME"
 
-for command in cpio gzip; do
+for command in cpio gzip fakeroot; do
     command -v "$command" >/dev/null 2>&1 || {
         echo "[ERROR] Required host command not found: $command" >&2
         exit 1
@@ -29,6 +29,14 @@ done
 }
 [[ "$(readlink "$ROOTFS/sbin/init")" == "/sbin/openrc-init" ]] || {
     echo "[ERROR] Refusing to package an ISO whose /sbin/init is not OpenRC." >&2
+    exit 1
+}
+[[ -x "$ROOTFS/usr/bin/sudo" && -x "$ROOTFS/usr/bin/visudo" ]] || {
+    echo "[ERROR] Static sudo and visudo are missing. Run 'make sudo' first." >&2
+    exit 1
+}
+[[ "$(stat -c '%a' "$ROOTFS/usr/bin/sudo")" == "4755" ]] || {
+    echo "[ERROR] /usr/bin/sudo must have mode 4755 before packaging." >&2
     exit 1
 }
 
@@ -62,11 +70,17 @@ else
 fi
 
 mkdir -p "$OUTPUT_DIR"
-(
-    cd "$ROOTFS"
-    # Stable ordering and gzip -n keep the archive reproducible.
+# The build runner is not root. fakeroot records root ownership for system
+# files and preserves sudo's setuid bit in the initramfs.
+# Stable ordering and gzip -n keep the archive reproducible.
+fakeroot -- sh -c '
+    set -eu
+    rootfs="$1"
+    chown -hR 0:0 "$rootfs"
+    chmod 4755 "$rootfs/usr/bin/sudo"
+    cd "$rootfs"
     find . -print0 | sort -z | cpio --null --create --format=newc --quiet
-) | gzip -9n > "$OUTPUT"
+' sh "$ROOTFS" | gzip -9n > "$OUTPUT"
 
 [[ -s "$OUTPUT" ]] || { echo "[ERROR] Initramfs archive is empty." >&2; exit 1; }
 gzip -t "$OUTPUT"
