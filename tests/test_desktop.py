@@ -46,6 +46,15 @@ class DesktopGenesisTests(unittest.TestCase):
         for shortcut in ("W-Return", "W-e", "W-d", "C-A-Left", "C-A-Right"):
             self.assertIn(shortcut, openbox)
 
+    def test_platform_profile_manifests_match_nyan_catalog(self) -> None:
+        result = subprocess.run(
+            ["python3", str(ROOT / "tools/validate-desktop-profiles.py")],
+            capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        for profile in ("android-termux", "pc", "remote"):
+            self.assertIn(f"validated {profile}", result.stdout)
+
     def test_desktop_launcher_has_valid_entry(self) -> None:
         launcher = (DESKTOP / "applications/vantor-terminal.desktop").read_text()
         self.assertIn("[Desktop Entry]", launcher)
