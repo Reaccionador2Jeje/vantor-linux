@@ -47,8 +47,27 @@ You can also use PRoot-Distro directly:
 proot-distro login vantor -- /usr/bin/vantor-termux-shell
 ~~~
 
-The archive can also be installed manually with proot-distro install /path/to/vantor-termux-aarch64-0.1.0.tar.gz --name vantor. PRoot-Distro accepts local rootfs archives and OCI images; VANTOR currently publishes the verified rootfs archive on GitHub Releases.
+The archive can also be installed manually with proot-distro install /path/to/vantor-termux-aarch64-0.1.0.tar.gz --name vantor. PRoot-Distro accepts local rootfs archives and OCI images; VANTOR publishes the verified rootfs archive on GitHub Releases and a matching ARM64 container image on Docker Hub when publishing credentials are configured.
 
+## Docker Hub image
+
+The Docker image is an **ARM64 userspace container**, not a bootable ISO or a replacement for Android's kernel. The workflow builds it from `Dockerfile.termux` after assembling and validating the rootfs.
+
+To enable publishing, configure these repository settings in GitHub:
+
+1. In Docker Hub, create a Personal Access Token with read/write access for the VANTOR image repository. Do not use your Docker Hub account password.
+2. In the GitHub repository, open **Settings → Secrets and variables → Actions**.
+3. Under **Variables**, add `DOCKERHUB_USERNAME` with your Docker Hub username.
+4. Under **Secrets**, add `DOCKERHUB_TOKEN` with the Personal Access Token value.
+
+Never put the token in a commit, workflow file, issue, or chat. If account setup requires an age-eligible account holder, ask a parent or guardian to help with that setup.
+
+After the variable and secret are saved, run **Actions → Build VANTOR Termux ARM64 userspace → Run workflow** on the `main` branch. Successful runs publish:
+
+- `DOCKERHUB_USERNAME/vantor-linux:termux-arm64`
+- `DOCKERHUB_USERNAME/vantor-linux:termux-0.1.0`
+
+The workflow skips Docker Hub publishing when the username variable is absent. If the username is configured but the token is missing or invalid, the login step fails rather than silently pretending the image was published. The rootfs GitHub Release remains available independently.
 
 ## What works in this target
 
@@ -67,4 +86,4 @@ The archive can also be installed manually with proot-distro install /path/to/va
 
 ## Rebuild
 
-The workflow `.github/workflows/build-termux.yml` uses an ARM64 GitHub-hosted runner, builds BusyBox from the repository's pinned source, assembles the VANTOR rootfs, validates the ELF architecture and publishes a GitHub Release asset. Docker Hub publishing is optional and activates only after repository secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` are configured.
+The workflow `.github/workflows/build-termux.yml` uses an ARM64 GitHub-hosted runner, builds BusyBox from the repository's pinned source, assembles the VANTOR rootfs, validates the ELF architecture, and publishes a GitHub Release asset. When the Docker Hub variable and secret are configured, it also builds and pushes the ARM64 OCI image.
