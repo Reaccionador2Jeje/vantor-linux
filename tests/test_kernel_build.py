@@ -28,6 +28,8 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("FRAMEBUFFER_CONSOLE", script)
         self.assertIn("DRM_FBDEV_EMULATION", script)
         self.assertIn("DRM_BOCHS", script)
+        for laptop_driver in ("DRM_I915", "SATA_AHCI", "SND_HDA_INTEL", "IWLWIFI", "IWLMVM", "ACPI_BATTERY", "ACPI_THERMAL"):
+            self.assertIn(laptop_driver, script)
         self.assertIn("bzImage modules", script)
         self.assertIn('CC="ccache gcc"', script)
         self.assertIn("ccache --show-stats", script)
