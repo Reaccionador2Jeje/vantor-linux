@@ -6,7 +6,6 @@ htop	3.4.1	x86_64	1ecb217ff2f5335e5c30b010d3f54d60841fd2a43384fb20b2446cdda0ed56
 dialog	1.3-20260721	x86_64	b490eb0e4a06ee16934d97495c0d5a71f995170f72505c60621949409678cbe8	dialog-1.3-20260721-x86_64.tar.gz	Dialog terminal UI widgets, static musl and ncurses	
 vantor-base-files	0.1.0	x86_64	7457b26e1f0f7867fd7c8e167840d7fe683913d4593af53442247327c1c3d003	vantor-base-files-0.1.0-x86_64.tar.gz	VANTOR Minimal base files, BusyBox, init and system accounts	
 vantor-profile-minimal	0.1.0	x86_64	7d89853a807b937d0301e3add97e4a93854881099c4543dcc56731d514c83036	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
-vantor-mountinfo	0.1.0	x86_64	41ec5296aeb3d61268c08c054dc047bfec8ae91cb9958b22dba5129aac2913f1	vantor-mountinfo-0.1.0-all.tar.gz	VANTOR utility: vantor-mountinfo (architecture-independent)	
 fastfetch	0.1.0	x86_64	18c69f7a8868fd0bb40e3690b5083a52a884acbec805da2f02aab419a3e8a5e7	fastfetch-0.1.0-all.tar.gz	VANTOR terminal utility: fastfetch	
 tree	0.1.0	x86_64	56525330801027e43c88416e1364e7ba58c190e0ca3192e83097ae880440ec78	tree-0.1.0-all.tar.gz	VANTOR terminal utility: tree	
 watch	0.1.0	x86_64	a20d171c86256b4295296bfa42067984472f0356d94cd1349c402ad2f328cd0d	watch-0.1.0-all.tar.gz	VANTOR terminal utility: watch	
@@ -33,3 +32,4 @@ vantor-doctor	0.1.0	x86_64	52702543bed76508546bf62d7e4ed3df5d0d73736c79d697a0ad9
 vantor-netdiag	0.1.0	x86_64	9902c4e98756576b244f6f7d19fecec22831ce1d46ff6ca2400dbf85a3e2d72c	vantor-netdiag-0.1.0-all.tar.gz	VANTOR utility: vantor-netdiag (architecture-independent)	
 vantor-logview	0.1.0	x86_64	910557eed0ae404b2a558b88c59393bc88013f665511220029533b38f307b189	vantor-logview-0.1.0-all.tar.gz	VANTOR utility: vantor-logview (architecture-independent)	
 vantor-config-backup	0.1.0	x86_64	da492a2980e087e71ba22aae042f63a24d2b355fc3a3f974da4f2f5653c841c1	vantor-config-backup-0.1.0-all.tar.gz	VANTOR utility: vantor-config-backup (architecture-independent)	
+vantor-mountinfo	0.1.0	x86_64	41ec5296aeb3d61268c08c054dc047bfec8ae91cb9958b22dba5129aac2913f1	vantor-mountinfo-0.1.0-all.tar.gz	VANTOR utility: vantor-mountinfo (architecture-independent)	
