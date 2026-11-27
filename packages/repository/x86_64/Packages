@@ -6,7 +6,6 @@ htop	3.4.1	x86_64	1ecb217ff2f5335e5c30b010d3f54d60841fd2a43384fb20b2446cdda0ed56
 dialog	1.3-20260721	x86_64	b490eb0e4a06ee16934d97495c0d5a71f995170f72505c60621949409678cbe8	dialog-1.3-20260721-x86_64.tar.gz	Dialog terminal UI widgets, static musl and ncurses	
 vantor-base-files	0.1.0	x86_64	aa70bf69f135750fd98790538958ae4c89269fd66fe7cfea3f7b93d14b07eac9	vantor-base-files-0.1.0-x86_64.tar.gz	VANTOR Minimal base files, BusyBox, init and system accounts	
 vantor-profile-minimal	0.1.0	x86_64	712eb3ae3beee8c43d27de03fa960886552577efc4588a0f6a90f200ad4645af	vantor-profile-minimal-0.1.0-x86_64.tar.gz	VANTOR primary Minimal installation profile	vantor-base-files
-vdu	0.1.0	x86_64	b78d2864db1a2f7b9975c3007f9757f5da48d2867bce7970c3e0be71f56e7b78	vdu-0.1.0-all.tar.gz	VANTOR terminal utility: vdu	
 vports	0.1.0	x86_64	5bedb29dda9d1b165c0957973ecd8cbe7386f764dae159dc02b5691860b35289	vports-0.1.0-all.tar.gz	VANTOR terminal utility: vports	
 vman	0.1.0	x86_64	c173d350d650ea58cbc2d149e76e1cc0ac0eb6565480be123f97628933c4c07c	vman-0.1.0-all.tar.gz	VANTOR terminal utility: vman	
 vantor-hardware	0.1.0	x86_64	d2dd76572977e23adb06319e44c2ce1eb9d8f399bde705e175dcc89fcbf63e26	vantor-hardware-0.1.0-x86_64.tar.gz	VANTOR read-only hardware inventory utility	
@@ -33,3 +32,4 @@ vchecksum	0.1.0	x86_64	1ff62d001df4acb516b3c420cd96d206f1db5d3be5277c68779db8d27
 varchive	0.1.0	x86_64	78381e9aa686714f4e7399f430790b161f697042afa22fe12ad35a6c1c435d68	varchive-0.1.0-all.tar.gz	VANTOR terminal utility: varchive	
 vps	0.1.0	x86_64	261621aa91ceffd74d3655feb920f1b60291a5707794a898c726b423f575b0b0	vps-0.1.0-all.tar.gz	VANTOR terminal utility: vps	
 vdf	0.1.0	x86_64	3200e7e249e247e62b6de98ecc39bdef531833346463b80308c29af056f96639	vdf-0.1.0-all.tar.gz	VANTOR terminal utility: vdf	
+vdu	0.1.0	x86_64	b78d2864db1a2f7b9975c3007f9757f5da48d2867bce7970c3e0be71f56e7b78	vdu-0.1.0-all.tar.gz	VANTOR terminal utility: vdu	
