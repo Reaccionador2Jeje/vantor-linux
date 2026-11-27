@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - "tools/prepare-rootfs.py"
+      - "installer/**"
       - "build/scripts/build-busybox-legacy.sh"
       - "build/sources/sources.json"
       - "tools/extract-source.py"
