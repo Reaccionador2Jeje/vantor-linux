@@ -2,7 +2,6 @@
 dialog	1.3-20260721	i486	224cbf0173d3f68d8fe4a5c9a8184dd8106dc69e2bf6872cff324fb289b47370	dialog-1.3-20260721-i486.tar.gz	Dialog terminal UI widgets, static musl and ncurses	
 nano	9.2	i486	83e23f2b88c23a5a8f5b6b6d2cb3747078e54a86ca58c79f8f13b6473f670145	nano-9.2-i486.tar.gz	GNU nano 9.2 tiny static editor (musl + ncurses)	
 htop	3.4.1	i486	add90701ca435934f353faeb67f9fd7f7eb6f56a92fc7d7afc1e7f07aab3ad82	htop-3.4.1-i486.tar.gz	htop 3.4.1 static process monitor (musl + ncurses)	
-fastfetch	0.1.0	i486	18c69f7a8868fd0bb40e3690b5083a52a884acbec805da2f02aab419a3e8a5e7	fastfetch-0.1.0-all.tar.gz	VANTOR terminal utility: fastfetch	
 tree	0.1.0	i486	56525330801027e43c88416e1364e7ba58c190e0ca3192e83097ae880440ec78	tree-0.1.0-all.tar.gz	VANTOR terminal utility: tree	
 watch	0.1.0	i486	a20d171c86256b4295296bfa42067984472f0356d94cd1349c402ad2f328cd0d	watch-0.1.0-all.tar.gz	VANTOR terminal utility: watch	
 which	0.1.0	i486	71e066a4c0840ff9ff1e654c1b0815300cb48b3e889cac3057a4f566e89dbabf	which-0.1.0-all.tar.gz	VANTOR terminal utility: which	
@@ -31,3 +30,4 @@ vantor-config-backup	0.1.0	i486	da492a2980e087e71ba22aae042f63a24d2b355fc3a3f974
 vantor-base-files	0.1.0	i486	6a269c7bac347fccc8e0714e10ae4758e0ef7695558cee2e1de2d1611cb22fec	vantor-base-files-0.1.0-i486.tar.gz	VANTOR Minimal i486 base files and static 486-compatible BusyBox	
 vantor-mountinfo	0.1.0	i486	41ec5296aeb3d61268c08c054dc047bfec8ae91cb9958b22dba5129aac2913f1	vantor-mountinfo-0.1.0-all.tar.gz	VANTOR utility: vantor-mountinfo (architecture-independent)	
 vantor-profile-minimal	0.1.0	i486	718235feb82fe7ae3c76669b8572726003d44af81a3a5103df75ef272cdf7eda	vantor-profile-minimal-0.1.0-i486.tar.gz	VANTOR Minimal profile for 486SX/486DX and later 32-bit PCs	vantor-base-files
+fastfetch	0.1.0	i486	18c69f7a8868fd0bb40e3690b5083a52a884acbec805da2f02aab419a3e8a5e7	fastfetch-0.1.0-all.tar.gz	VANTOR terminal utility: fastfetch	
