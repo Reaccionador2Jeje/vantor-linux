@@ -54,7 +54,9 @@ elif [[ -s "$KERNEL_RELEASE_FILE" ]]; then
         mkdir -p "$ROOTFS/lib/modules"
         rm -rf -- "$MODULES_DEST"
         cp -a "$MODULES_SOURCE" "$MODULES_DEST"
-        if command -v depmod >/dev/null 2>&1; then\n            depmod -b "$ROOTFS" "$KERNEL_RELEASE"\n        fi
+        if command -v depmod >/dev/null 2>&1; then
+            depmod -b "$ROOTFS" "$KERNEL_RELEASE"
+        fi
         echo "[OK] Included kernel modules: $KERNEL_RELEASE"
     else
         echo "[ERROR] Kernel modules missing: $MODULES_SOURCE" >&2
