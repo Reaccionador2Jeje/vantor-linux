@@ -28,8 +28,15 @@ class KernelBuildContractTests(unittest.TestCase):
         self.assertIn("FRAMEBUFFER_CONSOLE", script)
         self.assertIn("DRM_FBDEV_EMULATION", script)
         self.assertIn("DRM_BOCHS", script)
-        for laptop_driver in ("DRM_I915", "SATA_AHCI", "SND_HDA_INTEL", "IWLWIFI", "IWLMVM", "ACPI_BATTERY", "ACPI_THERMAL"):
-            self.assertIn(laptop_driver, script)
+        # The x86_64 profile is generic, not tied to a laptop or one vendor.
+        self.assertIn("# Universal x86_64 baseline", script)
+        self.assertIn("# Hardware drivers are modules", script)
+        for driver in ("DRM_I915", "DRM_AMDGPU", "DRM_NOUVEAU", "R8169", "TG3",
+                       "ATH9K", "ATH10K_PCI", "RTW88", "RTW89", "MT76", "BRCMFMAC"):
+            self.assertIn(driver, script)
+        self.assertIn('--module "$option"', script)
+        self.assertNotIn("I2C_I801", script)
+        self.assertNotIn("laptop_driver", script)
         self.assertIn("bzImage modules", script)
         self.assertIn('CC="ccache gcc"', script)
         self.assertIn("ccache --show-stats", script)
