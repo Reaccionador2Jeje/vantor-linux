@@ -2,9 +2,9 @@
 set -Eeuo pipefail
 ROOT="$(cd -- "$(dirname -- "$0")/../.." && pwd)"
 cd "$ROOT"
-ROOTFS="\${VANTOR_ROOTFS_DIR:-$ROOT/build/work/rootfs}"
-OUTPUT_DIR="\${VANTOR_INITRAMFS_DIR:-$ROOT/build/work/initramfs}"
-OUTPUT_NAME="\${VANTOR_INITRAMFS_NAME:-vantor-initramfs.cpio.gz}"
+ROOTFS="${VANTOR_ROOTFS_DIR:-$ROOT/build/work/rootfs}"
+OUTPUT_DIR="${VANTOR_INITRAMFS_DIR:-$ROOT/build/work/initramfs}"
+OUTPUT_NAME="${VANTOR_INITRAMFS_NAME:-vantor-initramfs.cpio.gz}"
 OUTPUT="$OUTPUT_DIR/$OUTPUT_NAME"
 for command in cpio gzip fakeroot; do
     command -v "$command" >/dev/null 2>&1 || { echo "[ERROR] Required host command not found: $command" >&2; exit 1; }
@@ -23,9 +23,9 @@ for policy in "$ROOTFS/etc/sudoers" "$ROOTFS/etc/sudoers.d/00-root" "$ROOTFS/etc
     [[ "$(stat -c '%a' "$policy")" == "440" ]] || { echo "[ERROR] Sudo policy must be mode 0440: $policy" >&2; exit 1; }
 done
 grep -qxF '#includedir /etc/sudoers.d' "$ROOTFS/etc/sudoers" || { echo "[ERROR] sudoers.d is not included." >&2; exit 1; }
-grep -qxF 'root ALL=(ALL:ALL) ALL' "$ROOTFS/etc/sudoers.d/00-root" || { echo "[ERROR] Invalid root sudo policy." >&2; exit 1; }
-grep -qxF 'live ALL=(ALL:ALL) ALL' "$ROOTFS/etc/sudoers.d/99-live" || { echo "[ERROR] Invalid live sudo policy." >&2; exit 1; }
-grep -qxF '%wheel ALL=(ALL:ALL) ALL' "$ROOTFS/etc/sudoers.d/10-wheel" || { echo "[ERROR] Invalid wheel sudo policy." >&2; exit 1; }
+grep -qxF 'root ALL=(ALL:ALL) ALL' "$ROOTFS/etc/sudoers.d/00-root" || { echo "[ERROR] Root sudo policy is incorrect." >&2; exit 1; }
+grep -qxF 'live ALL=(ALL:ALL) ALL' "$ROOTFS/etc/sudoers.d/99-live" || { echo "[ERROR] Live sudo policy is incorrect." >&2; exit 1; }
+grep -qxF '%wheel ALL=(ALL:ALL) ALL' "$ROOTFS/etc/sudoers.d/10-wheel" || { echo "[ERROR] Wheel sudo policy is incorrect." >&2; exit 1; }
 [[ "$(awk -F: '$1 == "live" { print $3 ":" $4 }' "$ROOTFS/etc/passwd")" == "1000:1000" ]] || { echo "[ERROR] Invalid live account identity." >&2; exit 1; }
 grep -qxF 'wheel:x:10:live' "$ROOTFS/etc/group" || { echo "[ERROR] live is not in wheel." >&2; exit 1; }
 
@@ -41,9 +41,9 @@ fakeroot -- sh -c '
     "$rootfs/usr/bin/visudo" -c -f "$policy_check"
 ' sh "$ROOTFS"
 
-KERNEL_RELEASE_FILE="\${VANTOR_KERNEL_RELEASE_FILE:-$ROOT/build/work/kernel/kernelrelease}"
-MODULES_ROOT="\${VANTOR_MODULES_ROOT:-$ROOT/build/work/modules}/lib/modules"
-if [[ "\${VANTOR_SKIP_KERNEL_MODULES:-0}" == "1" ]]; then
+KERNEL_RELEASE_FILE="${VANTOR_KERNEL_RELEASE_FILE:-$ROOT/build/work/kernel/kernelrelease}"
+MODULES_ROOT="${VANTOR_MODULES_ROOT:-$ROOT/build/work/modules}/lib/modules"
+if [[ "${VANTOR_SKIP_KERNEL_MODULES:-0}" == "1" ]]; then
     echo "[INFO] Loadable modules skipped for this image target."
 elif [[ -s "$KERNEL_RELEASE_FILE" ]]; then
     KERNEL_RELEASE="$(cat "$KERNEL_RELEASE_FILE")"
@@ -75,6 +75,6 @@ fakeroot -- sh -c '
 [[ -s "$OUTPUT" ]] || { echo "[ERROR] Initramfs archive is empty." >&2; exit 1; }
 gzip -t "$OUTPUT"
 SUDO_METADATA="$(gzip -dc "$OUTPUT" | cpio --list --verbose 2>/dev/null | awk '$NF ~ /(^|\/)usr\/bin\/sudo$/ { print $1 " " $3 " " $4; exit }')"
-[[ "$SUDO_METADATA" == "-rwsr-xr-x root root" ]] || { echo "[ERROR] sudo metadata invalid: \${SUDO_METADATA:-missing}" >&2; exit 1; }
+[[ "$SUDO_METADATA" == "-rwsr-xr-x root root" ]] || { echo "[ERROR] sudo metadata invalid: ${SUDO_METADATA:-missing}" >&2; exit 1; }
 echo "[OK] VANTOR initramfs created: $OUTPUT"
 echo "[INFO] Boot compatibility still requires QEMU/Limbo testing."
