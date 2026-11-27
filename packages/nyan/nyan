@@ -99,6 +99,7 @@ Usage:
   nyan languages
   nyan install PACKAGE [PACKAGE ...]
   nyan browse
+  nyan graphics
   nyan install-profile PROFILE
   nyan profiles
   nyan installed
@@ -225,6 +226,21 @@ case "$cmd" in
     index=$(index_file); [ -s "$index" ] || die "run 'nyan update' first"
     echo "Programming languages available:"
     awk -F '\t' '!/^#/ && NF >= 6 && $6 ~ /^Language:/ {printf "  %-18s %-10s %s\n",$1,$2,substr($6,10)}' "$index"
+    ;;
+  graphics)
+    [ "$#" -eq 1 ] || die "usage: nyan graphics"
+    [ -r "$NYAN_CATALOG" ] || die "package catalog is not installed"
+    index=$(index_file); [ -s "$index" ] || die "run 'nyan update' first"
+    printf "VANTOR graphical components (%s):\n" "$NYAN_ARCH"
+    printf "%-24s %-12s %-12s %s\n" "PACKAGE" "CATALOG" "REPOSITORY" "DESCRIPTION"
+    while IFS="$(printf '\t')" read -r pkg category status description; do
+      [ "$category" = "desktop" ] || continue
+      case "$pkg" in ''|'#'*) continue;; esac
+      if [ -n "$(package_row "$pkg")" ]; then availability=available; else availability=not-published; fi
+      printf "%-24s %-12s %-12s %s\n" "$pkg" "$status" "$availability" "$description"
+    done < "$NYAN_CATALOG"
+    echo
+    echo "Only packages marked available can be installed. Use: nyan install PACKAGE"
     ;;
   profiles)
     index=$(index_file); [ -s "$index" ] || die "run 'nyan update' first"
