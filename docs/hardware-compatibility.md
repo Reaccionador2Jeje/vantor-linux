@@ -40,3 +40,10 @@ This builds the i486 rootfs, static BusyBox, initramfs, legacy kernel and a text
 The kernel's CPU floor is not the same as a usable system requirement. Real machines vary widely in RAM, storage, BIOS behavior and peripheral support. A 486 may boot a small console kernel but still lack enough memory or supported storage to run a full package installation comfortably. The first legacy release should therefore be treated as a low-resource console experiment, not a desktop distribution.
 
 No physical 486 machine or Limbo legacy VM has been boot-tested yet. A successful kernel compilation is not proof of boot compatibility.
+
+
+## ThinkPad Edge E430 target profile
+
+The primary physical validation target for VANTOR Genesis is the Lenovo ThinkPad Edge E430 with an Intel Core i5-2520M. The x86_64 kernel configuration explicitly enables common laptop paths: Intel integrated graphics (i915), SATA/AHCI storage, Intel HD Audio with Realtek and HDMI codecs, Intel wireless (iwlwifi/iwlmvm), Intel wired Ethernet (e1000e), ACPI battery and thermal interfaces, backlight controls, USB host controllers and USB storage.
+
+Enabling a driver does not guarantee that a wireless adapter works without its matching firmware. Firmware packaging, Wi-Fi association, suspend/resume, brightness keys, audio output and the exact E430 wireless-card variant still require physical checks. Ethernet is the preferred first-install network fallback. The E430 is an x86_64 target and must use Genesis, not the i486 Legacy image. Physical support is not validated until the machine boots from its own disk and storage, keyboard, display, network and power-management checks pass.
