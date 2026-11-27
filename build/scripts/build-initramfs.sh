@@ -27,7 +27,7 @@ grep -qxF 'root ALL=(ALL:ALL) ALL' "$ROOTFS/etc/sudoers.d/00-root" || { echo "[E
 grep -qxF 'live ALL=(ALL:ALL) ALL' "$ROOTFS/etc/sudoers.d/99-live" || { echo "[ERROR] Live sudo policy is incorrect." >&2; exit 1; }
 grep -qxF '%wheel ALL=(ALL:ALL) ALL' "$ROOTFS/etc/sudoers.d/10-wheel" || { echo "[ERROR] Wheel sudo policy is incorrect." >&2; exit 1; }
 [[ "$(awk -F: '$1 == "live" { print $3 ":" $4 }' "$ROOTFS/etc/passwd")" == "1000:1000" ]] || { echo "[ERROR] Invalid live account identity." >&2; exit 1; }
-grep -qxF 'wheel:x:10:live' "$ROOTFS/etc/group" || { echo "[ERROR] live is not in wheel." >&2; exit 1; }
+grep -qxF 'wheel:x:10:live' "$ROOTFS/etc/group" || { echo "[ERROR] Live account is not a member of wheel." >&2; exit 1; }
 
 fakeroot -- sh -c '
     set -eu
@@ -54,7 +54,7 @@ elif [[ -s "$KERNEL_RELEASE_FILE" ]]; then
         mkdir -p "$ROOTFS/lib/modules"
         rm -rf -- "$MODULES_DEST"
         cp -a "$MODULES_SOURCE" "$MODULES_DEST"
-        command -v depmod >/dev/null 2>&1 && depmod -b "$ROOTFS" "$KERNEL_RELEASE"
+        if command -v depmod >/dev/null 2>&1; then\n            depmod -b "$ROOTFS" "$KERNEL_RELEASE"\n        fi
         echo "[OK] Included kernel modules: $KERNEL_RELEASE"
     else
         echo "[ERROR] Kernel modules missing: $MODULES_SOURCE" >&2
