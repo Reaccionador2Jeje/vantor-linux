@@ -20,7 +20,8 @@ The script:
 2. Downloads the archive through the repository's checksum-verifying fetcher.
 3. Safely extracts the source tree.
 4. Starts from upstream x86_64_defconfig.
-5. Enables early userspace, console, VirtIO, storage, network and common virtual-PC drivers.
+5. Enables a generic x86_64 boot baseline and a broad set of vendor-neutral and multi-vendor hardware drivers.
+6. Builds graphics, storage, Ethernet, audio and Wi-Fi drivers as modules where supported, so the kernel can load the matching driver for detected hardware.
 6. Runs olddefconfig and builds bzImage.
 7. Builds the kernel image and loadable modules.\n8. Installs modules into an isolated staging tree and generates dependency metadata when `depmod` is available.\n9. Stores the resolved config, kernel release and build log.
 
@@ -30,9 +31,11 @@ The dedicated GitHub Actions workflow compiles this target and uploads the kerne
 
 The canonical kernel build output remains at build/work/kernel/arch/x86/boot/bzImage for ISO assembly.
 
-## Initial driver profile
+## Universal x86_64 driver profile
 
-The first profile prioritizes Limbo/QEMU's virtual PC: PCI, VirtIO block/network/console, common IDE/SCSI storage, E1000 networking, VGA/VT console, 8250 serial and USB host controllers. Drivers are built into the kernel where enabled by the baseline configuration so that early boot does not depend on unavailable modules.
+The x86_64 profile is intended for a broad range of 64-bit PCs, not a specific laptop or manufacturer. It keeps boot-critical PCI, console, ACPI, initramfs, USB, common filesystems and VirtIO support available early. A broad module set covers common Intel/AMD/NVIDIA graphics, SATA/AHCI and NVMe storage, several Ethernet families, HDA/USB audio, and Wi-Fi families from Intel, Qualcomm/Atheros, Realtek, MediaTek and Broadcom where supported by the selected Linux release.
+
+Linux detects hardware and loads matching modules; enabling a driver does not guarantee every device works. Some devices require separate firmware, and support depends on the exact controller and kernel version. Limbo/QEMU is one validation target, while the ThinkPad Edge E430 is only one physical test machine—not the kernel's design target. Future ARM64 support will use a separate architecture profile.
 
 ## Current limitations
 
