@@ -329,7 +329,7 @@ exit 0
 exec /bin/sh -l
 """, 0o755)
     write(output / "etc/profile", """# VANTOR shell defaults
-export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+export PATH=/usr/local/sbin:/usr/local/bin:/bin:/sbin:/usr/bin:/usr/sbin
 export EDITOR=vi
 export PAGER=more
 : "${TERM:=vt100}"
