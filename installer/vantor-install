@@ -440,8 +440,10 @@ install_bootloader() {
         awk -v path="$target" '$2 == path { found=1 } END { exit !found }' "${VANTOR_PROC_MOUNTS:-/proc/mounts}" || die "target is not a mounted filesystem"
     fi
     [ -s "$target/boot/grub/grub.cfg" ] || die "GRUB configuration is missing; prepare boot files first"
+    mode=$(ask "GRUB firmware mode" "Choose firmware target: bios or uefi:" "bios") || return 0
+    case "$mode" in bios|uefi) ;; *) die "firmware mode must be bios or uefi";; esac
     if ! command -v grub-install >/dev/null 2>&1; then
-        message "grub-install is not included in this Live image yet. No disk was changed. A future image must bundle GRUB BIOS tools before this action can run."
+        message "grub-install and its platform modules are not included in this Live image yet. No disk was changed. BIOS/UEFI installation remains unavailable until the installer image bundles the matching GRUB tools."
         return 0
     fi
     record=$(awk -v path="$target" '$2 == path { print $1; exit }' "${VANTOR_PROC_MOUNTS:-/proc/mounts}")
@@ -455,11 +457,21 @@ install_bootloader() {
     disk="/dev/$parent"
     [ -b "$disk" ] || die "whole-disk device does not exist: $disk"
     [ ! -e "/sys/class/block/$parent/partition" ] || die "refusing to install GRUB to a partition; whole disk required"
-    message "GRUB will write BIOS boot code to $disk and install files under $target/boot. It will not format or partition the disk."
-    confirmation=$(ask "Confirm bootloader installation" "Type the exact disk path to continue:" "") || return 0
-    [ "$confirmation" = "$disk" ] || die "confirmation did not match; no disk was changed"
-    grub-install --target=i386-pc --boot-directory="$target/boot" --recheck "$disk" || die "GRUB installation failed"
-    message "GRUB BIOS bootloader installed to $disk. Test the virtual disk in Limbo before relying on it."
+    if [ "$mode" = bios ]; then
+        message "GRUB will install legacy BIOS boot code to $disk. No partition or filesystem will be formatted."
+        confirmation=$(ask "Confirm BIOS bootloader" "Type the exact whole-disk path to continue:" "") || return 0
+        [ "$confirmation" = "$disk" ] || die "confirmation did not match; no disk was changed"
+        grub-install --target=i386-pc --boot-directory="$target/boot" --recheck "$disk" || die "GRUB BIOS installation failed"
+    else
+        esp="$target/boot/efi"
+        [ -d "$esp" ] || die "UEFI requires an EFI System Partition mounted at $esp"
+        awk -v path="$esp" '$2 == path && ($3 == "vfat" || $3 == "fat" || $3 == "msdos") { found=1 } END { exit !found }' "${VANTOR_PROC_MOUNTS:-/proc/mounts}" || die "UEFI ESP must be mounted as FAT at $esp"
+        message "GRUB will install x86_64 UEFI files into the mounted EFI System Partition at $esp. No partition or filesystem will be formatted."
+        confirmation=$(ask "Confirm UEFI bootloader" "Type INSTALL-UEFI to continue:" "") || return 0
+        [ "$confirmation" = "INSTALL-UEFI" ] || die "confirmation did not match; no EFI files were written"
+        grub-install --target=x86_64-efi --efi-directory="$esp" --boot-directory="$target/boot" --bootloader-id=VANTOR --no-nvram --removable --recheck || die "GRUB UEFI installation failed"
+    fi
+    message "GRUB $mode files installed. Test the installed disk in Limbo before relying on it."
 }
 
 about() {
