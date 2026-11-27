@@ -79,6 +79,16 @@ The installer menu now provides two additional actions:
 Important: the current Live image does not yet bundle `grub-install` and its BIOS modules. The menu therefore reports that the feature is unavailable and makes no disk changes until those tools are included in a future image. This implementation is a guarded integration point, not proof of a working installed bootloader. The disk inventory is informational only; partitioning and formatting remain manual.
 
 
+## BIOS and UEFI GRUB installation
+
+The bootloader action now has separate guarded paths:
+
+- **BIOS:** installs the `i386-pc` GRUB target to the detected whole disk. The user must type the exact disk path.
+- **UEFI x86_64:** requires an existing EFI System Partition mounted as FAT at `TARGET/boot/efi`; it installs the `x86_64-efi` target using the removable-media fallback path and does not alter firmware NVRAM.
+- Neither path partitions, formats or erases storage. A mismatch or missing ESP aborts before invoking GRUB.
+
+This is installer-side support only. The Live ISO must still bundle `grub-install` and the matching BIOS/UEFI platform modules before either action is usable. The current ISO's host-side GRUB rescue tooling does not automatically provide those commands inside the Live environment.
+
 ## Standard mount points
 
 The Minimal root filesystem creates `/mnt` and `/media` at image-build time, so the installer default `/mnt` exists. `/mnt` is only an empty mount point until an existing partition is mounted there; creating the directory does not mount or format a disk. The installer can also create a custom mount point such as `/mnt/vantor-target` before mounting an existing supported filesystem.
