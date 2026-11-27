@@ -46,8 +46,9 @@ jobs:
           gzip -t build/work/initramfs/vantor-initramfs.cpio.gz
           test -x build/work/rootfs/init
           test -x build/work/rootfs/bin/busybox
-          test -x build/work/rootfs/sbin/openrc-init
-          test "$(readlink build/work/rootfs/sbin/init)" = "/sbin/openrc-init"
+          test -x build/work/rootfs/usr/sbin/openrc-init
+          test "$(readlink build/work/rootfs/sbin/openrc-init)" = "/usr/sbin/openrc-init"
+test "$(readlink build/work/rootfs/sbin/init)" = "/sbin/openrc-init"
           ls -lh build/work/initramfs/vantor-initramfs.cpio.gz
       - name: Upload early userspace artifact
         uses: actions/upload-artifact@v4
