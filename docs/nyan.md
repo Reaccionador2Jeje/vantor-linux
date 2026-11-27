@@ -11,6 +11,7 @@ Nyan is VANTOR's native package manager. It currently supports repository refres
 - `nyan languages` — list programming-language packages.
 - `nyan catalog` — show bundled, published and planned core packages.
 - `nyan install NAME` — resolve and install declared dependencies before the requested package.
+- `nyan graphics` — list every graphical component in the catalog and show whether its package is actually published for the selected architecture.
 - `nyan profiles` — list planned system profiles and their publication status.
 - `nyan install-profile NAME` — reserved for profiles whose full package sets have been published.
 - `nyan installed` — list packages recorded as installed in the selected root.
@@ -37,6 +38,8 @@ Nyan exposes five profile names:
 - `development` — Lua 5.4.9 starter language environment.
 - `remote-desktop` — optional remote graphical access tools: TigerVNC, x11vnc, wayvnc, FreeRDP and Remmina. These are catalog entries only; none is installable until its build and repository publication are complete.
 - `network` — DHCP, DNS, TLS and network diagnostic tools; not yet published.
+
+`nyan graphics` deliberately distinguishes catalog entries from published archives: a component marked `planned` or `building` is not installable merely because it appears in the catalog. The command reports `available` only when the selected architecture's live repository index contains that package. This keeps Nyan from promising a desktop whose server, libraries or session dependencies are still missing.
 
 The local package catalog is maintained in `packages/catalog.tsv` and is installed at `/usr/share/nyan/catalog.tsv`. It distinguishes bundled tools from packages that are still building or planned; only packages present in the architecture-specific repository index can be installed with Nyan. Core VANTOR commands (`vantorctl`, `vantor-hw`, `vantor-network`, `vantor-storage`, `vantor-service`, `vantor-modules`, `vantor-install`) and BusyBox `vi` belong to the base system and must be present before the first normal login. They are not optional add-ons. The `sudoers` wheel policy is already generated in the rootfs, but the actual `sudo` executable is still being integrated; do not treat the policy file as a working sudo installation. `nano` and full `vim` remain optional editor packages, while BusyBox `vi` is available immediately.
 
