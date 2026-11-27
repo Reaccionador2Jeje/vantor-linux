@@ -283,7 +283,7 @@ prepare_boot_files() {
     cp "$kernel" "$target/boot/vantor-kernel"
     cp "$initramfs" "$target/boot/vantor-initramfs.cpio.gz"
     if [ "$arch" = "x86_64" ]; then
-        theme_source="\${VANTOR_GRUB_THEME:-/run/vantor-media/boot/grub/themes/vantor/theme.txt}"
+        theme_source="${VANTOR_GRUB_THEME:-/run/vantor-media/boot/grub/themes/vantor/theme.txt}"
         if [ -s "$theme_source" ]; then
             mkdir -p "$target/boot/grub/themes/vantor"
             cp "$theme_source" "$target/boot/grub/themes/vantor/theme.txt"
