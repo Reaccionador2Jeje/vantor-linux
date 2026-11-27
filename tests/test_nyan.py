@@ -37,7 +37,7 @@ class NyanIntegrationTests(unittest.TestCase):
         self.root.mkdir()
         catalog = self.root / "usr/share/nyan/catalog.tsv"
         catalog.parent.mkdir(parents=True)
-        catalog.write_text("# package\tcategory\tstatus\tdescription\nbusybox\tsystem\tbundled\tCore shell and utilities\nsudo\tadmin\tplanned\tPrivilege elevation\n")
+        catalog.write_text("# package\tcategory\tstatus\tdescription\nbusybox\tsystem\tbundled\tCore shell and utilities\nsudo\tadmin\tplanned\tPrivilege elevation\nxorg-server\tdesktop\tplanned\tX.Org display server\nopenbox\tdesktop\tplanned\tLightweight window manager\n")
         self.env = dict(os.environ)
         self.env.update({
             "NYAN_ROOT": str(self.root),
@@ -110,6 +110,14 @@ class NyanIntegrationTests(unittest.TestCase):
         self.assertIn("sudo", result.stdout)
         self.assertIn("planned", result.stdout)
 
+    def test_graphics_lists_catalog_and_real_repository_availability(self) -> None:
+        self.assertEqual(self.run_nyan("update").returncode, 0)
+        result = self.run_nyan("graphics")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("xorg-server", result.stdout)
+        self.assertIn("openbox", result.stdout)
+        self.assertIn("not-published", result.stdout)
+        self.assertNotIn("available", result.stdout.split("xorg-server", 1)[1].splitlines()[0])
     def test_update_install_and_remove(self) -> None:
         self.make_archive("sample", [("usr/bin/sample", b"hello VANTOR\n", "file")])
         self.assertEqual(self.run_nyan("update").returncode, 0)
