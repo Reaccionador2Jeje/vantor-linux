@@ -29,6 +29,9 @@ class NyanIntegrationTests(unittest.TestCase):
         self.repo = self.base / "repo"
         (self.repo / "repo" / "x86_64").mkdir(parents=True)
         (self.repo / "packages" / "x86_64").mkdir(parents=True)
+        # A valid empty index is required for tests that only inspect the
+        # graphics catalog; package-specific tests append rows to this file.
+        (self.repo / "repo" / "x86_64" / "Packages").write_text("# VANTOR-PACKAGES 1\\n")
         handler = lambda *args, **kwargs: QuietHandler(*args, directory=str(self.repo), **kwargs)
         self.server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
